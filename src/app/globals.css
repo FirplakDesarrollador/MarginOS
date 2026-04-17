@@ -1,0 +1,35 @@
+@import "tailwindcss";
+@import "../styles/tokens.css";
+
+html, body {
+  background: var(--bg);
+  color: var(--text);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+@theme {
+  --font-sans: var(--font-poppins), system-ui, sans-serif;
+
+  /* Color Tokens from STYLE_GUIDE.md */
+  --color-brand-primary: #0B1F3B;
+  /* Dark Blue */
+  --color-brand-accent: #1D4ED8;
+  /* Blue */
+
+  --color-surface-bg: #F8FAFC;
+  /* Background */
+  --color-surface-card: #FFFFFF;
+
+  --color-text-primary: #0F172A;
+  --color-text-muted: #64748B;
+
+  --color-border-subtle: #E2E8F0;
+}
+
+/* Utility to enforce smoother font rendering */
+body {
+  @apply bg-surface-bg text-text-primary antialiased font-sans;
+  background-color: var(--color-surface-bg);
+  color: var(--color-text-primary);
+}
