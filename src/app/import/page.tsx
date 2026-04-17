@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft, UploadCloud, Save } from "lucide-react";
 import { DashboardHeader } from "@/components/dashboard-ui";
+import { createClient } from "@/lib/supabase/client";
 
 type RowSAP = {
   Codigo?: any;
@@ -214,7 +215,7 @@ export default function ImportBOMPage() {
     setLoading(false);
   }
 
-  function handleSave() {
+  async function handleSave() {
     setError(null);
     setSavedMsg(null);
 
@@ -223,19 +224,67 @@ export default function ImportBOMPage() {
       return;
     }
 
-    try {
-      const payload = {
-        source: "SAP_BOM_IMPORT",
-        fileName,
-        savedAt: new Date().toISOString(),
-        productos,
-      };
+    setLoading(true);
 
-      localStorage.setItem("marginos:last_bom_import", JSON.stringify(payload));
-      setSavedMsg("Guardado. Regresando…");
-      router.back();
-    } catch (e) {
-      setError("No pude guardar en el navegador (localStorage). Revisa permisos o modo incógnito.");
+    try {
+      const supabase = createClient();
+      
+      const { data: bImport, error: importError } = await supabase
+        .from("bom_imports")
+        .insert({
+          file_name: fileName || "Archivo sin nombre",
+          source: "SAP_BOM_IMPORT",
+          imported_at: new Date().toISOString(),
+        })
+        .select()
+        .single();
+
+      if (importError) throw importError;
+
+      const sapCodes = productos.map((p) => p.Codigo);
+
+      // Usar limitados chunks si existen demasiados
+      const sapMap = new Map<string, string>();
+      const step = 200;
+      for (let i = 0; i < sapCodes.length; i += step) {
+        const chunkCodes = sapCodes.slice(i, i + step);
+        const { data: dbProducts, error: dbErr } = await supabase
+          .from("products")
+          .select("id, sap_code")
+          .in("sap_code", chunkCodes);
+
+        if (!dbErr && dbProducts) {
+          for (const dp of dbProducts) {
+            sapMap.set(dp.sap_code, dp.id);
+          }
+        }
+      }
+
+      const bomData = productos.map((p) => ({
+        bom_import_id: bImport.id,
+        product_id: sapMap.get(p.Codigo) || null,
+        sap_code: p.Codigo,
+        description: p.Descripcion,
+        recalculated_cost_mp: p.Costo_Mp,
+        componentes_count: p.componentes_count,
+        excluidos_pz_count: p.excluidos_PZ_count,
+      }));
+
+      const chunkSize = 500;
+      for (let i = 0; i < bomData.length; i += chunkSize) {
+        const chunk = bomData.slice(i, i + chunkSize);
+        const { error: insErr } = await supabase.from("bom_products").insert(chunk);
+        if (insErr) throw insErr;
+      }
+
+      setSavedMsg("Guardado correctamente en base de datos. Regresando...");
+      setTimeout(() => router.back(), 1500);
+
+    } catch (e: any) {
+      console.error(e);
+      setError(`Error al guardar en base de datos: ${e?.message ?? "Error desconocido"}`);
+    } finally {
+      setLoading(false);
     }
   }
 
