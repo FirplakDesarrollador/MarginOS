@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
-import { Calculator, FileSpreadsheet, Settings, PieChart, Plus } from "lucide-react";
+import { Calculator, FileSpreadsheet, Settings, PieChart, Plus, Tag, Package, Store } from "lucide-react";
 import { DashboardHeader, StatCard, ActionCard } from "@/components/dashboard-ui";
 
 type ProductoNivel1 = {
@@ -55,6 +55,24 @@ export default function Home() {
       title: "Escenarios",
       description: "Histórico de simulaciones y comparativa de versiones.",
       href: "/scenarios",
+    },
+    {
+      icon: Tag,
+      title: "Listas de Precios",
+      description: "Gestión de precios por canal y producto",
+      href: "/price-lists",
+    },
+    {
+      icon: Package,
+      title: "Productos",
+      description: "Gestión maestra de productos SAP",
+      href: "/products",
+    },
+    {
+      icon: Store,
+      title: "Canales de Venta",
+      description: "Gestión maestra de canales comerciales",
+      href: "/sales-channels",
     },
   ];
 

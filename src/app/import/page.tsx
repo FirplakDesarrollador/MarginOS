@@ -242,12 +242,14 @@ export default function ImportBOMPage() {
       if (importError) throw importError;
 
       const sapCodes = productos.map((p) => p.Codigo);
+      const uniqueSapCodes = Array.from(new Set(sapCodes));
 
-      // Usar limitados chunks si existen demasiados
+      // 1. Fetch existing products from DB
       const sapMap = new Map<string, string>();
       const step = 200;
-      for (let i = 0; i < sapCodes.length; i += step) {
-        const chunkCodes = sapCodes.slice(i, i + step);
+      
+      for (let i = 0; i < uniqueSapCodes.length; i += step) {
+        const chunkCodes = uniqueSapCodes.slice(i, i + step);
         const { data: dbProducts, error: dbErr } = await supabase
           .from("products")
           .select("id, sap_code")
@@ -260,6 +262,48 @@ export default function ImportBOMPage() {
         }
       }
 
+      // 2. Identify missing products that need to be created
+      const missingProducts = productos.filter(p => !sapMap.has(p.Codigo));
+      
+      const missingPayloadMap = new Map<string, any>();
+      for (const p of missingProducts) {
+          if (!missingPayloadMap.has(p.Codigo)) {
+              missingPayloadMap.set(p.Codigo, {
+                  sap_code: p.Codigo,
+                  description: p.Descripcion,
+                  is_active: true
+              });
+          }
+      }
+      
+      const missingPayload = Array.from(missingPayloadMap.values());
+
+      // 3. Insert missing products and retrieve their new IDs
+      if (missingPayload.length > 0) {
+          for (let i = 0; i < missingPayload.length; i += step) {
+              const chunk = missingPayload.slice(i, i + step);
+              const { data: newProducts, error: insErr } = await supabase
+                .from("products")
+                .insert(chunk)
+                .select("id, sap_code");
+                
+              if (insErr) {
+                 console.error("Error creating missing products:", insErr);
+                 throw new Error("Fallo al crear productos faltantes en el maestro.");
+              }
+              
+              if (newProducts) {
+                  for (const np of newProducts) {
+                      sapMap.set(np.sap_code, np.id);
+                  }
+              }
+          }
+          console.log(`[BOM Import] Creamos on-the-fly ${missingPayload.length} productos faltantes en el maestro.`);
+      } else {
+          console.log(`[BOM Import] 100% de los ${uniqueSapCodes.length} productos ya existían en Supabase!`);
+      }
+
+      // 4. Transform BOM data using the fully populated map
       const bomData = productos.map((p) => ({
         bom_import_id: bImport.id,
         product_id: sapMap.get(p.Codigo) || null,
@@ -276,6 +320,8 @@ export default function ImportBOMPage() {
         const { error: insErr } = await supabase.from("bom_products").insert(chunk);
         if (insErr) throw insErr;
       }
+      
+      console.log(`[BOM Import] Inserción completada de ${bomData.length} registros en bom_products vinculados a su product_id.`);
 
       setSavedMsg("Guardado correctamente en base de datos. Regresando...");
       setTimeout(() => router.back(), 1500);

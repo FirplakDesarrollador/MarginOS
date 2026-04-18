@@ -5,6 +5,8 @@ import Link from "next/link";
 import { ArrowLeft, Eye, RefreshCw, FolderOpen, AlertCircle } from "lucide-react";
 import { DashboardHeader } from "@/components/dashboard-ui";
 import { createClient } from "@/lib/supabase/client";
+import { exportSimulationToExcel } from "@/lib/excelExport";
+import { useRouter } from "next/navigation";
 
 type Simulation = {
   id: string;
@@ -16,11 +18,19 @@ type Simulation = {
   valid_to: string | null;
   status: string;
   created_at: string;
+  customers?: { name: string; nit: string; contact_name: string };
+  sales_channels?: { name: string };
 };
 
 export default function ScenariosPage() {
   const [simulations, setSimulations] = useState<Simulation[]>([]);
   const [loading, setLoading] = useState(true);
+  
+  // Action Modal State
+  const [actionSim, setActionSim] = useState<Simulation | null>(null);
+  const [exporting, setExporting] = useState(false);
+  const router = useRouter();
+
   const supabase = createClient();
 
   useEffect(() => {
@@ -30,7 +40,7 @@ export default function ScenariosPage() {
       try {
         const { data, error } = await supabase
           .from("simulations")
-          .select("*")
+          .select("*, customers(name, nit, contact_name), sales_channels(name)")
           .order("created_at", { ascending: false });
 
         if (error) throw error;
@@ -114,6 +124,29 @@ export default function ScenariosPage() {
     alert(`Regla de renovación iniciada para el ID:\n${id}\n\n(Lógica a implementar más adelante)`);
   }
 
+  async function handleExport(sim: Simulation) {
+    setExporting(true);
+    try {
+      const { data: lines, error } = await supabase
+        .from("simulation_lines")
+        .select("*")
+        .eq("simulation_id", sim.id);
+        
+      if (error) throw error;
+      if (!lines || lines.length === 0) {
+         alert("Esta simulación no tiene líneas guardadas para exportar.");
+         return;
+      }
+      await exportSimulationToExcel(sim, lines);
+    } catch (err) {
+       console.error(err);
+       alert("Error exportando excel.");
+    } finally {
+       setExporting(false);
+       setActionSim(null);
+    }
+  }
+
   return (
     <main className="min-h-screen bg-[color:var(--bg)] text-[color:var(--text)] pb-24">
       <div className="relative z-10 max-w-7xl mx-auto px-6 md:px-8">
@@ -165,12 +198,12 @@ export default function ScenariosPage() {
               <thead className="bg-slate-50/80 border-b border-border-subtle">
                 <tr>
                   <th className="px-6 py-4 text-left font-semibold text-text-primary whitespace-nowrap">Fecha Creación</th>
-                  <th className="px-6 py-4 text-left font-semibold text-text-primary whitespace-nowrap">Tipo de Negociación</th>
+                  <th className="px-6 py-4 text-left font-semibold text-text-primary whitespace-nowrap">Cliente / Canal</th>
                   <th className="px-6 py-4 text-left font-semibold text-text-primary min-w-[200px]">Proyecto / Oportunidad</th>
                   <th className="px-6 py-4 text-left font-semibold text-text-primary">Moneda</th>
                   <th className="px-6 py-4 text-left font-semibold text-text-primary whitespace-nowrap">Vigencia</th>
                   <th className="px-6 py-4 text-left font-semibold text-text-primary">Estado</th>
-                  <th className="px-6 py-4 text-center font-semibold text-text-primary w-32">Acción</th>
+                  <th className="px-6 py-4 text-center font-semibold text-text-primary w-24">Acción</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-border-subtle">
@@ -181,7 +214,10 @@ export default function ScenariosPage() {
                     </td>
                     
                     <td className="px-6 py-5 font-medium text-text-primary align-middle">
-                      {getTypeLabel(sim.simulation_type)}
+                      <div className="flex flex-col">
+                         <span className="font-semibold">{sim.customers?.name || "Sin Cliente"}</span>
+                         <span className="text-[11px] text-text-muted mt-0.5">{sim.sales_channels?.name || "Sin Canal"} • {getTypeLabel(sim.simulation_type)}</span>
+                      </div>
                     </td>
 
                     <td className="px-6 py-5 align-middle">
@@ -220,22 +256,12 @@ export default function ScenariosPage() {
                     <td className="px-6 py-5 text-center align-middle">
                       <div className="flex items-center justify-center gap-2">
                         <button 
-                          className="p-2 text-text-muted hover:text-brand-primary hover:bg-brand-primary/5 rounded-lg transition-colors border border-transparent hover:border-brand-primary/20"
-                          title="Ver detalle"
+                          onClick={() => setActionSim(sim)}
+                          className="p-2 text-brand-primary hover:text-white hover:bg-brand-primary rounded-lg transition-colors border border-brand-primary/20 hover:border-transparent shadow-sm"
+                          title="Acciones"
                         >
-                          <Eye className="w-4 h-4" />
+                          Elegir
                         </button>
-
-                        {/* Mostrar RENOVACIÓN si la regla lo permite */}
-                        {sim.status === "VENCIDO" && sim.simulation_type === "PRICE_LIST" && (
-                          <button
-                            onClick={() => handleRenovar(sim.id)}
-                            className="p-2 text-text-muted hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors border border-transparent hover:border-blue-200"
-                            title="Renovar simulación"
-                          >
-                            <RefreshCw className="w-4 h-4" />
-                          </button>
-                        )}
                       </div>
                     </td>
                   </tr>
@@ -245,6 +271,45 @@ export default function ScenariosPage() {
           </div>
         )}
       </div>
+
+      {actionSim && (
+        <div className="fixed inset-0 z-[60] flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm transition-opacity" onClick={() => !exporting && setActionSim(null)} />
+          <div className="relative w-full max-w-sm bg-white rounded-2xl shadow-xl border border-border-subtle flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+            <div className="px-5 py-4 border-b border-border-subtle bg-slate-50/50">
+              <h3 className="text-lg font-semibold text-text-primary">Acciones del escenario</h3>
+              <p className="text-xs text-text-muted mt-1 truncate">{actionSim.project_name || actionSim.customers?.name}</p>
+            </div>
+            <div className="p-5 flex flex-col gap-3">
+               <button
+                 onClick={() => router.push(`/simulator?id=${actionSim.id}`)}
+                 disabled={exporting}
+                 className="w-full text-left px-4 py-3 bg-white border border-border-subtle rounded-xl hover:border-brand-primary/40 hover:bg-brand-primary/5 text-sm font-medium text-text-primary transition-all disabled:opacity-50"
+               >
+                 Editar simulación
+               </button>
+               <button
+                 onClick={() => handleExport(actionSim)}
+                 disabled={exporting}
+                 className="w-full flex items-center justify-between px-4 py-3 bg-white border border-border-subtle rounded-xl hover:border-brand-primary/40 hover:bg-brand-primary/5 text-sm font-medium text-text-primary transition-all disabled:opacity-50"
+               >
+                 <span>Descargar Excel</span>
+                 {exporting && <span className="w-4 h-4 border-2 border-brand-primary border-t-transparent rounded-full animate-spin" />}
+               </button>
+            </div>
+            <div className="px-5 py-3 border-t border-border-subtle bg-slate-50/50">
+               <button
+                 onClick={() => setActionSim(null)}
+                 disabled={exporting}
+                 className="w-full text-center px-4 py-2 bg-transparent text-text-muted hover:text-text-primary text-sm font-medium transition-colors disabled:opacity-50"
+               >
+                 Cancelar
+               </button>
+            </div>
+          </div>
+        </div>
+      )}
+
     </main>
   );
 }

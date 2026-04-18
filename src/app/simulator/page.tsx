@@ -1,6 +1,7 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect, Suspense } from "react";
+import { useSearchParams, useRouter } from "next/navigation";
 import { Plus, Trash2, Search, UserPlus, Save, Building2, Calendar, DollarSign, Briefcase } from "lucide-react";
 import { ProductPickerModal, type DBProduct } from "@/components/ProductPickerModal";
 import { CustomerCreateModal } from "@/components/CustomerCreateModal";
@@ -20,14 +21,21 @@ type Inputs = {
   cantidad?: number;
 };
 
-export default function SimulatorPage() {
+function SimulatorContent() {
   const supabase = createClient();
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const editId = searchParams.get("id");
+  
+  const [originalSimulation, setOriginalSimulation] = useState<any>(null);
+  const [isLoadingEdit, setIsLoadingEdit] = useState(false);
   
   // ==========================================
   // ESTADOS DE SIMULADOR
   // ==========================================
   const [productos, setProductos] = useState<Producto[]>([]);
   const [inputs, setInputs] = useState<Record<string, Inputs>>({});
+  const [margenObjetivo, setMargenObjetivo] = useState<number>(55);
   
   // ==========================================
   // ESTADOS DE METADATA (CABECERA)
@@ -50,11 +58,79 @@ export default function SimulatorPage() {
   const [saveError, setSaveError] = useState("");
   const [saveSuccess, setSaveSuccess] = useState(false);
 
+  // ==========================================
+  // EFECTO P/ EDICION (CARGA METADATA E INPUTS)
+  // ==========================================
+  useEffect(() => {
+    if (!editId) return;
+    let isMounted = true;
+
+    async function fetchEditData() {
+      setIsLoadingEdit(true);
+      try {
+        const { data: sim, error: simErr } = await supabase
+          .from("simulations")
+          .select("*, customers(*)")
+          .eq("id", editId)
+          .single();
+
+        if (simErr) throw simErr;
+        
+        const { data: lines, error: linesErr } = await supabase
+          .from("simulation_lines")
+          .select("*")
+          .eq("simulation_id", editId);
+
+        if (linesErr) throw linesErr;
+
+        if (isMounted && sim && lines) {
+           setOriginalSimulation(sim);
+           setCustomer(sim.customers); // Req metadata
+           setProjectName(sim.project_name || "");
+           setSimulationType(sim.simulation_type || "PRICE_LIST");
+           setCurrency(sim.currency || "COP");
+           setTrm(sim.trm || "");
+           setValidFrom(sim.valid_from ? sim.valid_from.split("T")[0] : "");
+           setValidTo(sim.valid_to ? sim.valid_to.split("T")[0] : "");
+           
+           // Restructure products into states
+           const newProds: Producto[] = [];
+           const newInputs: Record<string, Inputs> = {};
+           
+           for (const l of lines) {
+              newProds.push({
+                 Codigo: l.sap_code,
+                 Descripcion: l.description || "",
+                 Costo_Mp: l.cost_mp || 0,
+                 product_id: l.product_id
+              });
+              
+              newInputs[l.sap_code] = {
+                 precio: l.list_price || 0,
+                 descuento: l.discount_pct || 0,
+                 cantidad: l.qty || 1
+              };
+           }
+           
+           setProductos(newProds);
+           setInputs(newInputs);
+        }
+      } catch (err) {
+        console.error("Error cargando simulación:", err);
+      } finally {
+        if (isMounted) setIsLoadingEdit(false);
+      }
+    }
+    
+    fetchEditData();
+    return () => { isMounted = false; };
+  }, [editId, supabase]);
+
   const formatMoney = useMemo(() => {
     return (value: number) =>
       new Intl.NumberFormat("en-US", {
         minimumFractionDigits: 0,
-        maximumFractionDigits: 2,
+        maximumFractionDigits: 0,
       }).format(value);
   }, []);
 
@@ -73,17 +149,48 @@ export default function SimulatorPage() {
       .limit(1)
       .single();
 
-    const newProduct: Producto = {
+    let listPrice = 0;
+    let foundPrice = false;
+
+    if (customer?.default_channel_id) {
+      const { data: priceData } = await supabase
+        .from("price_lists")
+        .select("list_price")
+        .eq("product_id", dbProduct.id)
+        .eq("channel_id", customer.default_channel_id)
+        .eq("is_active", true)
+        .order("created_at", { ascending: false })
+        .limit(1)
+        .maybeSingle();
+
+      if (priceData) {
+        listPrice = priceData.list_price || 0;
+        foundPrice = true;
+      }
+    }
+
+    const newProduct: Producto & { _hasPriceList?: boolean } = {
       Codigo: dbProduct.sap_code,
       Descripcion: dbProduct.description,
       Costo_Mp: bomData?.recalculated_cost_mp || 0,
-      product_id: dbProduct.id
+      product_id: dbProduct.id,
+      _hasPriceList: foundPrice,
     };
 
     setProductos((prev) => {
       if (prev.some((p) => p.Codigo === newProduct.Codigo)) return prev;
       return [...prev, newProduct];
     });
+
+    if (foundPrice) {
+      setInputs((prev) => ({
+        ...prev,
+        [newProduct.Codigo]: {
+          ...prev[newProduct.Codigo],
+          precio: listPrice,
+        },
+      }));
+    }
   }
 
   function handleRemoveProduct(codigo: string) {
@@ -139,7 +246,7 @@ export default function SimulatorPage() {
   // ==========================================
   // FUNCION PRINCIPAL: GUARDAR SIMULACION
   // ==========================================
-  async function handleSaveSimulation() {
+  async function handleSaveSimulation(overwrite = false) {
     setSaveError("");
     setSaveSuccess(false);
 
@@ -168,20 +275,40 @@ export default function SimulatorPage() {
         status: "DRAFT"
       };
 
-      const { data: simData, error: simError } = await supabase
-        .from("simulations")
-        .insert(headerPayload)
-        .select()
-        .single();
+      let finalSimId;
 
-      if (simError) throw simError;
+      if (overwrite && editId) {
+        // OVERWRITE MODE
+        const { data: simData, error: simError } = await supabase
+          .from("simulations")
+          .update(headerPayload)
+          .eq("id", editId)
+          .select()
+          .single();
+        if (simError) throw simError;
+        finalSimId = simData.id;
+        
+        // BORRAR LÍNEAS VIEJAS PARA REMPLAZARLAS (Full rebuild)
+        const { error: delError } = await supabase.from("simulation_lines").delete().eq("simulation_id", finalSimId);
+        if (delError) throw delError;
+
+      } else {
+        // INSERT MODE
+        const { data: simData, error: simError } = await supabase
+          .from("simulations")
+          .insert(headerPayload)
+          .select()
+          .single();
+        if (simError) throw simError;
+        finalSimId = simData.id;
+      }
 
       // 2. Insert lines
       const linesPayload = productos.map(p => {
         const lineVars = calcularLinea(p);
         
         return {
-          simulation_id: simData.id,
+          simulation_id: finalSimId,
           product_id: p.product_id || null, // Assuming product_id from DB
           sap_code: p.Codigo,
           description: p.Descripcion,
@@ -209,11 +336,15 @@ export default function SimulatorPage() {
       setSaveError(err.message || "Ocurrió un error guardando la simulación.");
     } finally {
       setIsSaving(false);
+      if (!overwrite && isSaving) {
+        // si logramos save "GUARDAR NUEVA" limpiamos search params (opcional, aunque UI limpia el state en router refresh)
+        router.push('/simulator');
+      }
     }
   }
 
   return (
-    <main className="mx-auto max-w-7xl px-6 py-10 selection:bg-brand-primary selection:text-white pb-32">
+    <main className="mx-auto max-w-full px-4 md:px-6 py-10 selection:bg-brand-primary selection:text-white pb-32">
       
       {/* ========================================== */}
       {/* ALERTAS DE GUARDADO */}
@@ -408,28 +539,65 @@ export default function SimulatorPage() {
       {/* CUERPO CENTRAL DE PRODUCTOS */}
       {/* ========================================== */}
       <div className="mt-10 flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <h2 className="text-lg font-semibold text-text-primary">Detalle de Simulación</h2>
+        <div className="flex flex-col sm:flex-row sm:items-center gap-4">
+          <h2 className="text-lg font-semibold text-text-primary">Detalle de Simulación</h2>
+          <div className="flex items-center gap-2 bg-slate-50 border border-border-subtle rounded-xl px-3 py-1.5 shadow-sm">
+            <span className="text-sm font-medium text-text-muted">Margen Objetivo (%):</span>
+            <input 
+              type="number"
+              value={margenObjetivo}
+              onChange={(e) => setMargenObjetivo(Number(e.target.value))}
+              className="w-16 bg-white border border-border-subtle rounded-md px-2 py-1 text-sm font-semibold text-brand-primary focus:outline-none focus:ring-1 focus:ring-brand-primary text-center"
+            />
+          </div>
+        </div>
         <div className="flex gap-3">
-          <button
-            onClick={() => setIsProductModalOpen(true)}
-            className="inline-flex items-center justify-center gap-2 px-5 py-2.5 border border-border-subtle bg-white text-text-primary text-sm font-medium rounded-xl hover:bg-slate-50 transition-all shadow-sm flex-1 md:flex-none"
-          >
-            <Plus className="w-4 h-4" />
-            Agregar Producto
-          </button>
+          {(!customer || !customer.default_channel_id) ? (
+            <div className="flex-1 md:flex-none inline-flex items-center px-4 py-2 bg-amber-50 text-amber-700 text-sm font-medium rounded-xl border border-amber-200 shadow-sm">
+              Selecciona un cliente para obtener precios
+            </div>
+          ) : (
+            <button
+              onClick={() => setIsProductModalOpen(true)}
+              className="inline-flex items-center justify-center gap-2 px-5 py-2.5 border border-border-subtle bg-white text-text-primary text-sm font-medium rounded-xl hover:bg-slate-50 transition-all shadow-sm flex-1 md:flex-none"
+            >
+              <Plus className="w-4 h-4" />
+              Agregar Producto
+            </button>
+          )}
           
-          <button
-            onClick={handleSaveSimulation}
-            disabled={isSaving}
-            className="inline-flex items-center justify-center gap-2 px-6 py-2.5 bg-brand-primary text-white text-sm font-medium rounded-xl hover:bg-brand-accent transition-all shadow-sm hover:shadow-brand-primary/20 hover:-translate-y-0.5 disabled:opacity-50 flex-1 md:flex-none"
-          >
-            {isSaving ? (
-              <span className="w-4 h-4 border-2 border-white/50 border-t-white rounded-full animate-spin" />
-            ) : (
-              <Save className="w-4 h-4" />
-            )}
-            Guardar Simulación
-          </button>
+          {editId ? (
+            <>
+               <button
+                 onClick={() => handleSaveSimulation(true)}
+                 disabled={isSaving}
+                 className="inline-flex items-center justify-center gap-2 px-6 py-2.5 bg-brand-primary text-white text-sm font-medium rounded-xl hover:bg-brand-accent transition-all shadow-sm hover:shadow-brand-primary/20 hover:-translate-y-0.5 disabled:opacity-50 flex-1 md:flex-none"
+               >
+                 {isSaving ? <span className="w-4 h-4 border-2 border-white/50 border-t-white rounded-full animate-spin" /> : <Save className="w-4 h-4" />}
+                 Sobreescribir
+               </button>
+               <button
+                 onClick={() => handleSaveSimulation(false)}
+                 disabled={isSaving}
+                 className="inline-flex items-center justify-center gap-2 px-6 py-2.5 bg-slate-800 text-white text-sm font-medium rounded-xl hover:bg-slate-700 transition-all shadow-sm disabled:opacity-50 flex-1 md:flex-none"
+               >
+                 Guardar como Nueva
+               </button>
+            </>
+          ) : (
+            <button
+              onClick={() => handleSaveSimulation(false)}
+              disabled={isSaving}
+              className="inline-flex items-center justify-center gap-2 px-6 py-2.5 bg-brand-primary text-white text-sm font-medium rounded-xl hover:bg-brand-accent transition-all shadow-sm hover:shadow-brand-primary/20 hover:-translate-y-0.5 disabled:opacity-50 flex-1 md:flex-none"
+            >
+              {isSaving ? (
+                <span className="w-4 h-4 border-2 border-white/50 border-t-white rounded-full animate-spin" />
+              ) : (
+                <Save className="w-4 h-4" />
+              )}
+              Guardar Simulación
+            </button>
+          )}
         </div>
       </div>
 
@@ -442,12 +610,18 @@ export default function SimulatorPage() {
           <p className="text-sm text-text-muted">
             Aún no hay productos en la tabla. Agrega productos para comenzar la simulación.
           </p>
-          <button
-            onClick={() => setIsProductModalOpen(true)}
-            className="mt-6 inline-flex items-center gap-2 px-4 py-2 border border-border-subtle bg-white text-text-primary text-sm font-medium rounded-xl hover:bg-slate-50 transition-colors shadow-sm"
-          >
-            Agregar mi primer producto
-          </button>
+          {(!customer || !customer.default_channel_id) ? (
+            <div className="mt-6 inline-flex items-center gap-2 px-4 py-2 border border-amber-200 bg-amber-50 text-amber-700 text-sm font-medium rounded-xl shadow-sm">
+              Busca o crea un cliente primero
+            </div>
+          ) : (
+            <button
+              onClick={() => setIsProductModalOpen(true)}
+              className="mt-6 inline-flex items-center gap-2 px-4 py-2 border border-border-subtle bg-white text-text-primary text-sm font-medium rounded-xl hover:bg-slate-50 transition-colors shadow-sm"
+            >
+              Agregar mi primer producto
+            </button>
+          )}
         </div>
       )}
 
@@ -461,11 +635,12 @@ export default function SimulatorPage() {
                 <th className="px-4 py-4 text-right font-semibold text-text-primary">Costo Unitario</th>
                 <th className="px-4 py-4 text-right font-semibold text-text-primary whitespace-nowrap">Precio Lista</th>
                 <th className="px-4 py-4 text-right font-semibold text-text-primary whitespace-nowrap">% Desc</th>
+                <th className="px-4 py-4 text-right font-semibold text-text-primary whitespace-nowrap">Precio Neto</th>
                 <th className="px-4 py-4 text-right font-semibold text-text-primary">Cantidad</th>
                 <th className="px-4 py-4 text-right font-semibold text-text-primary whitespace-nowrap">Ingreso Neto</th>
                 <th className="px-4 py-4 text-right font-semibold text-text-primary whitespace-nowrap">Costo Total</th>
                 <th className="px-4 py-4 text-right font-semibold text-text-primary">Contribución</th>
-                <th className="px-4 py-4 text-right font-semibold text-text-primary whitespace-nowrap">Margen %</th>
+                <th className="px-4 py-4 text-center font-semibold text-text-primary whitespace-nowrap">Margen & Δ</th>
                 <th className="px-4 py-4 text-center w-12 font-semibold text-text-primary"></th>
               </tr>
             </thead>
@@ -498,16 +673,14 @@ export default function SimulatorPage() {
                     </td>
 
                     <td className="px-4 py-4 text-right align-middle">
-                      <input
-                        type="number"
-                        min="0"
-                        className="w-28 border border-border-subtle rounded-lg px-3 py-2 text-right focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary transition-all text-sm bg-white shadow-sm"
-                        value={inputs[p.Codigo]?.precio ?? ""}
-                        onChange={(e) =>
-                          updateInput(p.Codigo, "precio", Number(e.target.value))
-                        }
-                        placeholder="0"
-                      />
+                      <div className="font-semibold text-text-primary mb-1">
+                        {formatMoney(r.precio)}
+                      </div>
+                      {p._hasPriceList === false && (
+                        <div className="mt-1.5 text-[10px] font-semibold text-amber-600 tracking-tight leading-none bg-amber-50 inline-block px-1.5 py-0.5 rounded border border-amber-100">
+                          Sin precio base
+                        </div>
+                      )}
                     </td>
 
                     <td className="px-4 py-4 text-right align-middle">
@@ -525,6 +698,12 @@ export default function SimulatorPage() {
                     </td>
 
                     <td className="px-4 py-4 text-right align-middle">
+                      <div className="font-semibold text-text-primary">
+                        {formatMoney(r.precio * (1 - r.descuento / 100))}
+                      </div>
+                    </td>
+
+                    <td className="px-4 py-4 text-right align-middle">
                       <input
                         type="number"
                         min="0"
@@ -537,7 +716,7 @@ export default function SimulatorPage() {
                       />
                     </td>
 
-                    <td className="px-4 py-4 text-right font-medium text-text-primary align-middle">
+                    <td className="px-4 py-4 text-right font-semibold text-text-primary align-middle">
                       {formatMoney(r.ingresoNeto)}
                     </td>
 
@@ -553,12 +732,29 @@ export default function SimulatorPage() {
                       {formatMoney(r.contribucion)}
                     </td>
 
-                    <td
-                      className={`px-4 py-4 text-right font-semibold align-middle bg-clip-padding ${
-                        r.margen < 0 ? "text-red-600 bg-red-50/50" : "text-emerald-600 bg-emerald-50/50"
-                      }`}
-                    >
-                      {Number.isFinite(r.margen) ? r.margen.toFixed(1) : "0.0"}%
+                    <td className="px-4 py-4 align-middle">
+                      {(() => {
+                        const m = Number.isFinite(r.margen) ? r.margen : 0;
+                        const d = m - margenObjetivo;
+                        
+                        let badgeBg = "bg-emerald-50 text-emerald-700 border-emerald-200";
+                        if (d <= -5) {
+                          badgeBg = "bg-red-50 text-red-700 border-red-200";
+                        } else if (d < 0) {
+                          badgeBg = "bg-amber-50 text-amber-700 border-amber-200";
+                        }
+
+                        return (
+                          <div className="flex flex-col items-center justify-center gap-1.5 min-w-[70px]">
+                            <span className="font-bold text-text-primary">
+                              {m.toFixed(1)}%
+                            </span>
+                            <span className={`text-[11px] font-semibold px-2 py-0.5 rounded shadow-sm border ${badgeBg}`}>
+                              {d > 0 ? "+" : ""}{d.toFixed(1)}%
+                            </span>
+                          </div>
+                        );
+                      })()}
                     </td>
 
                     <td className="px-4 py-4 text-center align-middle">
@@ -608,5 +804,13 @@ export default function SimulatorPage() {
       />
 
     </main>
+  );
+}
+
+export default function SimulatorPage() {
+  return (
+    <Suspense fallback={<div className="flex min-h-screen items-center justify-center text-text-muted">Iniciando simulador...</div>}>
+       <SimulatorContent />
+    </Suspense>
   );
 }
