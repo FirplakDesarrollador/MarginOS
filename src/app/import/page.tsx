@@ -18,12 +18,23 @@ type RowSAP = {
   Costo_Mp?: any;
 };
 
+type BOMComponentType = {
+  codigo: string;
+  cantidad: number;
+  costo_excel_fallback: number;
+  nivel: number;
+  parent_codigo: string | null;
+};
+
 type ProductoNivel1 = {
   Codigo: string;
   Descripcion: string;
-  Costo_Mp: number; // recalculado según reglas
+  Costo_Mp: number;
   componentes_count: number;
   excluidos_PZ_count: number;
+  usaron_costo_real: number;
+  usaron_costo_excel: number;
+  component_list: BOMComponentType[];
 };
 
 function normalizeText(v: any) {
@@ -120,13 +131,34 @@ export default function ImportBOMPage() {
       // --- 1) Normaliza y detecta bloques por "fila de títulos" ---
       const rows: RowSAP[] = rowsRaw.filter((r) => !isHeaderRow(r));
 
-      // --- 2) Recorre en orden y arma productos por bloque ---
+      // --- 2.5) Fetch real costs from public.component_costs ---
+      const supabase = createClient();
+      const uniqueComponentCodes = Array.from(new Set(rows.map(r => normalizeText(r.Codigo)).filter(c => c && !c.toUpperCase().startsWith("PZ"))));
+      const costMap = new Map<string, number>();
+
+      for (let i = 0; i < uniqueComponentCodes.length; i += 200) {
+         const chunk = uniqueComponentCodes.slice(i, i + 200);
+         const { data: costsData, error } = await supabase
+            .from("component_costs")
+            .select("codigo, costo_unitario")
+            .in("codigo", chunk);
+            
+         if (costsData && !error) {
+            costsData.forEach(d => costMap.set(d.codigo, Number(d.costo_unitario)));
+         }
+      }
+
+      // --- 3) Recorre en orden y arma productos por bloque ---
       const productosOut: ProductoNivel1[] = [];
 
       let currentProduct: { codigo: string; desc: string } | null = null;
       let compSum = 0;
       let compCount = 0;
       let pzExcluded = 0;
+      let realCostCount = 0;
+      let excelCostCount = 0;
+      let componentList: BOMComponentType[] = [];
+      let parentStack: { nivel: number; codigo: string }[] = [];
 
       function flushProduct() {
         if (!currentProduct) return;
@@ -136,11 +168,18 @@ export default function ImportBOMPage() {
           Costo_Mp: compSum, // ✅ REGLA: MP recalculado por suma de componentes (excluye PZ)
           componentes_count: compCount,
           excluidos_PZ_count: pzExcluded,
+          usaron_costo_real: realCostCount,
+          usaron_costo_excel: excelCostCount,
+          component_list: componentList,
         });
         currentProduct = null;
         compSum = 0;
         compCount = 0;
         pzExcluded = 0;
+        realCostCount = 0;
+        excelCostCount = 0;
+        componentList = [];
+        parentStack = [];
       }
 
       for (const r of rows) {
@@ -165,14 +204,37 @@ export default function ImportBOMPage() {
           // omite filas sin nivel válido
           if (!Number.isFinite(nivel) || nivel <= 1) continue;
 
+          // Resolve parent_codigo via stack logic
+          while (parentStack.length > 0 && parentStack[parentStack.length - 1].nivel >= nivel) {
+            parentStack.pop();
+          }
+          const parent_codigo = parentStack.length > 0 ? parentStack[parentStack.length - 1].codigo : currentProduct.codigo;
+          parentStack.push({ nivel, codigo });
+
+          componentList.push({
+             codigo,
+             cantidad,
+             costo_excel_fallback: costoUnit,
+             nivel,
+             parent_codigo
+          });
+
           // ✅ REGLA 1: omitir suma de Costo_Mp de códigos que inician con "PZ"
           if (codigo.toUpperCase().startsWith("PZ")) {
             pzExcluded += 1;
             continue;
           }
 
-          // ✅ Recalcular costo_mp del componente: Cantidad * Costo_Unitario
-          const costoMpComponente = (cantidad || 0) * (costoUnit || 0);
+          let effectiveCost = costoUnit || 0;
+          if (costMap.has(codigo)) {
+            effectiveCost = costMap.get(codigo)!;
+            realCostCount += 1;
+          } else {
+            excelCostCount += 1;
+          }
+
+          // ✅ Recalcular costo_mp del componente: Cantidad * effectiveCost
+          const costoMpComponente = (cantidad || 0) * effectiveCost;
 
           compSum += costoMpComponente;
           compCount += 1;
@@ -192,6 +254,9 @@ export default function ImportBOMPage() {
             Costo_Mp: parseNumberSmart(r.Costo_Mp) || 0,
             componentes_count: 0,
             excluidos_PZ_count: 0,
+            usaron_costo_real: 0,
+            usaron_costo_excel: 0,
+            component_list: [],
           }))
           .filter((p) => p.Codigo.length > 0);
 
@@ -303,7 +368,6 @@ export default function ImportBOMPage() {
           console.log(`[BOM Import] 100% de los ${uniqueSapCodes.length} productos ya existían en Supabase!`);
       }
 
-      // 4. Transform BOM data using the fully populated map
       const bomData = productos.map((p) => ({
         bom_import_id: bImport.id,
         product_id: sapMap.get(p.Codigo) || null,
@@ -312,14 +376,48 @@ export default function ImportBOMPage() {
         recalculated_cost_mp: p.Costo_Mp,
         componentes_count: p.componentes_count,
         excluidos_pz_count: p.excluidos_PZ_count,
+        component_list: p.component_list,
       }));
 
       const chunkSize = 500;
+      let insertedProducts: any[] = [];
       for (let i = 0; i < bomData.length; i += chunkSize) {
         const chunk = bomData.slice(i, i + chunkSize);
-        const { error: insErr } = await supabase.from("bom_products").insert(chunk);
+        // Exclude component_list for bom_products insert
+        const cleanChunk = chunk.map(({ component_list, ...rest }) => rest);
+        const { data: inserted, error: insErr } = await supabase.from("bom_products").insert(cleanChunk).select("id, sap_code");
         if (insErr) throw insErr;
+        if (inserted) insertedProducts = insertedProducts.concat(inserted);
       }
+
+      // 5. Insert bom_components
+      const componentsPayload: any[] = [];
+      for (const bd of bomData) {
+         const bomProd = insertedProducts.find(ip => ip.sap_code === bd.sap_code);
+         if (bomProd && bd.component_list && bd.component_list.length > 0) {
+            for (const c of bd.component_list) {
+                componentsPayload.push({
+                   bom_product_id: bomProd.id,
+                   codigo: c.codigo,
+                   cantidad: c.cantidad,
+                   costo_excel_fallback: c.costo_excel_fallback,
+                   nivel: c.nivel,
+                   parent_codigo: c.parent_codigo
+                });
+            }
+         }
+      }
+
+      if (componentsPayload.length > 0) {
+         for (let i = 0; i < componentsPayload.length; i += chunkSize) {
+            const chunk = componentsPayload.slice(i, i + chunkSize);
+            const { error: compErr } = await supabase.from("bom_components").insert(chunk);
+            if (compErr) throw compErr;
+         }
+         console.log(`[BOM Import] Inserción completada de ${componentsPayload.length} registros en bom_components.`);
+      }
+      
+      console.log(`[BOM Import] Inserción completada de ${bomData.length} registros en bom_products vinculados a su product_id.`);
       
       console.log(`[BOM Import] Inserción completada de ${bomData.length} registros en bom_products vinculados a su product_id.`);
 
@@ -458,6 +556,8 @@ export default function ImportBOMPage() {
                       <th className="px-4 py-3 text-right font-semibold">Costo MP</th>
                       <th className="px-4 py-3 text-right font-semibold">Componentes</th>
                       <th className="px-4 py-3 text-right font-semibold">Excl. PZ</th>
+                      <th className="px-4 py-3 text-right font-semibold">C. Real</th>
+                      <th className="px-4 py-3 text-right font-semibold">C. Excel</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -468,6 +568,8 @@ export default function ImportBOMPage() {
                         <td className="px-4 py-3 text-right font-semibold">{formatMoney(p.Costo_Mp)}</td>
                         <td className="px-4 py-3 text-right text-[color:var(--muted)]">{p.componentes_count || "—"}</td>
                         <td className="px-4 py-3 text-right text-[color:var(--muted)]">{p.excluidos_PZ_count || "—"}</td>
+                        <td className="px-4 py-3 text-right text-emerald-600 font-medium">{p.usaron_costo_real || 0}</td>
+                        <td className="px-4 py-3 text-right text-slate-400 font-medium">{p.usaron_costo_excel || 0}</td>
                       </tr>
                     ))}
                   </tbody>

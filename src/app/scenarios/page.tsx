@@ -137,7 +137,15 @@ export default function ScenariosPage() {
          alert("Esta simulación no tiene líneas guardadas para exportar.");
          return;
       }
-      await exportSimulationToExcel(sim, lines);
+
+      // Fetch version tracing if exists
+      const { data: versionData } = await supabase
+        .from("simulation_versions")
+        .select("version_type, original_simulation_id, created_at")
+        .eq("renewed_simulation_id", sim.id)
+        .maybeSingle();
+
+      await exportSimulationToExcel(sim, lines, versionData);
     } catch (err) {
        console.error(err);
        alert("Error exportando excel.");

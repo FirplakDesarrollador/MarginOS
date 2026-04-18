@@ -6,6 +6,7 @@ import { Plus, Trash2, Search, UserPlus, Save, Building2, Calendar, DollarSign, 
 import { ProductPickerModal, type DBProduct } from "@/components/ProductPickerModal";
 import { CustomerCreateModal } from "@/components/CustomerCreateModal";
 import { CustomerSelectModal, type Customer } from "@/components/CustomerSelectModal";
+import { VersionModal, type VersionOption } from "@/components/VersionModal";
 import { createClient } from "@/lib/supabase/client";
 
 type Producto = {
@@ -28,6 +29,7 @@ function SimulatorContent() {
   const editId = searchParams.get("id");
   
   const [originalSimulation, setOriginalSimulation] = useState<any>(null);
+  const [versionTypeDisplay, setVersionTypeDisplay] = useState<{type: string, originalId: string} | null>(null);
   const [isLoadingEdit, setIsLoadingEdit] = useState(false);
   
   // ==========================================
@@ -54,6 +56,8 @@ function SimulatorContent() {
   const [isProductModalOpen, setIsProductModalOpen] = useState(false);
   const [isCustomerSelectOpen, setIsCustomerSelectOpen] = useState(false);
   const [isCustomerCreateOpen, setIsCustomerCreateOpen] = useState(false);
+  const [isVersionModalOpen, setIsVersionModalOpen] = useState(false);
+  
   const [isSaving, setIsSaving] = useState(false);
   const [saveError, setSaveError] = useState("");
   const [saveSuccess, setSaveSuccess] = useState(false);
@@ -93,6 +97,18 @@ function SimulatorContent() {
            setValidFrom(sim.valid_from ? sim.valid_from.split("T")[0] : "");
            setValidTo(sim.valid_to ? sim.valid_to.split("T")[0] : "");
            
+           // Fetch if it is a version of something
+           const { data: ver } = await supabase
+             .from("simulation_versions")
+             .select("original_simulation_id")
+             .eq("renewed_simulation_id", editId)
+             .maybeSingle();
+
+           if (ver) {
+             // temporal mock type since column doesn't exist yet
+             setVersionTypeDisplay({ type: "UNKNOWN", originalId: ver.original_simulation_id });
+           }
+
            // Restructure products into states
            const newProds: Producto[] = [];
            const newInputs: Record<string, Inputs> = {};
@@ -279,28 +295,28 @@ function SimulatorContent() {
 
       if (overwrite && editId) {
         // OVERWRITE MODE
-        const { data: simData, error: simError } = await supabase
+        const { data: updatedSimulationData, error: updateError } = await supabase
           .from("simulations")
           .update(headerPayload)
           .eq("id", editId)
           .select()
           .single();
-        if (simError) throw simError;
-        finalSimId = simData.id;
+        if (updateError) throw updateError;
+        finalSimId = updatedSimulationData.id;
         
         // BORRAR LÍNEAS VIEJAS PARA REMPLAZARLAS (Full rebuild)
         const { error: delError } = await supabase.from("simulation_lines").delete().eq("simulation_id", finalSimId);
         if (delError) throw delError;
 
       } else {
-        // INSERT MODE
-        const { data: simData, error: simError } = await supabase
+        // INSERT MODE (Should ideally only be triggered if !editId now)
+        const { data: insertedSimulationData, error: insertError } = await supabase
           .from("simulations")
           .insert(headerPayload)
           .select()
           .single();
-        if (simError) throw simError;
-        finalSimId = simData.id;
+        if (insertError) throw insertError;
+        finalSimId = insertedSimulationData.id;
       }
 
       // 2. Insert lines
@@ -336,10 +352,118 @@ function SimulatorContent() {
       setSaveError(err.message || "Ocurrió un error guardando la simulación.");
     } finally {
       setIsSaving(false);
-      if (!overwrite && isSaving) {
-        // si logramos save "GUARDAR NUEVA" limpiamos search params (opcional, aunque UI limpia el state en router refresh)
-        router.push('/simulator');
+      // We no longer push for normal save, unless we want to exit mode.
+      // But overwriting stays in edit mode.
+    }
+  }
+
+  // ==========================================
+  // LOGICA BIFURCADA: GUARDAR COMO NUEVO (VERSIONS)
+  // ==========================================
+  async function handleSaveNuevaVersion(option: VersionOption) {
+    if (!editId || !option || !customer) return;
+    setSaveError("");
+    setSaveSuccess(false);
+
+    if (productos.length === 0) {
+      setSaveError("La simulación debe tener al menos un producto.");
+      return;
+    }
+
+    setIsSaving(true);
+    try {
+      const headerPayload = {
+        customer_id: customer.id,
+        channel_id: customer.default_channel_id || null,
+        simulation_type: simulationType,
+        project_name: projectName || null,
+        currency,
+        trm: currency === "USD" ? Number(trm) : null,
+        valid_from: validFrom || null,
+        valid_to: validTo || null,
+        status: "DRAFT"
+      };
+
+      // 1. Crear nuevo header simulación
+      const { data: simData, error: simError } = await supabase
+        .from("simulations")
+        .insert(headerPayload)
+        .select()
+        .single();
+      if (simError) throw simError;
+
+      const newSimId = simData.id;
+
+      // 2. Obtener BOM Costs Actuales si es UPDATE, si no conservar lo que está en state
+      let updatedProductsCostMp: Record<string, number> = {};
+      
+      if (option === "COST_UPDATE") {
+         const { data: bomData, error: bomError } = await supabase
+           .from("bom_products")
+           .select("sap_code, recalculated_cost_mp")
+           .order("created_at", { ascending: false });
+           
+         if (bomError) throw bomError;
+
+         // Mapear costo más reciente por sap_code
+         bomData?.forEach(b => {
+           if (!updatedProductsCostMp[b.sap_code]) {
+              updatedProductsCostMp[b.sap_code] = b.recalculated_cost_mp;
+           }
+         });
       }
+
+      // 3. Crear líneas re-calculadas
+      const linesPayload = productos.map(p => {
+        // En cloning, usamos lo actual de la UI (reflejando exacto como estaba o si lo editó la UI).
+        // En UPDATE, forzamos recálculo sobre nuevo cost_mp.
+        const mpToUse = option === "COST_UPDATE" 
+           ? (updatedProductsCostMp[p.Codigo] !== undefined ? updatedProductsCostMp[p.Codigo] : p.Costo_Mp)
+           : p.Costo_Mp;
+           
+        const precio = Number(inputs[p.Codigo]?.precio || 0);
+        const descuento = Number(inputs[p.Codigo]?.descuento || 0);
+        const cantidad = Number(inputs[p.Codigo]?.cantidad || 0);
+
+        const ingresoNeto = (precio * cantidad) * (1 - descuento / 100);
+        const costoTotal = mpToUse * cantidad;
+        const contribucion = ingresoNeto - costoTotal;
+        const margen = ingresoNeto > 0 ? (contribucion / ingresoNeto) * 100 : 0;
+
+        return {
+          simulation_id: newSimId,
+          product_id: p.product_id || null,
+          sap_code: p.Codigo,
+          description: p.Descripcion,
+          qty: cantidad,
+          list_price: precio,
+          discount_pct: descuento,
+          net_price: ingresoNeto / (cantidad || 1) || 0,
+          cost_mp: mpToUse,
+          margin_pct: margen,
+          contribution_value: contribucion
+        };
+      });
+
+      const { error: linesError } = await supabase.from("simulation_lines").insert(linesPayload);
+      if (linesError) throw linesError;
+
+      // 4. Crear el enlace de versión
+      const { error: verError } = await supabase.from("simulation_versions").insert({
+        original_simulation_id: editId,
+        renewed_simulation_id: newSimId
+      });
+      if (verError) throw verError;
+
+      setIsVersionModalOpen(false);
+      // Re-encaminar silensiosamente al nuevo id clonado
+      router.push(`/simulator?id=${newSimId}`);
+
+    } catch (err: any) {
+      console.error(err);
+      setSaveError(err.message || "Ocurrió un error clonando/actualizando la simulación.");
+    } finally {
+      setIsSaving(false);
     }
   }
 
@@ -362,14 +486,21 @@ function SimulatorContent() {
       {/* ========================================== */}
       {/* ENCABEZADO Y RESUMEN KPls */}
       {/* ========================================== */}
-      <div className="flex items-start justify-between gap-6 flex-wrap">
-        <div>
-          <h1 className="text-2xl font-semibold mb-2 text-brand-primary">Simulador de Negocio</h1>
-          <p className="text-text-muted">
-            Agrega productos, ingresa precio lista, descuento (%) y cantidad. El sistema calcula
-            ingresos, costos, contribución y margen con tu última BOM subida.
-          </p>
-        </div>
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+          <div>
+            <h1 className="text-2xl font-bold tracking-tight text-text-primary">Simulador de Negocio</h1>
+            <p className="text-sm text-text-muted mt-1 leading-relaxed max-w-xl">
+              Crea o edita la negociación. Ajusta el proyecto, tipo de moneda y aplica cantidades para proyectar márgenes sobre costos SAP reales.
+            </p>
+            {versionTypeDisplay && (
+               <div className="mt-2 text-xs font-medium px-2.5 py-1 rounded-md inline-flex items-center gap-1.5 border border-amber-200 bg-amber-50 text-amber-700 shadow-sm">
+                 <span className={`w-1.5 h-1.5 rounded-full ${versionTypeDisplay.type === 'COST_UPDATE' ? 'bg-emerald-500' : 'bg-amber-500'}`}></span>
+                 {versionTypeDisplay.type === 'COST_UPDATE' 
+                    ? "Versión trazada: Actualizada con costos vigentes" 
+                    : "Versión trazada: Clonada desde histórico"}
+               </div>
+            )}
+          </div>
 
         <div className="w-full md:w-auto rounded-2xl border border-border-subtle bg-white p-4 shadow-sm">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6 px-2">
@@ -577,7 +708,7 @@ function SimulatorContent() {
                  Sobreescribir
                </button>
                <button
-                 onClick={() => handleSaveSimulation(false)}
+                 onClick={() => setIsVersionModalOpen(true)}
                  disabled={isSaving}
                  className="inline-flex items-center justify-center gap-2 px-6 py-2.5 bg-slate-800 text-white text-sm font-medium rounded-xl hover:bg-slate-700 transition-all shadow-sm disabled:opacity-50 flex-1 md:flex-none"
                >
@@ -801,6 +932,13 @@ function SimulatorContent() {
           setCustomer(selectedCustomer);
           setIsCustomerSelectOpen(false);
         }}
+      />
+      
+      <VersionModal
+        isOpen={isVersionModalOpen}
+        onClose={() => setIsVersionModalOpen(false)}
+        onConfirm={handleSaveNuevaVersion}
+        isSaving={isSaving}
       />
 
     </main>

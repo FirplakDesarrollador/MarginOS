@@ -1,6 +1,6 @@
 import ExcelJS from "exceljs";
 
-export async function exportSimulationToExcel(sim: any, lines: any[]) {
+export async function exportSimulationToExcel(sim: any, lines: any[], versionData?: any) {
   const workbook = new ExcelJS.Workbook();
   workbook.creator = "FIRPLAK MarginOS";
   workbook.lastModifiedBy = "Commercial System";
@@ -66,6 +66,18 @@ export async function exportSimulationToExcel(sim: any, lines: any[]) {
     sheet.getCell("E7").font = labelFont;
     sheet.getCell("F7").value = sim.trm || "N/A";
     sheet.getCell("F7").numFmt = "#,##0.00";
+  }
+
+  if (versionData) {
+    sheet.getCell("H4").value = "Simulación Base:";
+    sheet.getCell("H4").font = labelFont;
+    sheet.getCell("I4").value = versionData.original_simulation_id ? versionData.original_simulation_id.split("-")[0].toUpperCase() : "N/A";
+    sheet.getCell("I4").font = valFont;
+
+    sheet.getCell("H5").value = "Tipo Versión:";
+    sheet.getCell("H5").font = labelFont;
+    sheet.getCell("I5").value = versionData.version_type === "COST_UPDATE" ? "Actualizada con Costos Vigentes" : "Clon Exacto";
+    sheet.getCell("I5").font = { ...valFont, bold: true, color: { argb: versionData.version_type === "COST_UPDATE" ? "FF059669" : "FFD97706" } };
   }
 
   // 3. Table Headers
