@@ -2,14 +2,17 @@
 
 import { useMemo, useState, useEffect, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
-import { Plus, Trash2, Search, UserPlus, Save, Building2, Calendar, DollarSign, Briefcase } from "lucide-react";
+import { Plus, Trash2, Search, UserPlus, Save, Building2, Calendar, DollarSign, Briefcase, Loader2, Clock } from "lucide-react";
 import { ProductPickerModal, type DBProduct } from "@/components/ProductPickerModal";
 import { CustomerCreateModal } from "@/components/CustomerCreateModal";
 import { CustomerSelectModal, type Customer } from "@/components/CustomerSelectModal";
 import { VersionModal, type VersionOption } from "@/components/VersionModal";
 import { createClient } from "@/lib/supabase/client";
+import { AppShell } from "@/components/AppShell";
+import { useNavigationBlocker } from "@/contexts/NavigationBlockerContext";
 
 type Producto = {
+  row_id: string;
   Codigo: string;
   Descripcion: string;
   Costo_Mp: number;
@@ -28,6 +31,7 @@ function SimulatorContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const editId = searchParams.get("id");
+  const { isDirty, setIsDirty } = useNavigationBlocker();
   
   const [originalSimulation, setOriginalSimulation] = useState<any>(null);
   const [versionTypeDisplay, setVersionTypeDisplay] = useState<{type: string, originalId: string} | null>(null);
@@ -38,12 +42,13 @@ function SimulatorContent() {
   // ==========================================
   const [productos, setProductos] = useState<Producto[]>([]);
   const [inputs, setInputs] = useState<Record<string, Inputs>>({});
-  const [margenObjetivo, setMargenObjetivo] = useState<number>(55);
+  const [margenObjetivo, setMargenObjetivo] = useState<number>(65);
   
   // ==========================================
   // ESTADOS DE METADATA (CABECERA)
   // ==========================================
   const [customer, setCustomer] = useState<Customer | null>(null);
+  const [simulationStatus, setSimulationStatus] = useState("DRAFT");
   const [projectName, setProjectName] = useState("");
   const [simulationType, setSimulationType] = useState("PRICE_LIST");
   const [currency, setCurrency] = useState("COP");
@@ -62,6 +67,15 @@ function SimulatorContent() {
   const [isSaving, setIsSaving] = useState(false);
   const [saveError, setSaveError] = useState("");
   const [saveSuccess, setSaveSuccess] = useState(false);
+
+  // ==========================================
+  // AUTOSAVE STATES
+  // ==========================================
+  const [autosavedDraftId, setAutosavedDraftId] = useState<string | null>(null);
+  const [autosaveStatus, setAutosaveStatus] = useState<"IDLE" | "SAVING" | "SAVED" | "ERROR">("IDLE");
+  const [lastSavedAt, setLastSavedAt] = useState<Date | null>(null);
+  const [isDraftResumeModalOpen, setIsDraftResumeModalOpen] = useState(false);
+  const [foundDraftId, setFoundDraftId] = useState<string | null>(null);
 
   // ==========================================
   // EFECTO P/ EDICION (CARGA METADATA E INPUTS)
@@ -92,6 +106,7 @@ function SimulatorContent() {
            setOriginalSimulation(sim);
            setCustomer(sim.customers); // Req metadata
            setProjectName(sim.project_name || "");
+           setSimulationStatus(sim.status || "DRAFT");
            setSimulationType(sim.simulation_type || "PRICE_LIST");
            setCurrency(sim.currency || "COP");
            setTrm(sim.trm || "");
@@ -115,7 +130,9 @@ function SimulatorContent() {
            const newInputs: Record<string, Inputs> = {};
            
            for (const l of lines) {
+              const r_id = crypto.randomUUID();
               newProds.push({
+                 row_id: r_id,
                  Codigo: l.sap_code,
                  Descripcion: l.description || "",
                  Costo_Mp: l.cost_mp || 0,
@@ -123,7 +140,7 @@ function SimulatorContent() {
                  _hasPriceList: (l.list_price || 0) > 0
               });
               
-              newInputs[l.sap_code] = {
+              newInputs[r_id] = {
                  precio: l.list_price || 0,
                  descuento: l.discount_pct || 0,
                  cantidad: l.qty || 1
@@ -153,11 +170,6 @@ function SimulatorContent() {
   }, []);
 
   async function handleAddProduct(dbProduct: DBProduct) {
-    if (productos.some((p) => p.Codigo === dbProduct.sap_code)) {
-      return;
-    }
-
-    setIsProductModalOpen(false);
     
     const { data: bomData } = await supabase
       .from("bom_products")
@@ -187,7 +199,9 @@ function SimulatorContent() {
       }
     }
 
+    const row_id = crypto.randomUUID();
     const newProduct: Producto = {
+      row_id,
       Codigo: dbProduct.sap_code,
       Descripcion: dbProduct.description,
       Costo_Mp: bomData?.recalculated_cost_mp || 0,
@@ -195,43 +209,43 @@ function SimulatorContent() {
       _hasPriceList: foundPrice,
     };
 
-    setProductos((prev) => {
-      if (prev.some((p) => p.Codigo === newProduct.Codigo)) return prev;
-      return [...prev, newProduct];
-    });
+    setProductos((prev) => [...prev, newProduct]);
+    setIsDirty(true);
 
     if (foundPrice) {
       setInputs((prev) => ({
         ...prev,
-        [newProduct.Codigo]: {
-          ...prev[newProduct.Codigo],
+        [row_id]: {
+          ...prev[row_id],
           precio: listPrice,
         },
       }));
     }
   }
 
-  function handleRemoveProduct(codigo: string) {
-    setProductos((prev) => prev.filter((p) => p.Codigo !== codigo));
+  function handleRemoveProduct(row_id: string) {
+    setProductos((prev) => prev.filter((p) => p.row_id !== row_id));
     const newInputs = { ...inputs };
-    delete newInputs[codigo];
+    delete newInputs[row_id];
     setInputs(newInputs);
+    setIsDirty(true);
   }
 
-  function updateInput(codigo: string, field: keyof Inputs, value: number) {
+  function updateInput(row_id: string, field: keyof Inputs, value: number) {
     setInputs((prev) => ({
       ...prev,
-      [codigo]: {
-        ...prev[codigo],
+      [row_id]: {
+        ...prev[row_id],
         [field]: value,
       },
     }));
+    setIsDirty(true);
   }
 
   function calcularLinea(p: Producto) {
-    const precio = Number(inputs[p.Codigo]?.precio || 0);
-    const descuento = Number(inputs[p.Codigo]?.descuento || 0);
-    const cantidad = Number(inputs[p.Codigo]?.cantidad || 0);
+    const precio = Number(inputs[p.row_id]?.precio || 0);
+    const descuento = Number(inputs[p.row_id]?.descuento || 0);
+    const cantidad = Number(inputs[p.row_id]?.cantidad || 0);
 
     const ingresoBruto = precio * cantidad;
     const ingresoNeto = ingresoBruto * (1 - descuento / 100);
@@ -347,6 +361,7 @@ function SimulatorContent() {
       if (linesError) throw linesError;
 
       setSaveSuccess(true);
+      setIsDirty(false);
       setTimeout(() => setSaveSuccess(false), 4000); // clear success msg after a while
       
     } catch (err: any) {
@@ -383,7 +398,7 @@ function SimulatorContent() {
         trm: currency === "USD" ? Number(trm) : null,
         valid_from: validFrom || null,
         valid_to: validTo || null,
-        status: "DRAFT"
+        status: "VIGENTE"
       };
 
       // 1. Crear nuevo header simulación
@@ -423,9 +438,9 @@ function SimulatorContent() {
            ? (updatedProductsCostMp[p.Codigo] !== undefined ? updatedProductsCostMp[p.Codigo] : p.Costo_Mp)
            : p.Costo_Mp;
            
-        const precio = Number(inputs[p.Codigo]?.precio || 0);
-        const descuento = Number(inputs[p.Codigo]?.descuento || 0);
-        const cantidad = Number(inputs[p.Codigo]?.cantidad || 0);
+        const precio = Number(inputs[p.row_id]?.precio || 0);
+        const descuento = Number(inputs[p.row_id]?.descuento || 0);
+        const cantidad = Number(inputs[p.row_id]?.cantidad || 0);
 
         const ingresoNeto = (precio * cantidad) * (1 - descuento / 100);
         const costoTotal = mpToUse * cantidad;
@@ -450,6 +465,9 @@ function SimulatorContent() {
       const { error: linesError } = await supabase.from("simulation_lines").insert(linesPayload);
       if (linesError) throw linesError;
 
+      // UPDATE OLD SIM TO RENOVADA
+      await supabase.from("simulations").update({ status: 'RENOVADA' }).eq("id", editId);
+
       // 4. Crear el enlace de versión
       const { error: verError } = await supabase.from("simulation_versions").insert({
         original_simulation_id: editId,
@@ -458,6 +476,7 @@ function SimulatorContent() {
       if (verError) throw verError;
 
       setIsVersionModalOpen(false);
+      setIsDirty(false);
       // Re-encaminar silensiosamente al nuevo id clonado
       router.push(`/simulator?id=${newSimId}`);
 
@@ -469,8 +488,176 @@ function SimulatorContent() {
     }
   }
 
+  // Clean up isDirty on unmount (e.g. if navigated away programmatically)
+  useEffect(() => {
+    return () => setIsDirty(false);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // ==========================================
+  // DRAFT RESUME CHECK (On Mount)
+  // ==========================================
+  useEffect(() => {
+    if (editId) return; // If we are explicitly loading an ID, ignore drafts
+
+    let isMounted = true;
+    async function checkDrafts() {
+      const { data, error } = await supabase
+        .from("simulations")
+        .select("id, updated_at")
+        .eq("status", "DRAFT")
+        .order("updated_at", { ascending: false })
+        .limit(1)
+        .maybeSingle();
+
+      // Only prompt if a draft exists and has content
+      if (data && isMounted) {
+        // Option text based on dates
+        setFoundDraftId(data.id);
+        setIsDraftResumeModalOpen(true);
+      }
+    }
+    
+    checkDrafts();
+    return () => { isMounted = false; };
+  }, [editId, supabase]);
+
+  // ==========================================
+  // DEBOUNCED AUTOSAVE EFFECT
+  // ==========================================
+  useEffect(() => {
+    // Only autosave if there are actual modifications
+    if (!isDirty) return;
+    
+    // Conditions to trigger an autosave
+    if (!customer) return; // Must have customer
+    if (productos.length === 0) return; // Must have at least 1 product
+
+    const timerLabel = setTimeout(async () => {
+      setAutosaveStatus("SAVING");
+      
+      try {
+        const headerPayload = {
+          customer_id: customer.id,
+          channel_id: customer.default_channel_id || null,
+          simulation_type: simulationType,
+          project_name: projectName || null,
+          currency,
+          trm: currency === "USD" ? Number(trm) : null,
+          valid_from: validFrom || null,
+          valid_to: validTo || null,
+          updated_at: new Date().toISOString()
+        };
+
+        let targetSimId = editId || autosavedDraftId;
+
+        if (targetSimId) {
+          // UPDATE Existing
+          await supabase.from("simulations").update(headerPayload).eq("id", targetSimId);
+          // Delete old lines
+          await supabase.from("simulation_lines").delete().eq("simulation_id", targetSimId);
+        } else {
+          // CREATE New Draft
+          const { data, error } = await supabase.from("simulations").insert({ ...headerPayload, status: "DRAFT" }).select().single();
+          if (error) throw error;
+          targetSimId = data.id;
+          setAutosavedDraftId(targetSimId);
+          // Overwrite browser URL history slowly behind the scenes? 
+          // Not necessary if we rely on autosavedDraftId locally
+        }
+
+        // Insert fresh lines
+        const linesPayload = productos.map(p => {
+          const lineVars = calcularLinea(p);
+          return {
+            simulation_id: targetSimId,
+            product_id: p.product_id || null,
+            sap_code: p.Codigo,
+            description: p.Descripcion,
+            qty: lineVars.cantidad,
+            list_price: lineVars.precio,
+            discount_pct: lineVars.descuento,
+            net_price: lineVars.ingresoNeto / (lineVars.cantidad || 1) || 0,
+            cost_mp: p.Costo_Mp,
+            margin_pct: lineVars.margen,
+            contribution_value: lineVars.contribucion
+          };
+        });
+
+        await supabase.from("simulation_lines").insert(linesPayload);
+
+        const now = new Date();
+        setLastSavedAt(now);
+        setAutosaveStatus("SAVED");
+        setIsDirty(false); // Reset dirty flag because changes are persisted
+      } catch (err) {
+        console.error("Autosave failed", err);
+        setAutosaveStatus("ERROR");
+      }
+    }, 2000); // 2 second debounce
+
+    return () => clearTimeout(timerLabel);
+  }, [
+    isDirty, customer, productos, inputs, simulationType, projectName,
+    currency, trm, validFrom, validTo, editId, autosavedDraftId, supabase, setIsDirty, simulationStatus
+  ]);
+
+  async function handleConfirmar() {
+    const targetId = editId || autosavedDraftId;
+    if (!targetId || !customer || productos.length === 0 || !validFrom || !validTo) return;
+    
+    setIsSaving(true);
+    setSaveError("");
+    try {
+      const headerPayload = {
+        customer_id: customer.id,
+        channel_id: customer.default_channel_id || null,
+        simulation_type: simulationType,
+        project_name: projectName || null,
+        currency,
+        trm: currency === "USD" ? Number(trm) : null,
+        valid_from: validFrom || null,
+        valid_to: validTo || null,
+        status: "VIGENTE",
+        updated_at: new Date().toISOString()
+      };
+
+      await supabase.from("simulations").update(headerPayload).eq("id", targetId);
+      await supabase.from("simulation_lines").delete().eq("simulation_id", targetId);
+
+      const linesPayload = productos.map(p => {
+        const lineVars = calcularLinea(p);
+        return {
+          simulation_id: targetId,
+          product_id: p.product_id || null,
+          sap_code: p.Codigo,
+          description: p.Descripcion,
+          qty: lineVars.cantidad,
+          list_price: lineVars.precio,
+          discount_pct: lineVars.descuento,
+          net_price: lineVars.ingresoNeto / (lineVars.cantidad || 1) || 0,
+          cost_mp: p.Costo_Mp,
+          margin_pct: lineVars.margen,
+          contribution_value: lineVars.contribucion
+        };
+      });
+
+      await supabase.from("simulation_lines").insert(linesPayload);
+      
+      setSimulationStatus("VIGENTE");
+      setIsDirty(false); // Clean state natively
+      setSaveSuccess(true);
+      setTimeout(() => setSaveSuccess(false), 4000);
+    } catch (err: any) {
+      setSaveError(err.message || "Error al confirmar la simulación.");
+    } finally {
+      setIsSaving(false);
+    }
+  }
+
   return (
-    <main className="mx-auto max-w-full px-4 md:px-6 py-10 selection:bg-brand-primary selection:text-white pb-32">
+    <AppShell title="Simulador Comercial">
+      <div className="mx-auto w-full selection:bg-brand-primary selection:text-white pb-32">
       
       {/* ========================================== */}
       {/* ALERTAS DE GUARDADO */}
@@ -490,7 +677,19 @@ function SimulatorContent() {
       {/* ========================================== */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
           <div>
-            <h1 className="text-2xl font-bold tracking-tight text-text-primary">Simulador de Negocio</h1>
+            <div className="flex items-center gap-3">
+              <h1 className="text-2xl font-bold tracking-tight text-text-primary">Simulador de Negocio</h1>
+              
+              {/* Autosave Indicator */}
+              <div className="flex items-center gap-1.5 opacity-60 text-xs font-medium">
+                {autosaveStatus === "SAVING" && (
+                  <><Loader2 className="w-3.5 h-3.5 animate-spin text-brand-primary" /><span className="text-brand-primary">Guardando...</span></>
+                )}
+                {autosaveStatus === "SAVED" && lastSavedAt && (
+                  <><Clock className="w-3.5 h-3.5 text-emerald-600" /><span className="text-emerald-700">Guardado a las {lastSavedAt.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span></>
+                )}
+              </div>
+            </div>
             <p className="text-sm text-text-muted mt-1 leading-relaxed max-w-xl">
               Crea o edita la negociación. Ajusta el proyecto, tipo de moneda y aplica cantidades para proyectar márgenes sobre costos SAP reales.
             </p>
@@ -535,11 +734,21 @@ function SimulatorContent() {
               <div className="text-xs font-medium text-text-muted mb-1">Margen %</div>
               <div
                 className={`text-lg font-semibold tracking-tight inline-flex items-center gap-1 ${
-                  resumen.margenTotal < 0 ? "text-red-600" : "text-emerald-600"
+                  resumen.margenTotal >= margenObjetivo ? "text-emerald-600" : "text-red-600"
                 }`}
               >
                 {resumen.margenTotal.toFixed(1)}%
               </div>
+              {productos.length > 0 && (
+                <div className={`mt-1 text-[10px] font-semibold px-2 py-0.5 rounded-md inline-flex items-center gap-1 border ${
+                  resumen.margenTotal >= margenObjetivo
+                    ? "bg-emerald-50 text-emerald-700 border-emerald-200"
+                    : "bg-red-50 text-red-700 border-red-200"
+                }`}>
+                  <span className={`w-1.5 h-1.5 rounded-full ${resumen.margenTotal >= margenObjetivo ? "bg-emerald-500" : "bg-red-500"}`} />
+                  {resumen.margenTotal >= margenObjetivo ? "Meta cumplida" : "Por debajo de meta"}
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -567,6 +776,16 @@ function SimulatorContent() {
             >
               <UserPlus className="w-4 h-4" /> Crear Cliente
             </button>
+            {simulationStatus === "DRAFT" && (
+              <button
+                onClick={handleConfirmar}
+                disabled={!(editId || autosavedDraftId) || !customer || productos.length === 0 || !validFrom || !validTo || isSaving}
+                className="flex-1 md:flex-none inline-flex items-center justify-center gap-2 px-4 py-2 bg-emerald-600 text-white text-sm font-medium rounded-xl hover:bg-emerald-500 shadow-sm transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                title={(!(editId || autosavedDraftId) || !customer || productos.length === 0 || !validFrom || !validTo) ? "Completa cliente, productos y fechas para activar" : ""}
+              >
+                Confirmar / Activar
+              </button>
+            )}
           </div>
         </div>
         
@@ -597,7 +816,7 @@ function SimulatorContent() {
               type="text" 
               placeholder="Ej: Licitación Hotel"
               value={projectName}
-              onChange={e => setProjectName(e.target.value)}
+              onChange={e => { setProjectName(e.target.value); setIsDirty(true); }}
               className="w-full border border-border-subtle rounded-xl px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary text-sm transition-all"
             />
           </div>
@@ -606,7 +825,7 @@ function SimulatorContent() {
             <label className="block text-sm font-medium text-text-primary mb-1.5">Tipo de negociación</label>
             <select 
               value={simulationType}
-              onChange={e => setSimulationType(e.target.value)}
+              onChange={e => { setSimulationType(e.target.value); setIsDirty(true); }}
               className="w-full border border-border-subtle bg-white rounded-xl px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary text-sm transition-all"
             >
               <option value="PRICE_LIST">Lista de precios</option>
@@ -621,7 +840,7 @@ function SimulatorContent() {
             </label>
             <select 
               value={currency}
-              onChange={e => setCurrency(e.target.value)}
+              onChange={e => { setCurrency(e.target.value); setIsDirty(true); }}
               className="w-full border border-border-subtle bg-white rounded-xl px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary text-sm transition-all"
             >
               <option value="COP">COP (Pesos)</option>
@@ -636,7 +855,7 @@ function SimulatorContent() {
                  type="number" 
                  placeholder="Ej: 3950.50"
                  value={trm}
-                 onChange={e => setTrm(Number(e.target.value))}
+                 onChange={e => { setTrm(Number(e.target.value)); setIsDirty(true); }}
                  className="w-full border border-border-subtle rounded-xl px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary text-sm transition-all text-right"
                />
             </div>
@@ -649,7 +868,7 @@ function SimulatorContent() {
             <input 
               type="date" 
               value={validFrom}
-              onChange={e => setValidFrom(e.target.value)}
+              onChange={e => { setValidFrom(e.target.value); setIsDirty(true); }}
               className="w-full border border-border-subtle rounded-xl px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary text-sm transition-all text-text-muted"
             />
           </div>
@@ -661,7 +880,7 @@ function SimulatorContent() {
              <input 
                type="date" 
                value={validTo}
-               onChange={e => setValidTo(e.target.value)}
+               onChange={e => { setValidTo(e.target.value); setIsDirty(true); }}
                className="w-full border border-border-subtle rounded-xl px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary text-sm transition-all text-text-muted"
              />
           </div>
@@ -679,7 +898,7 @@ function SimulatorContent() {
             <input 
               type="number"
               value={margenObjetivo}
-              onChange={(e) => setMargenObjetivo(Number(e.target.value))}
+              onChange={(e) => { setMargenObjetivo(Number(e.target.value)); setIsDirty(true); }}
               className="w-16 bg-white border border-border-subtle rounded-md px-2 py-1 text-sm font-semibold text-brand-primary focus:outline-none focus:ring-1 focus:ring-brand-primary text-center"
             />
           </div>
@@ -760,7 +979,7 @@ function SimulatorContent() {
 
       {productos.length > 0 && (
         <div className="mt-6 overflow-x-auto border border-border-subtle rounded-2xl shadow-sm bg-white">
-          <table className="min-w-full text-sm">
+          <table className="w-full text-sm">
             <thead className="bg-slate-50 border-b border-border-subtle">
               <tr>
                 <th className="px-4 py-4 text-left font-semibold text-text-primary">Código SAP</th>
@@ -783,7 +1002,7 @@ function SimulatorContent() {
                 const r = calcularLinea(p);
 
                 return (
-                  <tr key={p.Codigo} className="group hover:bg-slate-50/40 transition-colors">
+                  <tr key={p.row_id} className="group hover:bg-slate-50/40 transition-colors">
                     <td className="px-4 py-4 font-medium text-text-primary align-middle">
                       <span className="inline-flex items-center px-2 py-1 rounded text-xs font-semibold bg-slate-100 text-slate-800 tracking-tight">
                         {p.Codigo}
@@ -822,9 +1041,9 @@ function SimulatorContent() {
                         min="0"
                         max="100"
                         className="w-20 border border-border-subtle rounded-lg px-3 py-2 text-right focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary transition-all text-sm bg-white shadow-sm"
-                        value={inputs[p.Codigo]?.descuento ?? ""}
+                        value={inputs[p.row_id]?.descuento ?? ""}
                         onChange={(e) =>
-                          updateInput(p.Codigo, "descuento", Number(e.target.value))
+                          updateInput(p.row_id, "descuento", Number(e.target.value))
                         }
                         placeholder="0"
                       />
@@ -841,9 +1060,9 @@ function SimulatorContent() {
                         type="number"
                         min="0"
                         className="w-24 border border-border-subtle rounded-lg px-3 py-2 text-right focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary transition-all text-sm bg-white shadow-sm"
-                        value={inputs[p.Codigo]?.cantidad ?? ""}
+                        value={inputs[p.row_id]?.cantidad ?? ""}
                         onChange={(e) =>
-                          updateInput(p.Codigo, "cantidad", Number(e.target.value))
+                          updateInput(p.row_id, "cantidad", Number(e.target.value))
                         }
                         placeholder="0"
                       />
@@ -892,7 +1111,7 @@ function SimulatorContent() {
 
                     <td className="px-4 py-4 text-center align-middle">
                        <button
-                         onClick={() => handleRemoveProduct(p.Codigo)}
+                         onClick={() => handleRemoveProduct(p.row_id)}
                          className="p-1.5 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors opacity-0 group-hover:opacity-100"
                          title="Eliminar fila"
                        >
@@ -923,6 +1142,7 @@ function SimulatorContent() {
         onClose={() => setIsCustomerCreateOpen(false)}
         onSuccess={(newCustomer: Customer) => {
           setCustomer(newCustomer);
+          setIsDirty(true);
           setIsCustomerCreateOpen(false);
         }}
       />
@@ -932,6 +1152,7 @@ function SimulatorContent() {
         onClose={() => setIsCustomerSelectOpen(false)}
         onSelect={(selectedCustomer: Customer) => {
           setCustomer(selectedCustomer);
+          setIsDirty(true);
           setIsCustomerSelectOpen(false);
         }}
       />
@@ -943,7 +1164,49 @@ function SimulatorContent() {
         isSaving={isSaving}
       />
 
-    </main>
+      {/* ========================================== */}
+      {/* MODAL DE BORRADOR ENCONTRADO               */}
+      {/* ========================================== */}
+      {isDraftResumeModalOpen && foundDraftId && (
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-slate-900/50 backdrop-blur-sm" />
+          <div className="relative w-full max-w-md bg-white rounded-2xl shadow-2xl border border-border-subtle overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+            <div className="px-6 pt-6 pb-4 border-b border-border-subtle">
+              <h2 className="text-base font-semibold text-text-primary leading-tight">
+                Borrador encontrado
+              </h2>
+            </div>
+            <div className="px-6 py-5">
+              <p className="text-sm text-text-muted leading-relaxed">
+                Encontramos una simulación en borrador guardada automáticamente. ¿Deseas continuar editándola?
+              </p>
+            </div>
+            <div className="px-6 pb-6 flex flex-col-reverse sm:flex-row gap-3 sm:justify-end">
+              <button
+                onClick={() => {
+                  setIsDraftResumeModalOpen(false);
+                  setFoundDraftId(null);
+                }}
+                className="px-4 py-2.5 rounded-xl text-sm font-medium text-slate-600 bg-white border border-border-subtle hover:bg-slate-50 transition-all"
+              >
+                Empezar nueva simulación
+              </button>
+              <button
+                onClick={() => {
+                  setIsDraftResumeModalOpen(false);
+                  router.push(`/simulator?id=${foundDraftId}`);
+                }}
+                className="px-5 py-2.5 rounded-xl text-sm font-semibold text-white bg-brand-primary hover:bg-brand-accent transition-all shadow-sm"
+              >
+                Continuar borrador
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      </div>
+    </AppShell>
   );
 }
 
