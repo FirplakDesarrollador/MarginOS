@@ -188,7 +188,7 @@ export async function exportSimulationToExcel(sim: any, lines: any[], versionDat
     sheet.getCell(currRow, 7).alignment = { horizontal: "right" };
 
     sheet.getCell(currRow, 8).value = s.val;
-    sheet.getCell(currRow, 8).numFmt = s.isMoney ? moneyFmt : s.fmt;
+    sheet.getCell(currRow, 8).numFmt = s.isMoney ? moneyFmt : (s.fmt || "General");
     sheet.getCell(currRow, 8).font = { ...valFont, bold: true };
     currRow++;
   }

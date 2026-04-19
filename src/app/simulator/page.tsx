@@ -14,6 +14,7 @@ type Producto = {
   Descripcion: string;
   Costo_Mp: number;
   product_id?: string;
+  _hasPriceList?: boolean;
 };
 
 type Inputs = {
@@ -118,7 +119,8 @@ function SimulatorContent() {
                  Codigo: l.sap_code,
                  Descripcion: l.description || "",
                  Costo_Mp: l.cost_mp || 0,
-                 product_id: l.product_id
+                 product_id: l.product_id,
+                 _hasPriceList: (l.list_price || 0) > 0
               });
               
               newInputs[l.sap_code] = {
@@ -185,7 +187,7 @@ function SimulatorContent() {
       }
     }
 
-    const newProduct: Producto & { _hasPriceList?: boolean } = {
+    const newProduct: Producto = {
       Codigo: dbProduct.sap_code,
       Descripcion: dbProduct.description,
       Costo_Mp: bomData?.recalculated_cost_mp || 0,
