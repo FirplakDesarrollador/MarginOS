@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { ArrowLeft, Package, Plus, FolderOpen, Download, UploadCloud, Search } from "lucide-react";
 import * as XLSX from "xlsx";
-import { DashboardHeader } from "@/components/dashboard-ui";
+import { AppShell } from "@/components/AppShell";
 import { createClient } from "@/lib/supabase/client";
 import { ProductModal } from "@/components/ProductModal";
 import { ProductUploadModal } from "@/components/ProductUploadModal";
@@ -95,9 +95,8 @@ export default function ProductsPage() {
   });
 
   return (
-    <main className="min-h-screen bg-[color:var(--bg)] text-[color:var(--text)] pb-24">
-      <div className="relative z-10 max-w-7xl mx-auto px-6 md:px-8">
-        <DashboardHeader />
+    <AppShell title="Productos">
+      <div className="relative z-10">
 
         <div className="mt-8 flex items-start justify-between gap-4 flex-wrap">
           <div>
@@ -187,7 +186,7 @@ export default function ProductsPage() {
           </div>
         ) : (
           <div className="mt-8 overflow-x-auto rounded-[var(--radius-lg)] border border-[color:var(--border)] bg-white shadow-sm">
-            <table className="min-w-full text-sm">
+            <table className="w-full text-sm">
               <thead className="bg-slate-50/80 border-b border-border-subtle">
                 <tr>
                   <th className="px-6 py-4 text-left font-semibold text-text-primary">Código SAP</th>
@@ -270,6 +269,6 @@ export default function ProductsPage() {
           fetchProducts();
         }}
       />
-    </main>
+    </AppShell>
   );
 }

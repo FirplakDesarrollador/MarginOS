@@ -3,7 +3,7 @@
 import { useEffect, useState, useMemo } from "react";
 import Link from "next/link";
 import { ArrowLeft, Search, Plus, Upload, Download, Settings } from "lucide-react";
-import { DashboardHeader } from "@/components/dashboard-ui";
+import { AppShell } from "@/components/AppShell";
 import { createClient } from "@/lib/supabase/client";
 import { CostModal, type DBCost } from "@/components/CostModal";
 import { CostUploadModal } from "@/components/CostUploadModal";
@@ -185,9 +185,8 @@ export default function RealCostsPage() {
   });
 
   return (
-    <main className="min-h-screen bg-[color:var(--bg)] text-[color:var(--text)] pb-24">
-      <div className="relative z-10 max-w-7xl mx-auto px-6 md:px-8">
-        <DashboardHeader />
+    <AppShell title="Costos Reales">
+      <div className="relative z-10">
 
         {/* Page Header */}
         <div className="mt-8 flex flex-col md:flex-row md:items-start justify-between gap-6">
@@ -291,7 +290,7 @@ export default function RealCostsPage() {
           </div>
         ) : (
           <div className="mt-6 overflow-x-auto rounded-[var(--radius-lg)] border border-[color:var(--border)] bg-white shadow-sm">
-            <table className="min-w-full text-sm">
+            <table className="w-full text-sm">
               <thead className="bg-slate-50/80 border-b border-border-subtle">
                 <tr>
                   <th className="px-6 py-4 text-left font-semibold text-text-primary w-48">Código Componente</th>
@@ -366,6 +365,6 @@ export default function RealCostsPage() {
         impacts={impacts}
       />
 
-    </main>
+    </AppShell>
   );
 }

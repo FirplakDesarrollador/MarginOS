@@ -135,7 +135,6 @@ export function ProductPickerModal({ isOpen, onClose, onSelect, existingSapCodes
           ) : (
             <div className="space-y-2">
               {filteredProducts.map((p) => {
-                const isAdded = existingSapCodes.includes(p.sap_code);
                 return (
                   <div 
                     key={p.id}
@@ -162,15 +161,10 @@ export function ProductPickerModal({ isOpen, onClose, onSelect, existingSapCodes
 
                     <div className="flex items-center justify-between sm:justify-end gap-4 w-full sm:w-auto">
                       <button
-                        onClick={() => !isAdded && onSelect(p)}
-                        disabled={isAdded}
-                        className={`shrink-0 px-4 py-2 rounded-xl text-sm font-medium transition-all ${
-                          isAdded 
-                            ? "bg-slate-100 text-slate-400 cursor-not-allowed" 
-                            : "bg-white border border-border-subtle text-text-primary hover:bg-slate-50 hover:border-brand-primary"
-                        }`}
+                        onClick={() => onSelect(p)}
+                        className="shrink-0 px-4 py-2 rounded-xl text-sm font-medium transition-all bg-white border border-border-subtle text-text-primary hover:bg-slate-50 hover:border-brand-primary"
                       >
-                        {isAdded ? "Agregado" : "Agregar"}
+                        Agregar Línea
                       </button>
                     </div>
                   </div>

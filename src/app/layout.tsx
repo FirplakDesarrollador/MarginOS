@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { Poppins } from 'next/font/google';
 import './globals.css';
+import { NavigationBlockerProvider } from '@/contexts/NavigationBlockerContext';
 
 const poppins = Poppins({
   subsets: ['latin'],
@@ -22,7 +23,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${poppins.variable} font-sans antialiased text-text-primary bg-surface-bg`}>
-        {children}
+        <NavigationBlockerProvider>
+          {children}
+        </NavigationBlockerProvider>
       </body>
     </html>
   );
