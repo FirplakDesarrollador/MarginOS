@@ -243,37 +243,53 @@ function SimulatorContent() {
   }
 
   function calcularLinea(p: Producto) {
-    const precio = Number(inputs[p.row_id]?.precio || 0);
+    const precioDisplay = Number(inputs[p.row_id]?.precio || 0);
     const descuento = Number(inputs[p.row_id]?.descuento || 0);
     const cantidad = Number(inputs[p.row_id]?.cantidad || 0);
 
-    const ingresoBruto = precio * cantidad;
-    const ingresoNeto = ingresoBruto * (1 - descuento / 100);
-    const costoTotal = p.Costo_Mp * cantidad;
-    const contribucion = ingresoNeto - costoTotal;
-    const margen = ingresoNeto > 0 ? (contribucion / ingresoNeto) * 100 : 0;
+    const ingresoBrutoDisplay = precioDisplay * cantidad;
+    const ingresoNetoDisplay = ingresoBrutoDisplay * (1 - descuento / 100);
+    
+    // Convert to COP if needed
+    const isUSD = currency === "USD";
+    const trmValue = Number(trm) || 0;
+    
+    const ingresoNetoCop = isUSD ? ingresoNetoDisplay * trmValue : ingresoNetoDisplay;
+    const costoTotalCop = p.Costo_Mp * cantidad;
+    const contribucionCop = ingresoNetoCop - costoTotalCop;
+    const margen = ingresoNetoCop > 0 ? (contribucionCop / ingresoNetoCop) * 100 : 0;
 
-    return { ingresoBruto, ingresoNeto, costoTotal, contribucion, margen, precio, descuento, cantidad };
+    return { 
+      ingresoBrutoDisplay, 
+      ingresoNetoDisplay, 
+      ingresoNetoCop,
+      costoTotalCop, 
+      contribucionCop, 
+      margen, 
+      precioDisplay, 
+      descuento, 
+      cantidad 
+    };
   }
 
   const resumen = useMemo(() => {
-    let ingresoNetoTotal = 0;
-    let costoTotalTotal = 0;
-    let contribucionTotal = 0;
+    let ingresoNetoTotalCop = 0;
+    let costoTotalTotalCop = 0;
+    let contribucionTotalCop = 0;
 
     for (const p of productos) {
       const r = calcularLinea(p);
-      ingresoNetoTotal += r.ingresoNeto;
-      costoTotalTotal += r.costoTotal;
-      contribucionTotal += r.contribucion;
+      ingresoNetoTotalCop += r.ingresoNetoCop;
+      costoTotalTotalCop += r.costoTotalCop;
+      contribucionTotalCop += r.contribucionCop;
     }
 
     const margenTotal =
-      ingresoNetoTotal > 0 ? (contribucionTotal / ingresoNetoTotal) * 100 : 0;
+      ingresoNetoTotalCop > 0 ? (contribucionTotalCop / ingresoNetoTotalCop) * 100 : 0;
 
-    return { ingresoNetoTotal, costoTotalTotal, contribucionTotal, margenTotal };
+    return { ingresoNetoTotalCop, costoTotalTotalCop, contribucionTotalCop, margenTotal };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [productos, inputs]);
+  }, [productos, inputs, currency, trm]);
 
   // ==========================================
   // FUNCION PRINCIPAL: GUARDAR SIMULACION
@@ -289,6 +305,10 @@ function SimulatorContent() {
     }
     if (productos.length === 0) {
       setSaveError("La simulación debe tener al menos un producto.");
+      return;
+    }
+    if (currency === "USD" && (!trm || Number(trm) <= 0)) {
+      setSaveError("Debes ingresar una TRM acordada para simular en USD");
       return;
     }
 
@@ -345,12 +365,12 @@ function SimulatorContent() {
           sap_code: p.Codigo,
           description: p.Descripcion,
           qty: lineVars.cantidad,
-          list_price: lineVars.precio,
+          list_price: lineVars.precioDisplay,
           discount_pct: lineVars.descuento,
-          net_price: lineVars.ingresoNeto / (lineVars.cantidad || 1) || 0, // precio unitario neto
+          net_price: lineVars.ingresoNetoDisplay / (lineVars.cantidad || 1) || 0, // precio unitario neto
           cost_mp: p.Costo_Mp,
           margin_pct: lineVars.margen,
-          contribution_value: lineVars.contribucion
+          contribution_value: lineVars.contribucionCop
         };
       });
 
@@ -384,6 +404,10 @@ function SimulatorContent() {
 
     if (productos.length === 0) {
       setSaveError("La simulación debe tener al menos un producto.");
+      return;
+    }
+    if (currency === "USD" && (!trm || Number(trm) <= 0)) {
+      setSaveError("Debes ingresar una TRM acordada para simular en USD");
       return;
     }
 
@@ -438,14 +462,20 @@ function SimulatorContent() {
            ? (updatedProductsCostMp[p.Codigo] !== undefined ? updatedProductsCostMp[p.Codigo] : p.Costo_Mp)
            : p.Costo_Mp;
            
-        const precio = Number(inputs[p.row_id]?.precio || 0);
+        const precioDisplay = Number(inputs[p.row_id]?.precio || 0);
         const descuento = Number(inputs[p.row_id]?.descuento || 0);
         const cantidad = Number(inputs[p.row_id]?.cantidad || 0);
 
-        const ingresoNeto = (precio * cantidad) * (1 - descuento / 100);
-        const costoTotal = mpToUse * cantidad;
-        const contribucion = ingresoNeto - costoTotal;
-        const margen = ingresoNeto > 0 ? (contribucion / ingresoNeto) * 100 : 0;
+        const ingresoBrutoDisplay = precioDisplay * cantidad;
+        const ingresoNetoDisplay = ingresoBrutoDisplay * (1 - descuento / 100);
+        
+        const isUSD = currency === "USD";
+        const trmValue = Number(trm) || 0;
+        const ingresoNetoCop = isUSD ? ingresoNetoDisplay * trmValue : ingresoNetoDisplay;
+
+        const costoTotalCop = mpToUse * cantidad;
+        const contribucionCop = ingresoNetoCop - costoTotalCop;
+        const margen = ingresoNetoCop > 0 ? (contribucionCop / ingresoNetoCop) * 100 : 0;
 
         return {
           simulation_id: newSimId,
@@ -453,12 +483,12 @@ function SimulatorContent() {
           sap_code: p.Codigo,
           description: p.Descripcion,
           qty: cantidad,
-          list_price: precio,
+          list_price: precioDisplay,
           discount_pct: descuento,
-          net_price: ingresoNeto / (cantidad || 1) || 0,
+          net_price: ingresoNetoDisplay / (cantidad || 1) || 0,
           cost_mp: mpToUse,
           margin_pct: margen,
-          contribution_value: contribucion
+          contribution_value: contribucionCop
         };
       });
 
@@ -532,6 +562,7 @@ function SimulatorContent() {
     // Conditions to trigger an autosave
     if (!customer) return; // Must have customer
     if (productos.length === 0) return; // Must have at least 1 product
+    if (currency === "USD" && (!trm || Number(trm) <= 0)) return; // Must have valid TRM
 
     const timerLabel = setTimeout(async () => {
       setAutosaveStatus("SAVING");
@@ -575,12 +606,12 @@ function SimulatorContent() {
             sap_code: p.Codigo,
             description: p.Descripcion,
             qty: lineVars.cantidad,
-            list_price: lineVars.precio,
+            list_price: lineVars.precioDisplay,
             discount_pct: lineVars.descuento,
-            net_price: lineVars.ingresoNeto / (lineVars.cantidad || 1) || 0,
+            net_price: lineVars.ingresoNetoDisplay / (lineVars.cantidad || 1) || 0,
             cost_mp: p.Costo_Mp,
             margin_pct: lineVars.margen,
-            contribution_value: lineVars.contribucion
+            contribution_value: lineVars.contribucionCop
           };
         });
 
@@ -605,6 +636,10 @@ function SimulatorContent() {
   async function handleConfirmar() {
     const targetId = editId || autosavedDraftId;
     if (!targetId || !customer || productos.length === 0 || !validFrom || !validTo) return;
+    if (currency === "USD" && (!trm || Number(trm) <= 0)) {
+      setSaveError("Debes ingresar una TRM acordada para simular en USD");
+      return;
+    }
     
     setIsSaving(true);
     setSaveError("");
@@ -633,12 +668,12 @@ function SimulatorContent() {
           sap_code: p.Codigo,
           description: p.Descripcion,
           qty: lineVars.cantidad,
-          list_price: lineVars.precio,
+          list_price: lineVars.precioDisplay,
           discount_pct: lineVars.descuento,
-          net_price: lineVars.ingresoNeto / (lineVars.cantidad || 1) || 0,
+          net_price: lineVars.ingresoNetoDisplay / (lineVars.cantidad || 1) || 0,
           cost_mp: p.Costo_Mp,
           margin_pct: lineVars.margen,
-          contribution_value: lineVars.contribucion
+          contribution_value: lineVars.contribucionCop
         };
       });
 
@@ -708,14 +743,14 @@ function SimulatorContent() {
             <div>
               <div className="text-xs font-medium text-text-muted mb-1">Ingreso Neto Total</div>
               <div className="text-lg font-semibold tracking-tight">
-                {formatMoney(resumen.ingresoNetoTotal)}
+                {formatMoney(resumen.ingresoNetoTotalCop)} <span className="text-xs font-normal text-text-muted">(COP)</span>
               </div>
             </div>
 
             <div>
               <div className="text-xs font-medium text-text-muted mb-1">Costo Total</div>
               <div className="text-lg font-semibold tracking-tight">
-                {formatMoney(resumen.costoTotalTotal)}
+                {formatMoney(resumen.costoTotalTotalCop)} <span className="text-xs font-normal text-text-muted">(COP)</span>
               </div>
             </div>
 
@@ -723,10 +758,10 @@ function SimulatorContent() {
               <div className="text-xs font-medium text-text-muted mb-1">Contribución</div>
               <div
                 className={`text-lg font-semibold tracking-tight inline-flex items-center gap-1 ${
-                  resumen.contribucionTotal < 0 ? "text-red-600" : "text-emerald-600"
+                  resumen.contribucionTotalCop < 0 ? "text-red-600" : "text-emerald-600"
                 }`}
               >
-                {formatMoney(resumen.contribucionTotal)}
+                {formatMoney(resumen.contribucionTotalCop)} <span className="text-xs font-normal text-text-muted">(COP)</span>
               </div>
             </div>
 
@@ -984,14 +1019,26 @@ function SimulatorContent() {
               <tr>
                 <th className="px-4 py-4 text-left font-semibold text-text-primary">Código SAP</th>
                 <th className="px-4 py-4 text-left font-semibold text-text-primary">Descripción</th>
-                <th className="px-4 py-4 text-right font-semibold text-text-primary">Costo Unitario</th>
-                <th className="px-4 py-4 text-right font-semibold text-text-primary whitespace-nowrap">Precio Lista</th>
+                <th className="px-4 py-4 text-right font-semibold text-text-primary">
+                  Costo Unitario <span className="text-xs text-text-muted font-normal block">(COP)</span>
+                </th>
+                <th className="px-4 py-4 text-right font-semibold text-text-primary whitespace-nowrap">
+                  Precio Lista <span className="text-xs text-text-muted font-normal block">({currency})</span>
+                </th>
                 <th className="px-4 py-4 text-right font-semibold text-text-primary whitespace-nowrap">% Desc</th>
-                <th className="px-4 py-4 text-right font-semibold text-text-primary whitespace-nowrap">Precio Neto</th>
+                <th className="px-4 py-4 text-right font-semibold text-text-primary whitespace-nowrap">
+                  Precio Neto <span className="text-xs text-text-muted font-normal block">({currency})</span>
+                </th>
                 <th className="px-4 py-4 text-right font-semibold text-text-primary">Cantidad</th>
-                <th className="px-4 py-4 text-right font-semibold text-text-primary whitespace-nowrap">Ingreso Neto</th>
-                <th className="px-4 py-4 text-right font-semibold text-text-primary whitespace-nowrap">Costo Total</th>
-                <th className="px-4 py-4 text-right font-semibold text-text-primary">Contribución</th>
+                <th className="px-4 py-4 text-right font-semibold text-text-primary whitespace-nowrap">
+                  Ingreso Neto <span className="text-xs text-text-muted font-normal block">({currency})</span>
+                </th>
+                <th className="px-4 py-4 text-right font-semibold text-text-primary whitespace-nowrap">
+                  Costo Total <span className="text-xs text-text-muted font-normal block">(COP)</span>
+                </th>
+                <th className="px-4 py-4 text-right font-semibold text-text-primary">
+                  Contribución <span className="text-xs text-text-muted font-normal block">(COP)</span>
+                </th>
                 <th className="px-4 py-4 text-center font-semibold text-text-primary whitespace-nowrap">Margen & Δ</th>
                 <th className="px-4 py-4 text-center w-12 font-semibold text-text-primary"></th>
               </tr>
@@ -1026,7 +1073,7 @@ function SimulatorContent() {
 
                     <td className="px-4 py-4 text-right align-middle">
                       <div className="font-semibold text-text-primary mb-1">
-                        {formatMoney(r.precio)}
+                        {formatMoney(r.precioDisplay)}
                       </div>
                       {p._hasPriceList === false && (
                         <div className="mt-1.5 text-[10px] font-semibold text-amber-600 tracking-tight leading-none bg-amber-50 inline-block px-1.5 py-0.5 rounded border border-amber-100">
@@ -1051,7 +1098,7 @@ function SimulatorContent() {
 
                     <td className="px-4 py-4 text-right align-middle">
                       <div className="font-semibold text-text-primary">
-                        {formatMoney(r.precio * (1 - r.descuento / 100))}
+                        {formatMoney(r.precioDisplay * (1 - r.descuento / 100))}
                       </div>
                     </td>
 
@@ -1069,19 +1116,19 @@ function SimulatorContent() {
                     </td>
 
                     <td className="px-4 py-4 text-right font-semibold text-text-primary align-middle">
-                      {formatMoney(r.ingresoNeto)}
+                      {formatMoney(r.ingresoNetoDisplay)}
                     </td>
 
                     <td className="px-4 py-4 text-right text-text-muted align-middle">
-                      {formatMoney(r.costoTotal)}
+                      {formatMoney(r.costoTotalCop)}
                     </td>
 
                     <td
                       className={`px-4 py-4 text-right font-medium align-middle ${
-                        r.contribucion < 0 ? "text-red-600" : "text-emerald-600"
+                        r.contribucionCop < 0 ? "text-red-600" : "text-emerald-600"
                       }`}
                     >
-                      {formatMoney(r.contribucion)}
+                      {formatMoney(r.contribucionCop)}
                     </td>
 
                     <td className="px-4 py-4 align-middle">
