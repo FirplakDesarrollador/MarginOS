@@ -1013,163 +1013,193 @@ function SimulatorContent() {
       )}
 
       {productos.length > 0 && (
-        <div className="mt-6 overflow-x-auto border border-border-subtle rounded-2xl shadow-sm bg-white">
-          <table className="w-full text-sm">
-            <thead className="bg-slate-50 border-b border-border-subtle">
-              <tr>
-                <th className="px-4 py-4 text-left font-semibold text-text-primary">Código SAP</th>
-                <th className="px-4 py-4 text-left font-semibold text-text-primary">Descripción</th>
-                <th className="px-4 py-4 text-right font-semibold text-text-primary">
-                  Costo Unitario <span className="text-xs text-text-muted font-normal block">(COP)</span>
-                </th>
-                <th className="px-4 py-4 text-right font-semibold text-text-primary whitespace-nowrap">
-                  Precio Lista <span className="text-xs text-text-muted font-normal block">({currency})</span>
-                </th>
-                <th className="px-4 py-4 text-right font-semibold text-text-primary whitespace-nowrap">% Desc</th>
-                <th className="px-4 py-4 text-right font-semibold text-text-primary whitespace-nowrap">
-                  Precio Neto <span className="text-xs text-text-muted font-normal block">({currency})</span>
-                </th>
-                <th className="px-4 py-4 text-right font-semibold text-text-primary">Cantidad</th>
-                <th className="px-4 py-4 text-right font-semibold text-text-primary whitespace-nowrap">
-                  Ingreso Neto <span className="text-xs text-text-muted font-normal block">({currency})</span>
-                </th>
-                <th className="px-4 py-4 text-right font-semibold text-text-primary whitespace-nowrap">
-                  Costo Total <span className="text-xs text-text-muted font-normal block">(COP)</span>
-                </th>
-                <th className="px-4 py-4 text-right font-semibold text-text-primary">
-                  Contribución <span className="text-xs text-text-muted font-normal block">(COP)</span>
-                </th>
-                <th className="px-4 py-4 text-center font-semibold text-text-primary whitespace-nowrap">Margen & Δ</th>
-                <th className="px-4 py-4 text-center w-12 font-semibold text-text-primary"></th>
-              </tr>
-            </thead>
+        /*
+         * Outer card: overflow-hidden keeps rounded corners intact.
+         * Inner div: overflow-x-auto provides internal scroll — never page-level.
+         * Table: table-fixed + colgroup pin every column width so the table
+         *        fits within ~1040 px on desktop and scrolls internally on laptops.
+         */
+        <div className="mt-6 rounded-2xl border border-border-subtle shadow-sm bg-white overflow-hidden">
+          <div className="overflow-x-auto w-full scrollbar-thin scrollbar-thumb-slate-200 scrollbar-track-transparent">
+            <table className="w-full text-sm table-fixed" style={{ minWidth: "960px" }}>
+              {/* colgroup pins each column to a fixed width so the table fits ~1000px */}
+              <colgroup>
+                <col style={{ width: "130px" }} />{/* Código SAP */}
+                <col />{/* Descripción — takes remaining flex space */}
+                <col style={{ width: "88px" }} />{/* Costo Unit. */}
+                <col style={{ width: "88px" }} />{/* Precio Lista */}
+                <col style={{ width: "70px" }} />{/* % Desc input */}
+                <col style={{ width: "88px" }} />{/* P. Neto */}
+                <col style={{ width: "68px" }} />{/* Cant. input */}
+                <col style={{ width: "88px" }} />{/* Ing. Neto */}
+                <col style={{ width: "88px" }} />{/* Costo Total */}
+                <col style={{ width: "90px" }} />{/* Contribución */}
+                <col style={{ width: "76px" }} />{/* Margen & Δ */}
+                <col style={{ width: "36px" }} />{/* Delete */}
+              </colgroup>
+              <thead className="bg-slate-50 border-b border-border-subtle">
+                <tr>
+                  <th className="px-2.5 py-3 text-left text-xs font-semibold text-text-primary whitespace-nowrap">Código SAP</th>
+                  <th className="px-2.5 py-3 text-left text-xs font-semibold text-text-primary">Descripción</th>
+                  <th className="px-2.5 py-3 text-right text-xs font-semibold text-text-primary whitespace-nowrap">
+                    Costo Unit.<br /><span className="text-[10px] text-text-muted font-normal">(COP)</span>
+                  </th>
+                  <th className="px-2.5 py-3 text-right text-xs font-semibold text-text-primary whitespace-nowrap">
+                    Precio Lista<br /><span className="text-[10px] text-text-muted font-normal">({currency})</span>
+                  </th>
+                  <th className="px-2.5 py-3 text-right text-xs font-semibold text-text-primary">% Desc</th>
+                  <th className="px-2.5 py-3 text-right text-xs font-semibold text-text-primary whitespace-nowrap">
+                    P. Neto<br /><span className="text-[10px] text-text-muted font-normal">({currency})</span>
+                  </th>
+                  <th className="px-2.5 py-3 text-right text-xs font-semibold text-text-primary">Cant.</th>
+                  <th className="px-2.5 py-3 text-right text-xs font-semibold text-text-primary whitespace-nowrap">
+                    Ing. Neto<br /><span className="text-[10px] text-text-muted font-normal">({currency})</span>
+                  </th>
+                  <th className="px-2.5 py-3 text-right text-xs font-semibold text-text-primary whitespace-nowrap">
+                    Costo Total<br /><span className="text-[10px] text-text-muted font-normal">(COP)</span>
+                  </th>
+                  <th className="px-2.5 py-3 text-right text-xs font-semibold text-text-primary whitespace-nowrap">
+                    Contribución<br /><span className="text-[10px] text-text-muted font-normal">(COP)</span>
+                  </th>
+                  <th className="px-2.5 py-3 text-center text-xs font-semibold text-text-primary">Margen</th>
+                  <th className="py-3"></th>
+                </tr>
+              </thead>
 
-            <tbody className="divide-y divide-border-subtle">
-              {productos.map((p) => {
-                const r = calcularLinea(p);
+              <tbody className="divide-y divide-border-subtle">
+                {productos.map((p) => {
+                  const r = calcularLinea(p);
 
-                return (
-                  <tr key={p.row_id} className="group hover:bg-slate-50/40 transition-colors">
-                    <td className="px-4 py-4 font-medium text-text-primary align-middle">
-                      <span className="inline-flex items-center px-2 py-1 rounded text-xs font-semibold bg-slate-100 text-slate-800 tracking-tight">
-                        {p.Codigo}
-                      </span>
-                    </td>
-                    <td className="px-4 py-4 align-middle">
-                      <div className="font-medium text-text-primary min-w-[250px] max-w-[320px] whitespace-normal line-clamp-2 md:line-clamp-3 leading-snug" title={p.Descripcion}>
-                        {p.Descripcion}
-                      </div>
-                    </td>
+                  return (
+                    <tr key={p.row_id} className="group hover:bg-slate-50/40 transition-colors">
 
-                    <td className="px-4 py-4 text-right align-middle">
-                      {p.Costo_Mp > 0 ? (
-                        <span className="text-text-muted font-medium">{formatMoney(p.Costo_Mp)}</span>
-                      ) : (
-                        <div className="inline-flex items-center px-2 py-1 rounded bg-orange-50 text-orange-600 border border-orange-100" title="Sin costo de BOM reportado">
-                          <span className="font-semibold text-xs tracking-tight">Falta Costo ($0)</span>
+                      {/* Código SAP */}
+                      <td className="px-2.5 py-3 align-middle">
+                        <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[11px] font-semibold bg-slate-100 text-slate-700 tracking-tight max-w-full break-all">
+                          {p.Codigo}
+                        </span>
+                      </td>
+
+                      {/* Descripción — truncate with tooltip */}
+                      <td className="px-2.5 py-3 align-middle">
+                        <div
+                          className="w-full font-medium text-text-primary text-xs leading-snug"
+                          title={p.Descripcion}
+                        >
+                          {p.Descripcion}
                         </div>
-                      )}
-                    </td>
+                      </td>
 
-                    <td className="px-4 py-4 text-right align-middle">
-                      <div className="font-semibold text-text-primary mb-1">
-                        {formatMoney(r.precioDisplay)}
-                      </div>
-                      {p._hasPriceList === false && (
-                        <div className="mt-1.5 text-[10px] font-semibold text-amber-600 tracking-tight leading-none bg-amber-50 inline-block px-1.5 py-0.5 rounded border border-amber-100">
-                          Sin precio base
-                        </div>
-                      )}
-                    </td>
+                      {/* Costo Unit. */}
+                      <td className="px-2.5 py-3 text-right align-middle">
+                        {p.Costo_Mp > 0 ? (
+                          <span className="text-text-muted font-medium text-xs">{formatMoney(p.Costo_Mp)}</span>
+                        ) : (
+                          <span
+                            className="inline-flex items-center px-1.5 py-0.5 rounded bg-orange-50 text-orange-600 border border-orange-100 text-[10px] font-semibold"
+                            title="Sin costo de BOM reportado"
+                          >
+                            $0
+                          </span>
+                        )}
+                      </td>
 
-                    <td className="px-4 py-4 text-right align-middle">
-                      <input
-                        type="number"
-                        min="0"
-                        max="100"
-                        className="w-20 border border-border-subtle rounded-lg px-3 py-2 text-right focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary transition-all text-sm bg-white shadow-sm"
-                        value={inputs[p.row_id]?.descuento ?? ""}
-                        onChange={(e) =>
-                          updateInput(p.row_id, "descuento", Number(e.target.value))
-                        }
-                        placeholder="0"
-                      />
-                    </td>
-
-                    <td className="px-4 py-4 text-right align-middle">
-                      <div className="font-semibold text-text-primary">
-                        {formatMoney(r.precioDisplay * (1 - r.descuento / 100))}
-                      </div>
-                    </td>
-
-                    <td className="px-4 py-4 text-right align-middle">
-                      <input
-                        type="number"
-                        min="0"
-                        className="w-24 border border-border-subtle rounded-lg px-3 py-2 text-right focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary transition-all text-sm bg-white shadow-sm"
-                        value={inputs[p.row_id]?.cantidad ?? ""}
-                        onChange={(e) =>
-                          updateInput(p.row_id, "cantidad", Number(e.target.value))
-                        }
-                        placeholder="0"
-                      />
-                    </td>
-
-                    <td className="px-4 py-4 text-right font-semibold text-text-primary align-middle">
-                      {formatMoney(r.ingresoNetoDisplay)}
-                    </td>
-
-                    <td className="px-4 py-4 text-right text-text-muted align-middle">
-                      {formatMoney(r.costoTotalCop)}
-                    </td>
-
-                    <td
-                      className={`px-4 py-4 text-right font-medium align-middle ${
-                        r.contribucionCop < 0 ? "text-red-600" : "text-emerald-600"
-                      }`}
-                    >
-                      {formatMoney(r.contribucionCop)}
-                    </td>
-
-                    <td className="px-4 py-4 align-middle">
-                      {(() => {
-                        const m = Number.isFinite(r.margen) ? r.margen : 0;
-                        const d = m - margenObjetivo;
-                        
-                        let badgeBg = "bg-emerald-50 text-emerald-700 border-emerald-200";
-                        if (d <= -5) {
-                          badgeBg = "bg-red-50 text-red-700 border-red-200";
-                        } else if (d < 0) {
-                          badgeBg = "bg-amber-50 text-amber-700 border-amber-200";
-                        }
-
-                        return (
-                          <div className="flex flex-col items-center justify-center gap-1.5 min-w-[70px]">
-                            <span className="font-bold text-text-primary">
-                              {m.toFixed(1)}%
-                            </span>
-                            <span className={`text-[11px] font-semibold px-2 py-0.5 rounded shadow-sm border ${badgeBg}`}>
-                              {d > 0 ? "+" : ""}{d.toFixed(1)}%
-                            </span>
+                      {/* Precio Lista */}
+                      <td className="px-2.5 py-3 text-right align-middle">
+                        <div className="font-semibold text-text-primary text-xs">{formatMoney(r.precioDisplay)}</div>
+                        {p._hasPriceList === false && (
+                          <div className="mt-0.5 text-[9px] font-semibold text-amber-600 bg-amber-50 inline-block px-1 py-0.5 rounded border border-amber-100 leading-none">
+                            Sin precio
                           </div>
-                        );
-                      })()}
-                    </td>
+                        )}
+                      </td>
 
-                    <td className="px-4 py-4 text-center align-middle">
-                       <button
-                         onClick={() => handleRemoveProduct(p.row_id)}
-                         className="p-1.5 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors opacity-0 group-hover:opacity-100"
-                         title="Eliminar fila"
-                       >
-                         <Trash2 className="w-4 h-4" />
-                       </button>
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
+                      {/* % Desc — editable */}
+                      <td className="px-1.5 py-3 text-right align-middle">
+                        <input
+                          type="number"
+                          min="0"
+                          max="100"
+                          className="w-full border border-border-subtle rounded-md px-1.5 py-1 text-right focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary transition-all text-xs bg-white shadow-sm"
+                          value={inputs[p.row_id]?.descuento ?? ""}
+                          onChange={(e) => updateInput(p.row_id, "descuento", Number(e.target.value))}
+                          placeholder="0"
+                        />
+                      </td>
+
+                      {/* P. Neto */}
+                      <td className="px-2.5 py-3 text-right align-middle">
+                        <div className="font-semibold text-text-primary text-xs">
+                          {formatMoney(r.precioDisplay * (1 - r.descuento / 100))}
+                        </div>
+                      </td>
+
+                      {/* Cant. — editable */}
+                      <td className="px-1.5 py-3 text-right align-middle">
+                        <input
+                          type="number"
+                          min="0"
+                          className="w-full border border-border-subtle rounded-md px-1.5 py-1 text-right focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary transition-all text-xs bg-white shadow-sm"
+                          value={inputs[p.row_id]?.cantidad ?? ""}
+                          onChange={(e) => updateInput(p.row_id, "cantidad", Number(e.target.value))}
+                          placeholder="0"
+                        />
+                      </td>
+
+                      {/* Ing. Neto */}
+                      <td className="px-2.5 py-3 text-right font-semibold text-text-primary text-xs align-middle">
+                        {formatMoney(r.ingresoNetoDisplay)}
+                      </td>
+
+                      {/* Costo Total */}
+                      <td className="px-2.5 py-3 text-right text-text-muted text-xs align-middle">
+                        {formatMoney(r.costoTotalCop)}
+                      </td>
+
+                      {/* Contribución */}
+                      <td
+                        className={`px-2.5 py-3 text-right font-semibold text-xs align-middle ${
+                          r.contribucionCop < 0 ? "text-red-600" : "text-emerald-600"
+                        }`}
+                      >
+                        {formatMoney(r.contribucionCop)}
+                      </td>
+
+                      {/* Margen & Δ */}
+                      <td className="px-1.5 py-3 align-middle">
+                        {(() => {
+                          const m = Number.isFinite(r.margen) ? r.margen : 0;
+                          const d = m - margenObjetivo;
+                          let badgeBg = "bg-emerald-50 text-emerald-700 border-emerald-200";
+                          if (d <= -5) badgeBg = "bg-red-50 text-red-700 border-red-200";
+                          else if (d < 0) badgeBg = "bg-amber-50 text-amber-700 border-amber-200";
+                          return (
+                            <div className="flex flex-col items-center gap-0.5">
+                              <span className="font-bold text-text-primary text-xs whitespace-nowrap">{m.toFixed(1)}%</span>
+                              <span className={`text-[10px] font-semibold px-1.5 py-0.5 rounded border whitespace-nowrap ${badgeBg}`}>
+                                {d > 0 ? "+" : ""}{d.toFixed(1)}%
+                              </span>
+                            </div>
+                          );
+                        })()}
+                      </td>
+
+                      {/* Delete */}
+                      <td className="py-3 text-center align-middle">
+                        <button
+                          onClick={() => handleRemoveProduct(p.row_id)}
+                          className="p-1 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-md transition-colors opacity-0 group-hover:opacity-100"
+                          title="Eliminar fila"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </button>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
         </div>
       )}
 
