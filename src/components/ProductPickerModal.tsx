@@ -154,7 +154,7 @@ export function ProductPickerModal({ isOpen, onClose, onSelect, existingSapCodes
                           {p.uom}
                         </span>
                       </div>
-                      <p className="text-sm font-medium text-text-primary truncate">
+                      <p className="text-sm font-medium text-text-primary">
                         {p.description}
                       </p>
                     </div>

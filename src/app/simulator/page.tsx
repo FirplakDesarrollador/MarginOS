@@ -1075,15 +1075,15 @@ function SimulatorContent() {
 
                       {/* Código SAP */}
                       <td className="px-2.5 py-3 align-middle">
-                        <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[11px] font-semibold bg-slate-100 text-slate-700 tracking-tight truncate max-w-full">
+                        <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[11px] font-semibold bg-slate-100 text-slate-700 tracking-tight max-w-full break-all">
                           {p.Codigo}
                         </span>
                       </td>
 
                       {/* Descripción — truncate with tooltip */}
-                      <td className="px-2.5 py-3 align-middle max-w-0">
+                      <td className="px-2.5 py-3 align-middle">
                         <div
-                          className="w-full truncate font-medium text-text-primary text-xs leading-snug"
+                          className="w-full font-medium text-text-primary text-xs leading-snug"
                           title={p.Descripcion}
                         >
                           {p.Descripcion}
