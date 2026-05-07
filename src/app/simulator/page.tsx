@@ -18,6 +18,7 @@ type Producto = {
   Costo_Mp: number;
   product_id?: string;
   _hasPriceList?: boolean;
+  target_margin_pct?: number | null;
 };
 
 type Inputs = {
@@ -49,6 +50,7 @@ function SimulatorContent() {
   // ==========================================
   const [customer, setCustomer] = useState<Customer | null>(null);
   const [simulationStatus, setSimulationStatus] = useState("DRAFT");
+  const [simulationNumber, setSimulationNumber] = useState<string | null>(null);
   const [projectName, setProjectName] = useState("");
   const [simulationType, setSimulationType] = useState("PRICE_LIST");
   const [currency, setCurrency] = useState("COP");
@@ -76,6 +78,9 @@ function SimulatorContent() {
   const [lastSavedAt, setLastSavedAt] = useState<Date | null>(null);
   const [isDraftResumeModalOpen, setIsDraftResumeModalOpen] = useState(false);
   const [foundDraftId, setFoundDraftId] = useState<string | null>(null);
+  
+  // UI States
+  const [showBackToTop, setShowBackToTop] = useState(false);
 
   // ==========================================
   // EFECTO P/ EDICION (CARGA METADATA E INPUTS)
@@ -93,20 +98,38 @@ function SimulatorContent() {
           .eq("id", editId)
           .single();
 
-        if (simErr) throw simErr;
+        if (simErr) {
+          console.error("Supabase Error (simulations fetch):", {
+            message: simErr.message,
+            details: simErr.details,
+            hint: simErr.hint,
+            code: simErr.code
+          });
+          throw new Error(`Error al cargar simulación: ${simErr.message}`);
+        }
         
         const { data: lines, error: linesErr } = await supabase
           .from("simulation_lines")
           .select("*")
           .eq("simulation_id", editId);
 
-        if (linesErr) throw linesErr;
+        if (linesErr) {
+          console.error("Supabase Error (simulation_lines fetch):", {
+            message: linesErr.message,
+            details: linesErr.details,
+            hint: linesErr.hint,
+            code: linesErr.code
+          });
+          throw new Error(`Error al cargar líneas: ${linesErr.message}`);
+        }
 
         if (isMounted && sim && lines) {
            setOriginalSimulation(sim);
-           setCustomer(sim.customers); // Req metadata
+           setCustomer(sim.customers || null); // Safe fallback if customer is missing
            setProjectName(sim.project_name || "");
            setSimulationStatus(sim.status || "DRAFT");
+           setSimulationNumber(sim.simulation_number || null);
+           setMargenObjetivo(sim.target_margin_pct ?? 65);
            setSimulationType(sim.simulation_type || "PRICE_LIST");
            setCurrency(sim.currency || "COP");
            setTrm(sim.trm || "");
@@ -114,15 +137,34 @@ function SimulatorContent() {
            setValidTo(sim.valid_to ? sim.valid_to.split("T")[0] : "");
            
            // Fetch if it is a version of something
-           const { data: ver } = await supabase
+           const { data: ver, error: verErr } = await supabase
              .from("simulation_versions")
              .select("original_simulation_id")
              .eq("renewed_simulation_id", editId)
              .maybeSingle();
 
-           if (ver) {
-             // temporal mock type since column doesn't exist yet
+           if (verErr) {
+             console.error("Supabase Error (simulation_versions fetch):", verErr.message);
+           } else if (ver) {
              setVersionTypeDisplay({ type: "UNKNOWN", originalId: ver.original_simulation_id });
+           }
+
+           // Fetch product target margins securely (without relying on inner joins)
+           const productIds = lines.map(l => l.product_id).filter(Boolean);
+           const productsMap: Record<string, number | null> = {};
+           if (productIds.length > 0) {
+             const { data: prods, error: prodErr } = await supabase
+               .from("products")
+               .select("id, target_margin_pct")
+               .in("id", productIds);
+
+             if (prodErr) {
+               console.error("Supabase Error (products margins):", prodErr.message);
+             } else if (prods) {
+               prods.forEach(p => {
+                 productsMap[p.id] = p.target_margin_pct;
+               });
+             }
            }
 
            // Restructure products into states
@@ -131,13 +173,16 @@ function SimulatorContent() {
            
            for (const l of lines) {
               const r_id = crypto.randomUUID();
+              const p_margin = l.product_id ? (productsMap[l.product_id] ?? null) : null;
+              
               newProds.push({
                  row_id: r_id,
                  Codigo: l.sap_code,
                  Descripcion: l.description || "",
                  Costo_Mp: l.cost_mp || 0,
                  product_id: l.product_id,
-                 _hasPriceList: (l.list_price || 0) > 0
+                 _hasPriceList: (l.list_price || 0) > 0,
+                 target_margin_pct: p_margin,
               });
               
               newInputs[r_id] = {
@@ -150,8 +195,8 @@ function SimulatorContent() {
            setProductos(newProds);
            setInputs(newInputs);
         }
-      } catch (err) {
-        console.error("Error cargando simulación:", err);
+      } catch (err: any) {
+        console.error("Error cargando simulación (catch):", err?.message || err);
       } finally {
         if (isMounted) setIsLoadingEdit(false);
       }
@@ -162,10 +207,10 @@ function SimulatorContent() {
   }, [editId, supabase]);
 
   const formatMoney = useMemo(() => {
-    return (value: number) =>
+    return (value: number, forceDecimals = false) =>
       new Intl.NumberFormat("en-US", {
-        minimumFractionDigits: 0,
-        maximumFractionDigits: 0,
+        minimumFractionDigits: forceDecimals ? 2 : 0,
+        maximumFractionDigits: forceDecimals ? 2 : 0,
       }).format(value);
   }, []);
 
@@ -207,6 +252,7 @@ function SimulatorContent() {
       Costo_Mp: bomData?.recalculated_cost_mp || 0,
       product_id: dbProduct.id,
       _hasPriceList: foundPrice,
+      target_margin_pct: dbProduct.target_margin_pct,
     };
 
     setProductos((prev) => [...prev, newProduct]);
@@ -268,7 +314,8 @@ function SimulatorContent() {
       margen, 
       precioDisplay, 
       descuento, 
-      cantidad 
+      cantidad,
+      margenObjetivoLinea: p.target_margin_pct ?? margenObjetivo
     };
   }
 
@@ -314,7 +361,9 @@ function SimulatorContent() {
 
     setIsSaving(true);
     try {
-      // 1. Insert header
+      const targetId = editId || autosavedDraftId;
+
+      // 1. Insert/Update header
       const headerPayload = {
         customer_id: customer.id,
         channel_id: customer.default_channel_id || null,
@@ -324,17 +373,18 @@ function SimulatorContent() {
         trm: currency === "USD" ? Number(trm) : null,
         valid_from: validFrom || null,
         valid_to: validTo || null,
-        status: "DRAFT"
+        status: targetId ? simulationStatus : "DRAFT",
+        target_margin_pct: margenObjetivo
       };
 
       let finalSimId;
 
-      if (overwrite && editId) {
+      if (targetId) {
         // OVERWRITE MODE
         const { data: updatedSimulationData, error: updateError } = await supabase
           .from("simulations")
           .update(headerPayload)
-          .eq("id", editId)
+          .eq("id", targetId)
           .select()
           .single();
         if (updateError) throw updateError;
@@ -345,7 +395,7 @@ function SimulatorContent() {
         if (delError) throw delError;
 
       } else {
-        // INSERT MODE (Should ideally only be triggered if !editId now)
+        // INSERT MODE
         const { data: insertedSimulationData, error: insertError } = await supabase
           .from("simulations")
           .insert(headerPayload)
@@ -353,6 +403,7 @@ function SimulatorContent() {
           .single();
         if (insertError) throw insertError;
         finalSimId = insertedSimulationData.id;
+        setAutosavedDraftId(finalSimId);
       }
 
       // 2. Insert lines
@@ -422,7 +473,8 @@ function SimulatorContent() {
         trm: currency === "USD" ? Number(trm) : null,
         valid_from: validFrom || null,
         valid_to: validTo || null,
-        status: "VIGENTE"
+        status: "VIGENTE",
+        target_margin_pct: margenObjetivo
       };
 
       // 1. Crear nuevo header simulación
@@ -577,7 +629,8 @@ function SimulatorContent() {
           trm: currency === "USD" ? Number(trm) : null,
           valid_from: validFrom || null,
           valid_to: validTo || null,
-          updated_at: new Date().toISOString()
+          updated_at: new Date().toISOString(),
+          target_margin_pct: margenObjetivo
         };
 
         let targetSimId = editId || autosavedDraftId;
@@ -654,7 +707,8 @@ function SimulatorContent() {
         valid_from: validFrom || null,
         valid_to: validTo || null,
         status: "VIGENTE",
-        updated_at: new Date().toISOString()
+        updated_at: new Date().toISOString(),
+        target_margin_pct: margenObjetivo
       };
 
       await supabase.from("simulations").update(headerPayload).eq("id", targetId);
@@ -690,6 +744,31 @@ function SimulatorContent() {
     }
   }
 
+  async function handleRechazar() {
+    const targetId = editId || autosavedDraftId;
+    if (!targetId) return;
+    
+    setIsSaving(true);
+    setSaveError("");
+    try {
+      const headerPayload = {
+        status: "RECHAZADA",
+        updated_at: new Date().toISOString(),
+      };
+
+      const { error } = await supabase.from("simulations").update(headerPayload).eq("id", targetId);
+      if (error) throw error;
+      
+      setSimulationStatus("RECHAZADA");
+      setSaveSuccess(true);
+      setTimeout(() => setSaveSuccess(false), 4000);
+    } catch (err: any) {
+      setSaveError(err.message || "Error al rechazar la simulación.");
+    } finally {
+      setIsSaving(false);
+    }
+  }
+
   return (
     <AppShell title="Simulador Comercial">
       <div className="mx-auto w-full selection:bg-brand-primary selection:text-white pb-32">
@@ -713,7 +792,14 @@ function SimulatorContent() {
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
           <div>
             <div className="flex items-center gap-3">
-              <h1 className="text-2xl font-bold tracking-tight text-text-primary">Simulador de Negocio</h1>
+              <h1 className="text-2xl font-bold tracking-tight text-text-primary">
+                Simulador de Negocio
+                {simulationNumber && (
+                  <span className="ml-3 inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-semibold bg-slate-100 text-slate-700 border border-slate-200 align-middle">
+                    {simulationNumber}
+                  </span>
+                )}
+              </h1>
               
               {/* Autosave Indicator */}
               <div className="flex items-center gap-1.5 opacity-60 text-xs font-medium">
@@ -939,9 +1025,13 @@ function SimulatorContent() {
           </div>
         </div>
         <div className="flex gap-3">
-          {(!customer || !customer.default_channel_id) ? (
+          {!customer ? (
             <div className="flex-1 md:flex-none inline-flex items-center px-4 py-2 bg-amber-50 text-amber-700 text-sm font-medium rounded-xl border border-amber-200 shadow-sm">
-              Selecciona un cliente para obtener precios
+              Selecciona un cliente para ver productos disponibles
+            </div>
+          ) : !customer.default_channel_id ? (
+            <div className="flex-1 md:flex-none inline-flex items-center px-4 py-2 bg-amber-50 text-amber-700 text-sm font-medium rounded-xl border border-amber-200 shadow-sm">
+              Este cliente no tiene canal asignado. Asigna un canal para ver productos disponibles.
             </div>
           ) : (
             <button
@@ -955,6 +1045,15 @@ function SimulatorContent() {
           
           {editId ? (
             <>
+               {(simulationStatus === "DRAFT" || simulationStatus === "VIGENTE") && (
+                 <button
+                   onClick={handleRechazar}
+                   disabled={isSaving}
+                   className="inline-flex items-center justify-center gap-2 px-6 py-2.5 bg-red-50 text-red-700 border border-red-200 text-sm font-medium rounded-xl hover:bg-red-100 transition-all shadow-sm disabled:opacity-50 flex-1 md:flex-none"
+                 >
+                   Rechazar
+                 </button>
+               )}
                <button
                  onClick={() => handleSaveSimulation(true)}
                  disabled={isSaving}
@@ -997,9 +1096,13 @@ function SimulatorContent() {
           <p className="text-sm text-text-muted">
             Aún no hay productos en la tabla. Agrega productos para comenzar la simulación.
           </p>
-          {(!customer || !customer.default_channel_id) ? (
+          {!customer ? (
             <div className="mt-6 inline-flex items-center gap-2 px-4 py-2 border border-amber-200 bg-amber-50 text-amber-700 text-sm font-medium rounded-xl shadow-sm">
-              Busca o crea un cliente primero
+              Selecciona un cliente para ver productos disponibles
+            </div>
+          ) : !customer.default_channel_id ? (
+            <div className="mt-6 inline-flex items-center gap-2 px-4 py-2 border border-amber-200 bg-amber-50 text-amber-700 text-sm font-medium rounded-xl shadow-sm">
+              Este cliente no tiene canal asignado. Asigna un canal para ver productos disponibles.
             </div>
           ) : (
             <button
@@ -1019,8 +1122,15 @@ function SimulatorContent() {
          * Table: table-fixed + colgroup pin every column width so the table
          *        fits within ~1040 px on desktop and scrolls internally on laptops.
          */
-        <div className="mt-6 rounded-2xl border border-border-subtle shadow-sm bg-white overflow-hidden">
-          <div className="overflow-x-auto w-full scrollbar-thin scrollbar-thumb-slate-200 scrollbar-track-transparent">
+        <div className="mt-6 rounded-2xl border border-border-subtle shadow-sm bg-white flex flex-col relative" style={{ maxHeight: 'min(75vh, 800px)' }}>
+          <div 
+            className="overflow-auto w-full scrollbar-thin scrollbar-thumb-slate-200 scrollbar-track-transparent flex-1" 
+            id="simulator-table-container"
+            onScroll={(e) => {
+              const target = e.target as HTMLDivElement;
+              setShowBackToTop(target.scrollTop > 300);
+            }}
+          >
             <table className="w-full text-sm table-fixed" style={{ minWidth: "960px" }}>
               {/* colgroup pins each column to a fixed width so the table fits ~1000px */}
               <colgroup>
@@ -1037,7 +1147,7 @@ function SimulatorContent() {
                 <col style={{ width: "76px" }} />{/* Margen & Δ */}
                 <col style={{ width: "36px" }} />{/* Delete */}
               </colgroup>
-              <thead className="bg-slate-50 border-b border-border-subtle">
+              <thead className="bg-slate-50 border-b border-border-subtle sticky top-0 z-20 shadow-sm after:absolute after:bottom-[-1px] after:left-0 after:right-0 after:h-[1px] after:bg-border-subtle">
                 <tr>
                   <th className="px-2.5 py-3 text-left text-xs font-semibold text-text-primary whitespace-nowrap">Código SAP</th>
                   <th className="px-2.5 py-3 text-left text-xs font-semibold text-text-primary">Descripción</th>
@@ -1106,7 +1216,7 @@ function SimulatorContent() {
 
                       {/* Precio Lista */}
                       <td className="px-2.5 py-3 text-right align-middle">
-                        <div className="font-semibold text-text-primary text-xs">{formatMoney(r.precioDisplay)}</div>
+                        <div className="font-semibold text-text-primary text-xs">{formatMoney(r.precioDisplay, currency === "USD")}</div>
                         {p._hasPriceList === false && (
                           <div className="mt-0.5 text-[9px] font-semibold text-amber-600 bg-amber-50 inline-block px-1 py-0.5 rounded border border-amber-100 leading-none">
                             Sin precio
@@ -1130,7 +1240,7 @@ function SimulatorContent() {
                       {/* P. Neto */}
                       <td className="px-2.5 py-3 text-right align-middle">
                         <div className="font-semibold text-text-primary text-xs">
-                          {formatMoney(r.precioDisplay * (1 - r.descuento / 100))}
+                          {formatMoney(r.precioDisplay * (1 - r.descuento / 100), currency === "USD")}
                         </div>
                       </td>
 
@@ -1148,7 +1258,7 @@ function SimulatorContent() {
 
                       {/* Ing. Neto */}
                       <td className="px-2.5 py-3 text-right font-semibold text-text-primary text-xs align-middle">
-                        {formatMoney(r.ingresoNetoDisplay)}
+                        {formatMoney(r.ingresoNetoDisplay, currency === "USD")}
                       </td>
 
                       {/* Costo Total */}
@@ -1169,12 +1279,12 @@ function SimulatorContent() {
                       <td className="px-1.5 py-3 align-middle">
                         {(() => {
                           const m = Number.isFinite(r.margen) ? r.margen : 0;
-                          const d = m - margenObjetivo;
+                          const d = m - r.margenObjetivoLinea;
                           let badgeBg = "bg-emerald-50 text-emerald-700 border-emerald-200";
                           if (d <= -5) badgeBg = "bg-red-50 text-red-700 border-red-200";
                           else if (d < 0) badgeBg = "bg-amber-50 text-amber-700 border-amber-200";
                           return (
-                            <div className="flex flex-col items-center gap-0.5">
+                            <div className="flex flex-col items-center gap-0.5" title={`Margen objetivo: ${r.margenObjetivoLinea}%`}>
                               <span className="font-bold text-text-primary text-xs whitespace-nowrap">{m.toFixed(1)}%</span>
                               <span className={`text-[10px] font-semibold px-1.5 py-0.5 rounded border whitespace-nowrap ${badgeBg}`}>
                                 {d > 0 ? "+" : ""}{d.toFixed(1)}%
@@ -1200,6 +1310,24 @@ function SimulatorContent() {
               </tbody>
             </table>
           </div>
+          
+          {/* BOTÓN VOLVER ARRIBA */}
+          <button
+            onClick={() => {
+              const container = document.getElementById('simulator-table-container');
+              if (container) container.scrollTo({ top: 0, behavior: 'smooth' });
+            }}
+            className={[
+              "absolute bottom-8 right-8 p-3 rounded-full shadow-lg transition-all duration-300 flex items-center justify-center group z-30",
+              showBackToTop ? "opacity-30 hover:opacity-100 translate-y-0" : "opacity-0 pointer-events-none translate-y-4",
+              "bg-slate-800 hover:bg-[#0f172a] text-white"
+            ].join(" ")}
+            title="Volver arriba"
+          >
+            <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 10l7-7m0 0l7 7m-7-7v18" />
+            </svg>
+          </button>
         </div>
       )}
 
@@ -1212,6 +1340,7 @@ function SimulatorContent() {
         onClose={() => setIsProductModalOpen(false)}
         onSelect={handleAddProduct}
         existingSapCodes={productos.map(p => p.Codigo)}
+        channelId={customer?.default_channel_id || undefined}
       />
 
       <CustomerCreateModal

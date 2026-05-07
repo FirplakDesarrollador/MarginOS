@@ -4,11 +4,13 @@ import { useEffect, useState, useMemo } from "react";
 import Link from "next/link";
 import {
   ArrowLeft, Users, Search, Plus, Pencil, X, UserPlus, Building2, Mail,
-  ChevronRight, FileText, Calculator, Clock, AlertCircle, ExternalLink
+  ChevronRight, FileText, Calculator, Clock, AlertCircle, ExternalLink,
+  Trash2, FileDown, CheckCircle
 } from "lucide-react";
 import { AppShell } from "@/components/AppShell";
 import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
+import { exportSimulationToExcel } from "@/lib/excelExport";
 
 // =============================================
 // TYPES
@@ -25,6 +27,7 @@ type Simulation = {
   valid_to: string | null;
   created_at: string;
   updated_at: string | null;
+  simulation_number?: string | null;
 };
 
 type Customer = {
@@ -74,9 +77,14 @@ export default function CustomersPage() {
   });
   const [formLoading, setFormLoading] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
+  const [simFetchError, setSimFetchError] = useState<any>(null);
 
   // Detail modal
   const [selectedCustomer, setSelectedCustomer] = useState<CustomerEnriched | null>(null);
+
+  // Actions modal
+  const [actionSim, setActionSim] = useState<Simulation | null>(null);
+  const [exporting, setExporting] = useState(false);
 
   // =============================================
   // DATA FETCH
@@ -85,11 +93,15 @@ export default function CustomersPage() {
     setLoading(true);
     const [custRes, simRes, chRes] = await Promise.all([
       supabase.from("customers").select("*, sales_channels(name)").order("name"),
-      supabase.from("simulations").select("id, customer_id, status, project_name, simulation_type, currency, valid_from, valid_to, created_at, updated_at").order("created_at", { ascending: false }),
+      supabase.from("simulations").select("*").order("created_at", { ascending: false }),
       supabase.from("sales_channels").select("id, name").eq("is_active", true).order("name"),
     ]);
     if (custRes.data) setCustomers(custRes.data);
-    if (simRes.data) setSimulations(simRes.data);
+    if (simRes.data) {
+      setSimulations(simRes.data);
+    } else if (simRes.error) {
+      setSimFetchError(simRes.error);
+    }
     if (chRes.data) setChannels(chRes.data);
     setLoading(false);
   }
@@ -118,6 +130,12 @@ export default function CustomersPage() {
       };
     });
   }, [customers, simulations]);
+
+  useEffect(() => {
+    if (enriched.length > 0) {
+       console.log("DEBUG - first enriched customer simCount:", enriched[0].simCount);
+    }
+  }, [enriched]);
 
   // =============================================
   // FILTERED
@@ -170,6 +188,10 @@ export default function CustomersPage() {
       case "RENOVADA":
         return <span className={`${base} bg-blue-50 text-blue-700 border border-blue-200`}>
           <span className="w-1.5 h-1.5 rounded-full bg-blue-500" /> Renovada
+        </span>;
+      case "RECHAZADA":
+        return <span className={`${base} bg-slate-100 text-slate-700 border border-slate-300`}>
+          <span className="w-1.5 h-1.5 rounded-full bg-slate-500" /> Rechazada
         </span>;
       case "DRAFT":
         return <span className={`${base} bg-amber-50 text-amber-700 border border-amber-200`}>
@@ -259,12 +281,77 @@ export default function CustomersPage() {
     }
   }
 
+  async function handleExport(sim: Simulation) {
+    setExporting(true);
+    try {
+      const { data: lines, error } = await supabase
+        .from("simulation_lines")
+        .select("*")
+        .eq("simulation_id", sim.id);
+
+      if (error) throw error;
+      if (!lines || lines.length === 0) {
+        alert("Esta simulación no tiene líneas guardadas para exportar.");
+        return;
+      }
+
+      const { data: versionData } = await supabase
+        .from("simulation_versions")
+        .select("version_type, original_simulation_id, created_at")
+        .eq("renewed_simulation_id", sim.id)
+        .maybeSingle();
+
+      await exportSimulationToExcel(sim, lines, versionData);
+    } catch (err) {
+      console.error(err);
+      alert("Error exportando excel.");
+    } finally {
+      setExporting(false);
+      setActionSim(null);
+    }
+  }
+
+  async function handleStatusChange(sim: Simulation, newStatus: string) {
+    try {
+      setExporting(true);
+      const { error } = await supabase.from("simulations").update({ status: newStatus }).eq("id", sim.id);
+      if (error) throw error;
+      
+      setSimulations(prev => prev.map(s => s.id === sim.id ? { ...s, status: newStatus } : s));
+      
+      // update selectedCustomer so UI updates immediately
+      if (selectedCustomer) {
+        setSelectedCustomer(prev => {
+           if (!prev) return prev;
+           return {
+             ...prev,
+             simulations: prev.simulations.map(s => s.id === sim.id ? { ...s, status: newStatus } : s)
+           };
+        });
+      }
+      
+      setActionSim(null);
+    } catch (e) {
+      alert("Error actualizando estado.");
+    } finally {
+      setExporting(false);
+    }
+  }
+
   // =============================================
   // RENDER
   // =============================================
   return (
     <AppShell title="Clientes">
       <div className="relative z-10">
+        
+        {simFetchError && (
+          <div className="mt-8 p-4 bg-red-50 text-red-700 border border-red-200 rounded-xl font-mono text-xs">
+            <h4 className="font-bold mb-2">Error Fetching Simulations:</h4>
+            <pre>{JSON.stringify(simFetchError, null, 2)}</pre>
+          </div>
+        )}
+
         {/* HEADER */}
         <div className="mt-8 flex items-start justify-between gap-4 flex-wrap">
           <div>
@@ -519,13 +606,20 @@ export default function CustomersPage() {
                         <tr key={sim.id} className="hover:bg-slate-50/50 transition-colors">
                           <td className="px-5 py-4 text-text-muted align-middle">{formatDateTime(sim.created_at)}</td>
                           <td className="px-5 py-4 align-middle">
-                            {sim.project_name ? (
-                              <span className="font-medium text-text-primary">{sim.project_name}</span>
-                            ) : (
-                              <span className="text-text-muted italic text-xs flex items-center gap-1">
-                                <AlertCircle className="w-3 h-3 opacity-50" /> Sin especificar
-                              </span>
-                            )}
+                            <div className="flex flex-col gap-0.5">
+                              {sim.simulation_number && (
+                                <span className="text-[10px] font-semibold text-text-muted">
+                                  {sim.simulation_number}
+                                </span>
+                              )}
+                              {sim.project_name ? (
+                                <span className="font-medium text-text-primary">{sim.project_name}</span>
+                              ) : (
+                                <span className="text-text-muted italic text-xs flex items-center gap-1">
+                                  <AlertCircle className="w-3 h-3 opacity-50" /> Sin especificar
+                                </span>
+                              )}
+                            </div>
                           </td>
                           <td className="px-5 py-4 align-middle">
                             <span className="text-text-muted text-xs font-medium">{getTypeLabel(sim.simulation_type)}</span>
@@ -543,9 +637,9 @@ export default function CustomersPage() {
                           <td className="px-5 py-4 text-center align-middle">{getStatusPill(displayStatus)}</td>
                           <td className="px-5 py-4 text-center align-middle">
                             <button
-                              onClick={() => router.push(`/simulator?id=${sim.id}`)}
+                              onClick={() => setActionSim(sim)}
                               className="inline-flex items-center gap-1 px-3 py-1.5 text-xs font-semibold text-brand-primary hover:text-white hover:bg-brand-primary rounded-lg transition-all border border-brand-primary/20 hover:border-transparent shadow-sm">
-                              <Pencil className="w-3 h-3" /> Editar
+                              Acciones
                             </button>
                           </td>
                         </tr>
@@ -570,6 +664,81 @@ export default function CustomersPage() {
               </div>
               <button onClick={() => setSelectedCustomer(null)} className="px-4 py-2 text-text-muted hover:text-text-primary text-sm font-medium transition-colors">
                 Cerrar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ================================================= */}
+      {/* ACTION MODAL                                      */}
+      {/* ================================================= */}
+      {actionSim && (
+        <div className="fixed inset-0 z-[80] flex items-center justify-center p-4">
+          <div
+            className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm transition-opacity"
+            onClick={() => !exporting && setActionSim(null)}
+          />
+          <div className="relative w-full max-w-sm bg-white rounded-2xl shadow-xl border border-border-subtle flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+            <div className="px-5 py-4 border-b border-border-subtle bg-slate-50/50">
+              <h3 className="text-base font-semibold text-text-primary">
+                Acciones del escenario
+              </h3>
+              <p className="text-xs text-text-muted mt-1 truncate">
+                {actionSim.project_name || "Sin título"}
+              </p>
+            </div>
+            <div className="p-5 flex flex-col gap-3">
+              <button
+                onClick={() => router.push(`/simulator?id=${actionSim.id}`)}
+                disabled={exporting}
+                className="w-full flex items-center gap-3 px-4 py-3 bg-white border border-border-subtle rounded-xl hover:border-brand-primary/40 hover:bg-brand-primary/5 text-sm font-medium text-text-primary transition-all disabled:opacity-50"
+              >
+                <Pencil className="w-4 h-4 text-text-muted" />
+                Editar / Ver simulación
+              </button>
+
+              <button
+                onClick={() => handleExport(actionSim)}
+                disabled={exporting}
+                className="w-full flex items-center gap-3 px-4 py-3 bg-white border border-border-subtle rounded-xl hover:border-brand-primary/40 hover:bg-brand-primary/5 text-sm font-medium text-text-primary transition-all disabled:opacity-50"
+              >
+                <FileDown className="w-4 h-4 text-text-muted" />
+                <span className="flex-1 text-left">Descargar Excel</span>
+                {exporting && (
+                  <span className="w-4 h-4 border-2 border-brand-primary border-t-transparent rounded-full animate-spin" />
+                )}
+              </button>
+
+              {actionSim.status === "DRAFT" && (
+                <button
+                  onClick={() => handleStatusChange(actionSim, "VIGENTE")}
+                  disabled={exporting}
+                  className="w-full flex items-center gap-3 px-4 py-3 bg-white border border-border-subtle rounded-xl hover:border-emerald-400 hover:bg-emerald-50 text-sm font-medium text-emerald-700 transition-all disabled:opacity-50 mt-1"
+                >
+                  <CheckCircle className="w-4 h-4" />
+                  Activar / Confirmar
+                </button>
+              )}
+
+              {(actionSim.status === "DRAFT" || actionSim.status === "VIGENTE") && (
+                <button
+                  onClick={() => handleStatusChange(actionSim, "RECHAZADA")}
+                  disabled={exporting}
+                  className="w-full flex items-center gap-3 px-4 py-3 bg-white border border-red-200 rounded-xl hover:border-red-400 hover:bg-red-50 text-sm font-medium text-red-600 transition-all disabled:opacity-50 mt-1"
+                >
+                  <X className="w-4 h-4" />
+                  Rechazar Simulación
+                </button>
+              )}
+            </div>
+            <div className="px-5 py-3 border-t border-border-subtle bg-slate-50/50">
+              <button
+                onClick={() => setActionSim(null)}
+                disabled={exporting}
+                className="w-full text-center px-4 py-2 bg-transparent text-text-muted hover:text-text-primary text-sm font-medium transition-colors disabled:opacity-50"
+              >
+                Cancelar
               </button>
             </div>
           </div>

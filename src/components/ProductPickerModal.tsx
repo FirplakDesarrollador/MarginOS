@@ -10,6 +10,7 @@ export type DBProduct = {
   description: string;
   category: string;
   uom: string;
+  target_margin_pct?: number | null;
 };
 
 type ProductPickerModalProps = {
@@ -17,9 +18,10 @@ type ProductPickerModalProps = {
   onClose: () => void;
   onSelect: (product: DBProduct) => void;
   existingSapCodes: string[];
+  channelId?: string;
 };
 
-export function ProductPickerModal({ isOpen, onClose, onSelect, existingSapCodes }: ProductPickerModalProps) {
+export function ProductPickerModal({ isOpen, onClose, onSelect, existingSapCodes, channelId }: ProductPickerModalProps) {
   const [products, setProducts] = useState<DBProduct[]>([]);
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(false);
@@ -32,16 +34,23 @@ export function ProductPickerModal({ isOpen, onClose, onSelect, existingSapCodes
     const fetchProducts = async () => {
       setLoading(true);
       
-      const { data, error } = await supabase
+      let query = supabase
         .from("products")
         .select(`
           id,
           sap_code,
           description,
           category,
-          uom
+          uom,
+          target_margin_pct${channelId ? ", price_lists!inner(channel_id, is_active)" : ""}
         `)
-        .eq("is_active", true)
+        .eq("is_active", true);
+
+      if (channelId) {
+        query = query.eq("price_lists.channel_id", channelId).eq("price_lists.is_active", true);
+      }
+
+      const { data, error } = await query
         .order("description", { ascending: true })
         .limit(100);
 
@@ -53,6 +62,7 @@ export function ProductPickerModal({ isOpen, onClose, onSelect, existingSapCodes
             description: item.description,
             category: item.category || "",
             uom: item.uom || "UN",
+            target_margin_pct: item.target_margin_pct,
           } as DBProduct;
         });
         setProducts(processed);
@@ -65,7 +75,7 @@ export function ProductPickerModal({ isOpen, onClose, onSelect, existingSapCodes
     return () => {
       isMounted = false;
     };
-  }, [isOpen, supabase]);
+  }, [isOpen, supabase, channelId]);
 
   if (!isOpen) return null;
 

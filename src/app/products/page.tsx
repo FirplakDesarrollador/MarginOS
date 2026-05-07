@@ -16,6 +16,7 @@ export type ProductRow = {
   category: string | null;
   uom: string | null;
   is_active: boolean;
+  target_margin_pct?: number | null;
 };
 
 export default function ProductsPage() {
@@ -37,7 +38,7 @@ export default function ProductsPage() {
     try {
       const { data: dbData, error } = await supabase
         .from("products")
-        .select(`id, sap_code, description, category, uom, is_active`)
+        .select(`id, sap_code, description, category, uom, is_active, target_margin_pct`)
         .order("sap_code", { ascending: true });
 
       if (error) throw error;
@@ -58,9 +59,9 @@ export default function ProductsPage() {
 
   function downloadTemplate() {
     const wsData = [
-      ["sap_code", "description", "category", "uom", "is_active"],
-      ["1001", "Pintura Acrílica Premium M", "Pinturas", "GAL", "true"],
-      ["2045A", "Rodillo Profesional 9", "Herramientas", "UND", "true"]
+      ["sap_code", "description", "category", "uom", "is_active", "target_margin_pct"],
+      ["1001", "Pintura Acrílica Premium M", "Pinturas", "GAL", "true", 65.0],
+      ["2045A", "Rodillo Profesional 9", "Herramientas", "UND", "true", null]
     ];
     
     const ws = XLSX.utils.aoa_to_sheet(wsData);
@@ -70,7 +71,8 @@ export default function ProductsPage() {
       { wch: 35 },
       { wch: 15 },
       { wch: 10 },
-      { wch: 10 }
+      { wch: 10 },
+      { wch: 18 }
     ];
 
     const wb = XLSX.utils.book_new();
@@ -193,6 +195,7 @@ export default function ProductsPage() {
                   <th className="px-6 py-4 text-left font-semibold text-text-primary">Descripción</th>
                   <th className="px-6 py-4 text-left font-semibold text-text-primary">Categoría</th>
                   <th className="px-6 py-4 text-center font-semibold text-text-primary">Unidad</th>
+                  <th className="px-6 py-4 text-center font-semibold text-text-primary">Margen Obj.</th>
                   <th className="px-6 py-4 text-center font-semibold text-text-primary w-24">Estado</th>
                   <th className="px-6 py-4 text-center font-semibold text-text-primary w-24">Acción</th>
                 </tr>
@@ -218,6 +221,10 @@ export default function ProductsPage() {
 
                     <td className="px-6 py-4 align-middle text-center text-text-muted">
                         {row.uom || "—"}
+                    </td>
+
+                    <td className="px-6 py-4 align-middle text-center font-medium text-text-primary">
+                        {row.target_margin_pct != null ? `${row.target_margin_pct}%` : "—"}
                     </td>
 
                     <td className="px-6 py-4 text-center align-middle whitespace-nowrap">

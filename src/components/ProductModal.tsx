@@ -11,6 +11,7 @@ type ProductRow = {
   category: string | null;
   uom: string | null;
   is_active: boolean;
+  target_margin_pct?: number | null;
 };
 
 type ProductModalProps = {
@@ -28,7 +29,8 @@ export function ProductModal({ isOpen, onClose, onSuccess, product }: ProductMod
     description: "",
     category: "",
     uom: "",
-    is_active: true
+    is_active: true,
+    target_margin_pct: null
   });
   
   const [loading, setLoading] = useState(false);
@@ -44,7 +46,8 @@ export function ProductModal({ isOpen, onClose, onSuccess, product }: ProductMod
             description: product.description,
             category: product.category || "",
             uom: product.uom || "",
-            is_active: product.is_active
+            is_active: product.is_active,
+            target_margin_pct: product.target_margin_pct ?? null
         });
       } else {
         setFormData({
@@ -52,7 +55,8 @@ export function ProductModal({ isOpen, onClose, onSuccess, product }: ProductMod
             description: "",
             category: "",
             uom: "",
-            is_active: true
+            is_active: true,
+            target_margin_pct: null
         });
       }
       setError(null);
@@ -100,7 +104,8 @@ export function ProductModal({ isOpen, onClose, onSuccess, product }: ProductMod
         description: descClean,
         category: formData.category?.trim() || null,
         uom: formData.uom?.trim() || null,
-        is_active: formData.is_active
+        is_active: formData.is_active,
+        target_margin_pct: formData.target_margin_pct ?? null
       };
 
       if (isEditMode && product?.id) {
@@ -210,6 +215,18 @@ export function ProductModal({ isOpen, onClose, onSuccess, product }: ProductMod
                     placeholder="Ej: GAL, UND, MT"
                   />
                 </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-text-primary mb-1">Margen Objetivo Límite (%)</label>
+                <input 
+                  type="number" 
+                  step="0.1"
+                  value={formData.target_margin_pct ?? ""}
+                  onChange={(e) => setFormData({...formData, target_margin_pct: e.target.value ? Number(e.target.value) : null})}
+                  className="w-full border border-border-subtle rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary transition-all bg-white"
+                  placeholder="Dejar vacío para usar margen global (65%)"
+                />
               </div>
 
               <label className="flex items-center gap-2 mt-4 cursor-pointer">
