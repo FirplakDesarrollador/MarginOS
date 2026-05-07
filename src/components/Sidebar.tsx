@@ -120,7 +120,7 @@ export function Sidebar() {
         ].join(" ")}
       >
         <span className="text-[10px] font-semibold tracking-tight text-text-muted opacity-70 px-1">
-          MarginOS <span className="font-normal opacity-70 ml-1">v1.0</span>
+          MarginOS <span className="font-normal opacity-70 ml-1">v1.1</span>
         </span>
       </div>
 
@@ -131,8 +131,8 @@ export function Sidebar() {
             {/* Group label — hidden when collapsed */}
             <div
               className={[
-                "mb-2 px-2 text-[10px] font-bold uppercase tracking-wider text-text-muted opacity-70 transition-opacity duration-150 whitespace-nowrap overflow-hidden",
-                isExpanded ? "opacity-70" : "opacity-0",
+                "px-2 text-[10px] font-bold uppercase tracking-wider text-text-muted transition-all duration-150 whitespace-nowrap overflow-hidden",
+                isExpanded ? "mb-2 opacity-70 max-h-8" : "mb-0 opacity-0 max-h-0 max-w-0 p-0 pointer-events-none",
               ].join(" ")}
             >
               {group.title}

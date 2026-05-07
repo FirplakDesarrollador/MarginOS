@@ -18,6 +18,7 @@ type UploadedProductRow = {
   category: string;
   uom: string;
   is_active: boolean;
+  target_margin_pct?: number | null;
   
   isValid: boolean;
   error_reason?: string;
@@ -86,6 +87,18 @@ export function ProductUploadModal({ isOpen, onClose, onSuccess }: ProductUpload
       let isValid = true;
       let error_reason = "";
 
+      let target_margin_pct: number | null = null;
+      const marginVal = r.target_margin_pct ?? r["Margen Obj. (%)"] ?? r["Margen Obj."] ?? r["Margen Obj"];
+      if (marginVal !== undefined && marginVal !== null && String(marginVal).trim() !== "") {
+        const parsed = parseFloat(String(marginVal).replace(",", "."));
+        if (!isNaN(parsed) && parsed >= 0 && parsed <= 100) {
+          target_margin_pct = parsed;
+        } else {
+          isValid = false;
+          error_reason += "Margen obj. debe ser número entre 0 y 100. ";
+        }
+      }
+
       if (!sap_code) { isValid = false; error_reason += "Código SAP vacío. "; }
       if (!description) { isValid = false; error_reason += "Descripción vacía. "; }
 
@@ -96,6 +109,7 @@ export function ProductUploadModal({ isOpen, onClose, onSuccess }: ProductUpload
         category,
         uom,
         is_active,
+        target_margin_pct,
         isValid,
         error_reason: error_reason.trim()
       };
@@ -156,7 +170,8 @@ export function ProductUploadModal({ isOpen, onClose, onSuccess }: ProductUpload
         description: r.description,
         category: r.category || null,
         uom: r.uom || null,
-        is_active: r.is_active
+        is_active: r.is_active,
+        target_margin_pct: r.target_margin_pct ?? null
       }));
 
       const { error } = await supabase.from("products").insert(payload);

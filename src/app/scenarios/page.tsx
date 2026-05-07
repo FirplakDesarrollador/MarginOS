@@ -35,6 +35,8 @@ type Simulation = {
   status: string;
   created_at: string;
   updated_at: string | null;
+  target_margin_pct?: number | null;
+  simulation_number?: string | null;
   customers?: { name: string; nit: string; contact_name: string };
   sales_channels?: { name: string };
 };
@@ -205,6 +207,13 @@ export default function ScenariosPage() {
           <span className={`${base} bg-blue-50 text-blue-700 border border-blue-200`}>
             <span className="w-1.5 h-1.5 rounded-full bg-blue-500" />
             Renovada
+          </span>
+        );
+      case "RECHAZADA":
+        return (
+          <span className={`${base} bg-slate-100 text-slate-700 border border-slate-300`}>
+            <span className="w-1.5 h-1.5 rounded-full bg-slate-500" />
+            Rechazada
           </span>
         );
       case "DRAFT":
@@ -599,16 +608,23 @@ export default function ScenariosPage() {
                         </td>
 
                         <td className="px-5 py-4 align-middle">
-                          {sim.project_name ? (
-                            <span className="font-medium text-text-primary">
-                              {sim.project_name}
-                            </span>
-                          ) : (
-                            <span className="text-text-muted italic text-xs flex items-center gap-1">
-                              <AlertCircle className="w-3 h-3 opacity-50" />
-                              Sin especificar
-                            </span>
-                          )}
+                          <div className="flex flex-col gap-0.5">
+                            {sim.simulation_number && (
+                              <span className="text-[10px] font-semibold text-text-muted">
+                                {sim.simulation_number}
+                              </span>
+                            )}
+                            {sim.project_name ? (
+                              <span className="font-medium text-text-primary">
+                                {sim.project_name}
+                              </span>
+                            ) : (
+                              <span className="text-text-muted italic text-xs flex items-center gap-1">
+                                <AlertCircle className="w-3 h-3 opacity-50" />
+                                Sin especificar
+                              </span>
+                            )}
+                          </div>
                         </td>
 
                         <td className="px-5 py-4 align-middle">
