@@ -45,6 +45,20 @@ export function PriceListModal({ isOpen, onClose, onSuccess }: PriceListModalPro
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  const currentYear = new Date().getFullYear();
+  const [useAnnualValidity, setUseAnnualValidity] = useState(false);
+  const [selectedYear, setSelectedYear] = useState<string>(currentYear.toString());
+
+  useEffect(() => {
+    if (useAnnualValidity) {
+      setFormData(prev => ({
+        ...prev,
+        valid_from: `${selectedYear}-01-01`,
+        valid_to: `${selectedYear}-12-31`
+      }));
+    }
+  }, [useAnnualValidity, selectedYear]);
+
   useEffect(() => {
     if (!isOpen) return;
     let isMounted = true;
@@ -87,6 +101,8 @@ export function PriceListModal({ isOpen, onClose, onSuccess }: PriceListModalPro
       setSelectedProductName("");
       setProductSearch("");
       setError(null);
+      setUseAnnualValidity(false);
+      setSelectedYear(new Date().getFullYear().toString());
     };
   }, [isOpen, supabase]);
 
@@ -296,7 +312,8 @@ export function PriceListModal({ isOpen, onClose, onSuccess }: PriceListModalPro
                     type="date" 
                     value={formData.valid_from}
                     onChange={(e) => setFormData({...formData, valid_from: e.target.value})}
-                    className="w-full border border-border-subtle rounded-xl px-3 py-2 focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary text-sm text-text-muted transition-all"
+                    disabled={useAnnualValidity}
+                    className="w-full border border-border-subtle rounded-xl px-3 py-2 focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary text-sm text-text-muted transition-all disabled:bg-slate-50 disabled:opacity-70"
                   />
                 </div>
                 <div>
@@ -305,20 +322,49 @@ export function PriceListModal({ isOpen, onClose, onSuccess }: PriceListModalPro
                     type="date" 
                     value={formData.valid_to}
                     onChange={(e) => setFormData({...formData, valid_to: e.target.value})}
-                    className="w-full border border-border-subtle rounded-xl px-3 py-2 focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary text-sm text-text-muted transition-all"
+                    disabled={useAnnualValidity}
+                    className="w-full border border-border-subtle rounded-xl px-3 py-2 focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary text-sm text-text-muted transition-all disabled:bg-slate-50 disabled:opacity-70"
                   />
                 </div>
               </div>
 
-              <label className="flex items-center gap-2 mt-4 cursor-pointer">
-                <input 
-                  type="checkbox"
-                  checked={formData.is_active}
-                  onChange={(e) => setFormData({...formData, is_active: e.target.checked})}
-                  className="w-4 h-4 text-brand-primary rounded border-border-subtle focus:ring-brand-primary"
-                />
-                <span className="text-sm font-medium text-text-primary">Precio Activo (Vigente)</span>
-              </label>
+              <div className="flex flex-col sm:flex-row sm:items-center gap-6 mt-4">
+                <label className="flex items-center gap-2 cursor-pointer shrink-0">
+                  <input 
+                    type="checkbox"
+                    checked={formData.is_active}
+                    onChange={(e) => setFormData({...formData, is_active: e.target.checked})}
+                    className="w-4 h-4 text-brand-primary rounded border-border-subtle focus:ring-brand-primary"
+                  />
+                  <span className="text-sm font-medium text-text-primary">Precio Activo (Vigente)</span>
+                </label>
+
+                <div className="h-6 w-px bg-border-subtle hidden sm:block"></div>
+
+                <div className="flex flex-wrap items-center gap-3">
+                  <label className="flex items-center gap-2 cursor-pointer">
+                    <input 
+                      type="checkbox"
+                      checked={useAnnualValidity}
+                      onChange={(e) => setUseAnnualValidity(e.target.checked)}
+                      className="w-4 h-4 text-brand-primary rounded border-border-subtle focus:ring-brand-primary"
+                    />
+                    <span className="text-sm font-medium text-text-primary">Usar vigencia anual</span>
+                  </label>
+
+                  {useAnnualValidity && (
+                    <select
+                      value={selectedYear}
+                      onChange={(e) => setSelectedYear(e.target.value)}
+                      className="border border-border-subtle rounded-xl px-3 py-1 focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary text-sm transition-all bg-white min-w-[90px]"
+                    >
+                      {[currentYear - 1, currentYear, currentYear + 1, currentYear + 2, currentYear + 3].map(y => (
+                        <option key={y} value={y}>{y}</option>
+                      ))}
+                    </select>
+                  )}
+                </div>
+              </div>
 
             </div>
           </form>
