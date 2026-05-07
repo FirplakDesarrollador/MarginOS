@@ -1,6 +1,6 @@
 "use client";
 
-import React, { createContext, useContext, useState, useCallback } from "react";
+import React, { createContext, useContext, useState, useCallback, useEffect } from "react";
 
 interface SidebarContextValue {
   isCollapsed: boolean;
@@ -21,6 +21,27 @@ export function SidebarProvider({ children }: { children: React.ReactNode }) {
   const [isHovered, setIsHovered] = useState(false);
   const [isMobileOpen, setIsMobileOpen] = useState(false);
 
+  // Load from localStorage on mount
+  useEffect(() => {
+    try {
+      const stored = localStorage.getItem("marginos:sidebar_collapsed");
+      if (stored === "true") {
+        setIsCollapsed(true);
+      }
+    } catch (e) {
+      console.warn("Failed to read sidebar state from localStorage", e);
+    }
+  }, []);
+
+  const handleSetIsCollapsed = useCallback((v: boolean) => {
+    setIsCollapsed(v);
+    try {
+      localStorage.setItem("marginos:sidebar_collapsed", String(v));
+    } catch (e) {
+      console.warn("Failed to save sidebar state to localStorage", e);
+    }
+  }, []);
+
   const toggleMobile = useCallback(() => setIsMobileOpen((v) => !v), []);
   const closeMobile = useCallback(() => setIsMobileOpen(false), []);
 
@@ -33,7 +54,7 @@ export function SidebarProvider({ children }: { children: React.ReactNode }) {
         isCollapsed,
         isHovered,
         isMobileOpen,
-        setIsCollapsed,
+        setIsCollapsed: handleSetIsCollapsed,
         setIsHovered,
         toggleMobile,
         closeMobile,
