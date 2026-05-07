@@ -68,6 +68,20 @@ export async function exportSimulationToExcel(sim: any, lines: any[], versionDat
     sheet.getCell("F7").numFmt = "#,##0.00";
   }
 
+  if (sim.simulation_number) {
+    sheet.getCell("B8").value = "N° Simulación:";
+    sheet.getCell("B8").font = labelFont;
+    sheet.getCell("C8").value = sim.simulation_number;
+    sheet.getCell("C8").font = { ...valFont, bold: true };
+  }
+
+  if (sim.target_margin_pct) {
+    sheet.getCell("E8").value = "Margen Objetivo:";
+    sheet.getCell("E8").font = labelFont;
+    sheet.getCell("F8").value = `${sim.target_margin_pct}%`;
+    sheet.getCell("F8").font = { ...valFont, bold: true };
+  }
+
   if (versionData) {
     sheet.getCell("H4").value = "Simulación Base:";
     sheet.getCell("H4").font = labelFont;
