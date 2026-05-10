@@ -238,15 +238,15 @@ export default function PriceListsPage() {
           </div>
           <div className="flex items-center gap-3 w-full md:w-auto">
             <button onClick={downloadTemplate}
-              className="inline-flex flex-1 md:flex-none items-center justify-center gap-2 px-4 py-2 bg-white text-text-primary border border-border-subtle text-sm font-medium rounded-xl hover:bg-slate-50 transition-all shadow-sm">
+              className="inline-flex flex-1 md:flex-none items-center justify-center gap-2 px-4 py-2 bg-surface-card text-text-primary border border-border-subtle text-sm font-medium rounded-xl hover:bg-surface-hover transition-all shadow-sm">
               <Download className="w-4 h-4" /> Plantilla
             </button>
             <button onClick={() => setIsUploadModalOpen(true)}
-              className="inline-flex flex-1 md:flex-none items-center justify-center gap-2 px-4 py-2 bg-white text-brand-primary border border-brand-primary/20 text-sm font-medium rounded-xl hover:bg-brand-primary/5 hover:border-brand-primary/40 transition-all shadow-sm">
+              className="inline-flex flex-1 md:flex-none items-center justify-center gap-2 px-4 py-2 bg-surface-card text-brand-primary border border-brand-primary/20 text-sm font-medium rounded-xl hover:bg-brand-primary/5 hover:border-brand-primary/40 transition-all shadow-sm">
               <UploadCloud className="w-4 h-4" /> Carga Masiva
             </button>
             <button onClick={() => setIsModalOpen(true)}
-              className="inline-flex flex-1 md:flex-none items-center justify-center gap-2 px-6 py-2 bg-brand-primary text-white text-sm font-medium rounded-xl hover:bg-brand-accent transition-all shadow-sm shadow-brand-primary/20 hover:-translate-y-0.5">
+              className="inline-flex flex-1 md:flex-none items-center justify-center gap-2 px-6 py-2 btn-primary text-sm font-medium rounded-xl hover:-translate-y-0.5">
               <Plus className="w-4 h-4" /> Nueva Lista
             </button>
           </div>
@@ -254,13 +254,13 @@ export default function PriceListsPage() {
 
         {/* MAIN TABLE: CHANNEL-FIRST */}
         {loading ? (
-          <div className="mt-12 py-24 flex flex-col items-center justify-center border border-border-subtle rounded-2xl bg-white shadow-sm">
+          <div className="mt-12 py-24 flex flex-col items-center justify-center border border-border-subtle rounded-2xl bg-surface-card shadow-sm">
             <div className="w-8 h-8 border-2 border-brand-primary border-t-transparent rounded-full animate-spin mb-4" />
             <p className="text-sm font-medium text-text-muted">Cargando tarifas...</p>
           </div>
         ) : channelGroups.length === 0 ? (
-          <div className="mt-12 border-2 border-dashed border-border-subtle rounded-3xl py-24 px-6 text-center bg-slate-50/50 shadow-sm flex flex-col items-center justify-center">
-            <div className="w-16 h-16 bg-white border border-border-subtle rounded-2xl flex items-center justify-center mb-6 shadow-sm">
+          <div className="mt-12 border-2 border-dashed border-border-subtle rounded-3xl py-24 px-6 text-center bg-surface-hover/50 shadow-sm flex flex-col items-center justify-center">
+            <div className="w-16 h-16 bg-surface-card border border-border-subtle rounded-2xl flex items-center justify-center mb-6 shadow-sm">
               <FolderOpen className="w-8 h-8 text-text-muted/50" />
             </div>
             <h3 className="text-xl font-semibold text-text-primary mb-2 tracking-tight">
@@ -275,9 +275,9 @@ export default function PriceListsPage() {
             </button>
           </div>
         ) : (
-          <div className="mt-10 overflow-x-auto rounded-[var(--radius-lg)] border border-[color:var(--border)] bg-white shadow-sm">
+          <div className="mt-10 overflow-x-auto rounded-[var(--radius-lg)] border border-[color:var(--border)] bg-surface-card shadow-sm">
             <table className="w-full text-sm">
-              <thead className="bg-slate-50/80 border-b border-border-subtle">
+              <thead className="bg-surface-hover/80 border-b border-border-subtle">
                 <tr>
                   <th className="px-6 py-4 text-left font-semibold text-text-primary">Canal de Venta</th>
                   <th className="px-6 py-4 text-center font-semibold text-text-primary">Moneda</th>
@@ -290,7 +290,7 @@ export default function PriceListsPage() {
               </thead>
               <tbody className="divide-y divide-border-subtle">
                 {channelGroups.map((group) => (
-                  <tr key={group.channelId} className="hover:bg-slate-50/50 transition-colors cursor-pointer group"
+                  <tr key={group.channelId} className="hover:bg-surface-hover/50 transition-colors cursor-pointer group"
                     onClick={() => setSelectedChannel(group)}>
                     <td className="px-6 py-5 align-middle">
                       <div className="flex items-center gap-3">
@@ -301,13 +301,13 @@ export default function PriceListsPage() {
                       </div>
                     </td>
                     <td className="px-6 py-5 text-center align-middle">
-                      <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-semibold bg-slate-100 text-slate-700 border border-slate-200">
+                      <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-semibold bg-surface-hover text-text-primary border border-border-subtle">
                         {group.defaultCurrency}
                       </span>
                     </td>
                     <td className="px-6 py-5 text-center align-middle">
                       <button onClick={(e) => { e.stopPropagation(); setSelectedChannel(group); }}
-                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold bg-slate-100 text-slate-700 border border-slate-200 hover:bg-brand-primary/10 hover:text-brand-primary hover:border-brand-primary/30 transition-all">
+                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold bg-surface-hover text-text-primary border border-border-subtle hover:bg-brand-primary/10 hover:text-brand-primary hover:border-brand-primary/30 transition-all">
                         {group.productCount} {group.productCount === 1 ? "producto" : "productos"}
                       </button>
                     </td>
@@ -327,12 +327,12 @@ export default function PriceListsPage() {
                       {group.isActive ? (
                         <span className="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-100">Activo</span>
                       ) : (
-                        <span className="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-semibold bg-slate-100 text-slate-600 border border-slate-200">Inactivo</span>
+                        <span className="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-semibold bg-surface-hover text-text-muted border border-border-subtle">Inactivo</span>
                       )}
                     </td>
                     <td className="px-6 py-5 text-center align-middle">
                       <button onClick={(e) => { e.stopPropagation(); setSelectedChannel(group); }}
-                        className="inline-flex items-center gap-1 px-3 py-2 text-xs font-semibold text-brand-primary hover:text-white hover:bg-brand-primary rounded-lg transition-all border border-brand-primary/20 hover:border-transparent shadow-sm">
+                        className="btn-table-action px-3 py-2">
                         Ver <ChevronRight className="w-3.5 h-3.5" />
                       </button>
                     </td>
@@ -350,9 +350,9 @@ export default function PriceListsPage() {
       {selectedChannel && !editingRow && (
         <div className="fixed inset-0 z-[60] flex items-center justify-center px-6 py-6 lg:px-12">
           <div className="absolute inset-0 bg-slate-900/50 backdrop-blur-sm" onClick={() => { setSelectedChannel(null); setChannelSearch(""); }} />
-          <div className="relative w-full max-w-[1280px] max-h-[85vh] bg-white rounded-2xl shadow-2xl border border-border-subtle flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+          <div className="relative w-full max-w-[1280px] max-h-[85vh] bg-surface-card rounded-2xl shadow-2xl border border-border-subtle flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200">
             {/* HEADER */}
-            <div className="px-6 py-5 border-b border-border-subtle bg-slate-50/50 flex items-center justify-between flex-shrink-0 gap-4">
+            <div className="px-6 py-5 border-b border-border-subtle bg-surface-hover/50 flex items-center justify-between flex-shrink-0 gap-4">
               <div className="flex items-center gap-3 min-w-0">
                 <div className="w-10 h-10 rounded-xl bg-brand-primary/10 flex items-center justify-center flex-shrink-0">
                   <Store className="w-5 h-5 text-brand-primary" />
@@ -377,7 +377,7 @@ export default function PriceListsPage() {
                     className="pl-9 pr-4 py-2 border border-border-subtle rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary transition-all w-64"
                   />
                 </div>
-                <button onClick={() => { setSelectedChannel(null); setChannelSearch(""); }} className="p-2 text-text-muted hover:text-text-primary hover:bg-slate-100 rounded-xl transition-colors">
+                <button onClick={() => { setSelectedChannel(null); setChannelSearch(""); }} className="p-2 text-text-muted hover:text-text-primary hover:bg-surface-hover rounded-xl transition-colors">
                   <X className="w-5 h-5" />
                 </button>
               </div>
@@ -395,7 +395,7 @@ export default function PriceListsPage() {
                   <col className="w-[11%]" />
                   <col className="w-[10%]" />
                 </colgroup>
-                <thead className="bg-slate-50/60 border-b border-border-subtle sticky top-0 z-10">
+                <thead className="bg-surface-hover/60 border-b border-border-subtle sticky top-0 z-10">
                   <tr>
                     <th className="px-5 py-3 text-left font-semibold text-text-primary text-xs uppercase tracking-wider">Producto</th>
                     <th className="px-5 py-3 text-left font-semibold text-text-primary text-xs uppercase tracking-wider">Código SAP</th>
@@ -414,7 +414,7 @@ export default function PriceListsPage() {
                       </td>
                     </tr>
                   ) : filteredChannelPrices.map((row) => (
-                    <tr key={row.id} className="hover:bg-slate-50/50 transition-colors">
+                    <tr key={row.id} className="hover:bg-surface-hover/50 transition-colors">
                       <td className="px-5 py-4 align-middle">
                         <div className="flex items-center gap-2.5">
                           <Package className="w-4 h-4 text-text-muted/40 flex-shrink-0" />
@@ -422,7 +422,7 @@ export default function PriceListsPage() {
                         </div>
                       </td>
                       <td className="px-5 py-4 align-middle">
-                        <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-semibold bg-slate-100 text-slate-800">
+                        <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-semibold bg-surface-hover text-text-primary">
                           {row.products?.sap_code || "—"}
                         </span>
                       </td>
@@ -450,12 +450,12 @@ export default function PriceListsPage() {
                             <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" /> Activo
                           </span>
                         ) : (
-                          <span className="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-semibold bg-slate-100 text-slate-600 border border-slate-200">Inactivo</span>
+                          <span className="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-semibold bg-surface-hover text-text-muted border border-border-subtle">Inactivo</span>
                         )}
                       </td>
                       <td className="px-5 py-4 text-center align-middle">
                         <button onClick={() => openEditRow(row)}
-                          className="inline-flex items-center gap-1 px-3 py-1.5 text-xs font-semibold text-brand-primary hover:text-white hover:bg-brand-primary rounded-lg transition-all border border-brand-primary/20 hover:border-transparent shadow-sm">
+                          className="btn-table-action px-3 py-1.5">
                           <Pencil className="w-3 h-3" /> Editar
                         </button>
                       </td>
@@ -466,9 +466,9 @@ export default function PriceListsPage() {
             </div>
 
             {/* FOOTER */}
-            <div className="px-6 py-4 border-t border-border-subtle bg-slate-50/50 flex items-center justify-between flex-shrink-0">
+            <div className="px-6 py-4 border-t border-border-subtle bg-surface-hover/50 flex items-center justify-between flex-shrink-0">
               <button onClick={() => { setSelectedChannel(null); setChannelSearch(""); setIsModalOpen(true); }}
-                className="inline-flex items-center gap-2 px-4 py-2 bg-brand-primary text-white text-xs font-semibold rounded-xl hover:bg-brand-accent transition-all shadow-sm">
+                className="inline-flex items-center gap-2 px-4 py-2 btn-primary text-xs font-semibold rounded-xl">
                 <Plus className="w-3.5 h-3.5" /> Agregar Producto
               </button>
               <button onClick={() => { setSelectedChannel(null); setChannelSearch(""); }} className="px-4 py-2 text-text-muted hover:text-text-primary text-sm font-medium transition-colors">
@@ -485,8 +485,8 @@ export default function PriceListsPage() {
       {editingRow && (
         <div className="fixed inset-0 z-[70] flex items-center justify-center p-4 sm:p-6">
           <div className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm" onClick={() => setEditingRow(null)} />
-          <div className="relative w-full max-w-md bg-white rounded-2xl shadow-xl border border-border-subtle flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200">
-            <div className="flex items-center justify-between px-6 py-4 border-b border-border-subtle bg-slate-50/50">
+          <div className="relative w-full max-w-md bg-surface-card rounded-2xl shadow-xl border border-border-subtle flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+            <div className="flex items-center justify-between px-6 py-4 border-b border-border-subtle bg-surface-hover/50">
               <div className="flex items-center gap-3">
                 <div className="p-2 bg-brand-primary/10 text-brand-primary rounded-xl">
                   <Pencil className="w-5 h-5" />
@@ -498,7 +498,7 @@ export default function PriceListsPage() {
                   </p>
                 </div>
               </div>
-              <button onClick={() => setEditingRow(null)} className="p-2 text-text-muted hover:text-text-primary hover:bg-slate-100 rounded-xl transition-colors">
+              <button onClick={() => setEditingRow(null)} className="p-2 text-text-muted hover:text-text-primary hover:bg-surface-hover rounded-xl transition-colors">
                 <X className="w-5 h-5" />
               </button>
             </div>
@@ -517,7 +517,7 @@ export default function PriceListsPage() {
                   <div>
                     <label className="block text-sm font-medium text-text-primary mb-1">Moneda</label>
                     <select value={editForm.currency} onChange={(e) => setEditForm({...editForm, currency: e.target.value})}
-                      className="w-full border border-border-subtle bg-white rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary transition-all">
+                      className="w-full border border-border-subtle bg-surface-card rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary transition-all">
                       <option value="COP">COP</option>
                       <option value="USD">USD</option>
                     </select>
@@ -542,13 +542,13 @@ export default function PriceListsPage() {
                 </label>
               </form>
             </div>
-            <div className="p-4 border-t border-border-subtle bg-slate-50/50 flex justify-end gap-3 text-sm">
+            <div className="p-4 border-t border-border-subtle bg-surface-hover/50 flex justify-end gap-3 text-sm">
               <button type="button" onClick={() => setEditingRow(null)}
-                className="px-4 py-2 border border-border-subtle text-text-primary bg-white rounded-xl hover:bg-slate-50 transition-colors">
+                className="px-4 py-2 border border-border-subtle text-text-primary bg-surface-card rounded-xl hover:bg-surface-hover transition-colors">
                 Cancelar
               </button>
               <button type="submit" form="edit-price-form" disabled={editLoading}
-                className="px-6 py-2 bg-brand-primary text-white font-medium rounded-xl hover:bg-brand-accent transition-colors disabled:opacity-50">
+                className="px-6 py-2 btn-primary font-medium rounded-xl">
                 {editLoading ? "Guardando..." : "Guardar Cambios"}
               </button>
             </div>

@@ -279,9 +279,9 @@ export function PriceListUploadModal({ isOpen, onClose, onSuccess }: PriceListUp
         onClick={onClose}
       />
       
-      <div className="relative w-full max-w-4xl bg-white rounded-2xl shadow-xl border border-border-subtle flex flex-col max-h-[90vh] overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+      <div className="relative w-full max-w-4xl bg-surface-card rounded-2xl shadow-xl border border-border-subtle flex flex-col max-h-[90vh] overflow-hidden animate-in fade-in zoom-in-95 duration-200">
         
-        <div className="flex items-center justify-between px-6 py-4 border-b border-border-subtle bg-slate-50/50">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-border-subtle bg-surface-hover/50">
           <div className="flex items-center gap-3">
             <div className="p-2 bg-brand-primary/10 text-brand-primary rounded-xl">
               <UploadCloud className="w-5 h-5" />
@@ -292,7 +292,7 @@ export function PriceListUploadModal({ isOpen, onClose, onSuccess }: PriceListUp
           </div>
           <button 
             onClick={onClose}
-            className="p-2 text-text-muted hover:text-text-primary hover:bg-slate-100 rounded-xl transition-colors"
+            className="p-2 text-text-muted hover:text-text-primary hover:bg-surface-hover rounded-xl transition-colors"
           >
             <X className="w-5 h-5" />
           </button>
@@ -301,8 +301,8 @@ export function PriceListUploadModal({ isOpen, onClose, onSuccess }: PriceListUp
         <div className="flex-1 overflow-y-auto p-6 flex flex-col gap-6">
            
            {!fileName && (
-              <div className="border-2 border-dashed border-border-subtle rounded-3xl p-12 text-center bg-slate-50/50 hover:bg-slate-50 transition-colors">
-                  <div className="w-16 h-16 bg-white border border-border-subtle rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-sm">
+              <div className="border-2 border-dashed border-border-subtle rounded-3xl p-12 text-center bg-surface-hover/50 hover:bg-surface-hover transition-colors">
+                  <div className="w-16 h-16 bg-surface-card border border-border-subtle rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-sm">
                       <FileSpreadsheet className="w-8 h-8 text-brand-primary" />
                   </div>
                   <h3 className="text-base font-medium text-text-primary mb-2">Selecciona o arrastra el archivo de carga</h3>
@@ -318,7 +318,7 @@ export function PriceListUploadModal({ isOpen, onClose, onSuccess }: PriceListUp
                   />
                   <label
                     htmlFor="excel-upload"
-                    className="cursor-pointer inline-flex items-center gap-2 px-6 py-2.5 border border-border-subtle bg-white text-text-primary text-sm font-medium rounded-xl hover:text-brand-primary hover:border-brand-primary/30 transition-all shadow-sm"
+                    className="cursor-pointer inline-flex items-center gap-2 px-6 py-2.5 border border-border-subtle bg-surface-card text-text-primary text-sm font-medium rounded-xl hover:text-brand-primary hover:border-brand-primary/30 transition-all shadow-sm"
                   >
                      Buscar Documento
                   </label>
@@ -326,7 +326,7 @@ export function PriceListUploadModal({ isOpen, onClose, onSuccess }: PriceListUp
            )}
 
            {analyzing && (
-              <div className="py-12 flex flex-col items-center justify-center rounded-2xl bg-slate-50/50 border border-border-subtle">
+              <div className="py-12 flex flex-col items-center justify-center rounded-2xl bg-surface-hover/50 border border-border-subtle">
                 <div className="w-8 h-8 border-2 border-brand-primary border-t-transparent rounded-full animate-spin mb-4" />
                 <p className="text-sm font-medium text-text-primary">Parseando matrices y resolviendo cruces...</p>
               </div>
@@ -342,9 +342,9 @@ export function PriceListUploadModal({ isOpen, onClose, onSuccess }: PriceListUp
            {!analyzing && fileName && rows.length > 0 && (
              <div className="flex flex-col gap-6 animate-in fade-in duration-300">
                 <div className="grid grid-cols-3 gap-4">
-                  <div className="bg-slate-50 border border-border-subtle rounded-xl p-4 shadow-sm text-center">
+                  <div className="bg-surface-hover border border-border-subtle rounded-xl p-4 shadow-sm text-center">
                     <div className="text-xs font-semibold text-text-muted tracking-wide uppercase mb-1">Total Analizado</div>
-                    <div className="text-2xl font-bold text-slate-700">{rows.length}</div>
+                    <div className="text-2xl font-bold text-text-primary">{rows.length}</div>
                   </div>
                   <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-4 shadow-sm text-center">
                     <div className="text-xs font-semibold text-emerald-600/80 tracking-wide uppercase mb-1">Filas Válidas Aceptadas</div>
@@ -357,25 +357,25 @@ export function PriceListUploadModal({ isOpen, onClose, onSuccess }: PriceListUp
                 </div>
 
                 {invalidRows.length > 0 && (
-                  <div className="rounded-xl border border-border-subtle bg-white shadow-sm overflow-hidden">
-                    <div className="px-4 py-3 border-b border-border-subtle bg-slate-50">
+                  <div className="rounded-xl border border-border-subtle bg-surface-card shadow-sm overflow-hidden">
+                    <div className="px-4 py-3 border-b border-border-subtle bg-surface-hover">
                        <h3 className="text-sm font-semibold text-text-primary">Registro de Auditoría: Descartes ({invalidRows.length})</h3>
                     </div>
                     <div className="max-h-64 overflow-y-auto">
                       <table className="min-w-full text-xs">
-                         <thead className="bg-white sticky top-0 border-b border-border-subtle z-10 shadow-sm">
+                         <thead className="bg-surface-card sticky top-0 border-b border-border-subtle z-10 shadow-sm">
                            <tr>
-                             <th className="px-4 py-2 font-semibold text-left text-text-primary bg-white">Canal / Producto</th>
-                             <th className="px-4 py-2 font-semibold text-left text-text-primary bg-white">Importe</th>
-                             <th className="px-4 py-2 font-semibold text-left text-text-primary bg-white">Vigencia</th>
-                             <th className="px-4 py-2 font-semibold text-left text-text-primary bg-white">Anomalía Detectada</th>
+                             <th className="px-4 py-2 font-semibold text-left text-text-primary bg-surface-card">Canal / Producto</th>
+                             <th className="px-4 py-2 font-semibold text-left text-text-primary bg-surface-card">Importe</th>
+                             <th className="px-4 py-2 font-semibold text-left text-text-primary bg-surface-card">Vigencia</th>
+                             <th className="px-4 py-2 font-semibold text-left text-text-primary bg-surface-card">Anomalía Detectada</th>
                            </tr>
                          </thead>
                          <tbody className="divide-y divide-border-subtle">
                            {invalidRows.map((r) => (
                              <tr key={`error-${r.internal_id}`} className="hover:bg-red-50/50">
                                <td className="px-4 py-2 text-text-muted">
-                                 <span className="font-medium text-slate-700">{r.channel_name || "N/A"}</span><br/>
+                                 <span className="font-medium text-text-primary">{r.channel_name || "N/A"}</span><br/>
                                  <span className="text-[10px]">{r.sap_code || "N/A"}</span>
                                </td>
                                <td className="px-4 py-2 text-text-muted">{r.list_price} {r.currency}</td>
@@ -399,13 +399,13 @@ export function PriceListUploadModal({ isOpen, onClose, onSuccess }: PriceListUp
 
         </div>
         
-        <div className="p-4 border-t border-border-subtle bg-slate-50/50 flex justify-between gap-3 mt-auto">
+        <div className="p-4 border-t border-border-subtle bg-surface-hover/50 flex justify-between gap-3 mt-auto">
           {(!analyzing && fileName) ? (
               <button
                 type="button"
                 onClick={handleReset}
                 disabled={loading}
-                className="px-4 py-2 border border-border-subtle text-text-primary text-sm font-medium bg-white rounded-xl hover:bg-slate-50 transition-colors shadow-sm disabled:opacity-50"
+                className="px-4 py-2 border border-border-subtle text-text-primary text-sm font-medium bg-surface-card rounded-xl hover:bg-surface-hover transition-colors shadow-sm disabled:opacity-50"
               >
                 Volver a subir
               </button>
@@ -424,7 +424,7 @@ export function PriceListUploadModal({ isOpen, onClose, onSuccess }: PriceListUp
               type="button"
               onClick={handleFinalSave}
               disabled={loading || validCount === 0}
-              className="px-6 py-2 bg-brand-primary text-white text-sm font-medium rounded-xl hover:bg-brand-accent transition-colors disabled:opacity-50 inline-flex justify-center items-center gap-2 shadow-sm shadow-brand-primary/20"
+              className="px-6 py-2 btn-primary text-sm font-medium rounded-xl inline-flex justify-center items-center gap-2 shadow-brand-primary/20"
             >
               {loading ? (
                 <>

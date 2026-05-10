@@ -211,8 +211,8 @@ export default function ScenariosPage() {
         );
       case "RECHAZADA":
         return (
-          <span className={`${base} bg-slate-100 text-slate-700 border border-slate-300`}>
-            <span className="w-1.5 h-1.5 rounded-full bg-slate-500" />
+          <span className={`${base} bg-surface-hover text-text-primary border border-border-subtle`}>
+            <span className="w-1.5 h-1.5 rounded-full bg-surface-hover0" />
             Rechazada
           </span>
         );
@@ -347,7 +347,7 @@ export default function ScenariosPage() {
 
         {/* LOADING */}
         {loading ? (
-          <div className="mt-12 py-24 flex flex-col items-center justify-center border border-border-subtle rounded-2xl bg-white shadow-sm">
+          <div className="mt-12 py-24 flex flex-col items-center justify-center border border-border-subtle rounded-2xl bg-surface-card shadow-sm">
             <div className="w-8 h-8 border-2 border-brand-primary border-t-transparent rounded-full animate-spin mb-4" />
             <p className="text-sm font-medium text-text-muted">
               Cargando escenarios...
@@ -355,8 +355,8 @@ export default function ScenariosPage() {
           </div>
         ) : customerGroups.length === 0 ? (
           /* EMPTY STATE */
-          <div className="mt-12 border-2 border-dashed border-border-subtle rounded-3xl py-24 px-6 text-center bg-slate-50/50 shadow-sm flex flex-col items-center justify-center">
-            <div className="w-16 h-16 bg-white border border-border-subtle rounded-2xl flex items-center justify-center mb-6 shadow-sm">
+          <div className="mt-12 border-2 border-dashed border-border-subtle rounded-3xl py-24 px-6 text-center bg-surface-hover/50 shadow-sm flex flex-col items-center justify-center">
+            <div className="w-16 h-16 bg-surface-card border border-border-subtle rounded-2xl flex items-center justify-center mb-6 shadow-sm">
               <FolderOpen className="w-8 h-8 text-text-muted/50" />
             </div>
             <h3 className="text-xl font-semibold text-text-primary mb-2 tracking-tight">
@@ -368,7 +368,7 @@ export default function ScenariosPage() {
             </p>
             <Link
               href="/simulator"
-              className="mt-8 inline-flex items-center gap-2 px-6 py-3 bg-brand-primary text-white text-sm font-medium rounded-xl hover:bg-brand-accent transition-all shadow-sm hover:shadow-brand-primary/20 hover:-translate-y-0.5"
+              className="mt-8 inline-flex items-center gap-2 px-6 py-3 btn-primary text-sm font-medium rounded-xl hover:-translate-y-0.5"
             >
               Crear nueva simulación
             </Link>
@@ -377,9 +377,9 @@ export default function ScenariosPage() {
           /* ============================================= */
           /* MAIN TABLE: ONE ROW PER CUSTOMER              */
           /* ============================================= */
-          <div className="mt-10 overflow-x-auto rounded-[var(--radius-lg)] border border-[color:var(--border)] bg-white shadow-sm">
+          <div className="mt-10 overflow-x-auto rounded-[var(--radius-lg)] border border-[color:var(--border)] bg-surface-card shadow-sm">
             <table className="w-full text-sm">
-              <thead className="bg-slate-50/80 border-b border-border-subtle">
+              <thead className="bg-surface-hover/80 border-b border-border-subtle">
                 <tr>
                   <th className="px-6 py-4 text-left font-semibold text-text-primary whitespace-nowrap">
                     Cliente
@@ -411,7 +411,7 @@ export default function ScenariosPage() {
                 {customerGroups.map((group) => (
                   <tr
                     key={group.customerId}
-                    className="hover:bg-slate-50/50 transition-colors group cursor-pointer"
+                    className="hover:bg-surface-hover/50 transition-colors group cursor-pointer"
                     onClick={() => setSelectedGroup(group)}
                   >
                     {/* CUSTOMER */}
@@ -466,7 +466,7 @@ export default function ScenariosPage() {
                           e.stopPropagation();
                           setSelectedGroup(group);
                         }}
-                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold bg-slate-100 text-slate-700 border border-slate-200 hover:bg-brand-primary/10 hover:text-brand-primary hover:border-brand-primary/30 transition-all"
+                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold bg-surface-hover text-text-primary border border-border-subtle hover:bg-brand-primary/10 hover:text-brand-primary hover:border-brand-primary/30 transition-all"
                       >
                         {group.countTotal}{" "}
                         {group.countTotal === 1
@@ -529,9 +529,9 @@ export default function ScenariosPage() {
             className="absolute inset-0 bg-slate-900/50 backdrop-blur-sm transition-opacity"
             onClick={() => setSelectedGroup(null)}
           />
-          <div className="relative w-full max-w-[1280px] max-h-[85vh] bg-white rounded-2xl shadow-2xl border border-border-subtle flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+          <div className="relative w-full max-w-[1280px] max-h-[85vh] bg-surface-card rounded-2xl shadow-2xl border border-border-subtle flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200">
             {/* MODAL HEADER */}
-            <div className="px-6 py-5 border-b border-border-subtle bg-slate-50/50 flex items-center justify-between flex-shrink-0">
+            <div className="px-6 py-5 border-b border-border-subtle bg-surface-hover/50 flex items-center justify-between flex-shrink-0">
               <div className="flex items-center gap-3 min-w-0">
                 <div className="w-10 h-10 rounded-xl bg-brand-primary/10 flex items-center justify-center flex-shrink-0">
                   <Users className="w-5 h-5 text-brand-primary" />
@@ -552,7 +552,7 @@ export default function ScenariosPage() {
               </div>
               <button
                 onClick={() => setSelectedGroup(null)}
-                className="p-2 text-text-muted hover:text-text-primary hover:bg-slate-100 rounded-xl transition-colors"
+                className="p-2 text-text-muted hover:text-text-primary hover:bg-surface-hover rounded-xl transition-colors"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -570,7 +570,7 @@ export default function ScenariosPage() {
                   <col className="w-[10%]" />{/* Estado */}
                   <col className="w-[10%]" />{/* Acción */}
                 </colgroup>
-                <thead className="bg-slate-50/60 border-b border-border-subtle sticky top-0 z-10">
+                <thead className="bg-surface-hover/60 border-b border-border-subtle sticky top-0 z-10">
                   <tr>
                     <th className="px-5 py-3 text-left font-semibold text-text-primary text-xs uppercase tracking-wider">
                       Fecha
@@ -601,7 +601,7 @@ export default function ScenariosPage() {
                     return (
                       <tr
                         key={sim.id}
-                        className="hover:bg-slate-50/50 transition-colors"
+                        className="hover:bg-surface-hover/50 transition-colors"
                       >
                         <td className="px-5 py-4 text-text-muted align-middle">
                           {formatDateTime(sim.created_at)}
@@ -634,7 +634,7 @@ export default function ScenariosPage() {
                         </td>
 
                         <td className="px-5 py-4 text-center align-middle">
-                          <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-semibold bg-slate-100 text-slate-700 border border-slate-200">
+                          <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-semibold bg-surface-hover text-text-primary border border-border-subtle">
                             {sim.currency}
                           </span>
                         </td>
@@ -671,10 +671,10 @@ export default function ScenariosPage() {
             </div>
 
             {/* MODAL FOOTER */}
-            <div className="px-6 py-4 border-t border-border-subtle bg-slate-50/50 flex items-center justify-between flex-shrink-0">
+            <div className="px-6 py-4 border-t border-border-subtle bg-surface-hover/50 flex items-center justify-between flex-shrink-0">
               <Link
                 href="/simulator"
-                className="inline-flex items-center gap-2 px-4 py-2 bg-brand-primary text-white text-xs font-semibold rounded-xl hover:bg-brand-accent transition-all shadow-sm"
+                className="inline-flex items-center gap-2 px-4 py-2 btn-primary text-xs font-semibold rounded-xl"
               >
                 Nueva simulación
               </Link>
@@ -698,8 +698,8 @@ export default function ScenariosPage() {
             className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm transition-opacity"
             onClick={() => !exporting && setActionSim(null)}
           />
-          <div className="relative w-full max-w-sm bg-white rounded-2xl shadow-xl border border-border-subtle flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200">
-            <div className="px-5 py-4 border-b border-border-subtle bg-slate-50/50">
+          <div className="relative w-full max-w-sm bg-surface-card rounded-2xl shadow-xl border border-border-subtle flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+            <div className="px-5 py-4 border-b border-border-subtle bg-surface-hover/50">
               <h3 className="text-base font-semibold text-text-primary">
                 Acciones del escenario
               </h3>
@@ -714,7 +714,7 @@ export default function ScenariosPage() {
                   router.push(`/simulator?id=${actionSim.id}`)
                 }
                 disabled={exporting}
-                className="w-full flex items-center gap-3 px-4 py-3 bg-white border border-border-subtle rounded-xl hover:border-brand-primary/40 hover:bg-brand-primary/5 text-sm font-medium text-text-primary transition-all disabled:opacity-50"
+                className="w-full flex items-center gap-3 px-4 py-3 bg-surface-card border border-border-subtle rounded-xl hover:border-brand-primary/40 hover:bg-brand-primary/5 text-sm font-medium text-text-primary transition-all disabled:opacity-50"
               >
                 <Pencil className="w-4 h-4 text-text-muted" />
                 Editar simulación
@@ -724,7 +724,7 @@ export default function ScenariosPage() {
               <button
                 onClick={() => handleExport(actionSim)}
                 disabled={exporting}
-                className="w-full flex items-center gap-3 px-4 py-3 bg-white border border-border-subtle rounded-xl hover:border-brand-primary/40 hover:bg-brand-primary/5 text-sm font-medium text-text-primary transition-all disabled:opacity-50"
+                className="w-full flex items-center gap-3 px-4 py-3 bg-surface-card border border-border-subtle rounded-xl hover:border-brand-primary/40 hover:bg-brand-primary/5 text-sm font-medium text-text-primary transition-all disabled:opacity-50"
               >
                 <FileDown className="w-4 h-4 text-text-muted" />
                 <span className="flex-1 text-left">Descargar Excel</span>
@@ -738,14 +738,14 @@ export default function ScenariosPage() {
                 <button
                   onClick={() => handleDelete(actionSim)}
                   disabled={exporting}
-                  className="w-full flex items-center gap-3 px-4 py-3 bg-white border border-red-200 rounded-xl hover:border-red-400 hover:bg-red-50 text-sm font-medium text-red-600 transition-all disabled:opacity-50 mt-1"
+                  className="w-full flex items-center gap-3 px-4 py-3 bg-surface-card border border-red-200 rounded-xl hover:border-red-400 hover:bg-red-50 text-sm font-medium text-red-600 transition-all disabled:opacity-50 mt-1"
                 >
                   <Trash2 className="w-4 h-4" />
                   Eliminar Borrador
                 </button>
               )}
             </div>
-            <div className="px-5 py-3 border-t border-border-subtle bg-slate-50/50">
+            <div className="px-5 py-3 border-t border-border-subtle bg-surface-hover/50">
               <button
                 onClick={() => setActionSim(null)}
                 disabled={exporting}

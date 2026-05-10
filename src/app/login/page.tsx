@@ -30,7 +30,7 @@ export default function LoginPage() {
         <div className="absolute bottom-[-10%] left-[-5%] w-[30%] h-[30%] bg-brand-primary/5 rounded-full blur-[100px]" />
       </div>
 
-      <div className="w-full max-w-md bg-white rounded-3xl shadow-xl shadow-brand-primary/5 border border-border-subtle p-8 md:p-10 relative z-10">
+      <div className="w-full max-w-md bg-surface-card rounded-3xl shadow-xl shadow-brand-primary/5 border border-border-subtle p-8 md:p-10 relative z-10">
         <div className="flex justify-center mb-8">
             <div className="h-16 w-16 bg-brand-primary rounded-2xl flex items-center justify-center shadow-lg shadow-brand-primary/20">
                 <Calculator className="w-8 h-8 text-white" />
@@ -70,7 +70,7 @@ export default function LoginPage() {
                   type="email"
                   required
                   placeholder="ejemplo@firplak.com"
-                  className="block w-full pl-11 pr-4 py-3 bg-slate-50 border border-border-subtle rounded-xl text-base text-text-primary placeholder:text-text-muted focus:ring-2 focus:ring-brand-primary focus:border-transparent transition-all outline-none"
+                  className="block w-full pl-11 pr-4 py-3 bg-surface-hover border border-border-subtle rounded-xl text-base text-text-primary placeholder:text-text-muted focus:ring-2 focus:ring-brand-primary focus:border-transparent transition-all outline-none"
                 />
               </div>
             </div>
@@ -89,7 +89,7 @@ export default function LoginPage() {
                   type="password"
                   required
                   placeholder="••••••••"
-                  className="block w-full pl-11 pr-4 py-3 bg-slate-50 border border-border-subtle rounded-xl text-base text-text-primary placeholder:text-text-muted focus:ring-2 focus:ring-brand-primary focus:border-transparent transition-all outline-none"
+                  className="block w-full pl-11 pr-4 py-3 bg-surface-hover border border-border-subtle rounded-xl text-base text-text-primary placeholder:text-text-muted focus:ring-2 focus:ring-brand-primary focus:border-transparent transition-all outline-none"
                 />
               </div>
             </div>

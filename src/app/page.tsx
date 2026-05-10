@@ -142,7 +142,7 @@ export default function Home() {
     if (status === "VIGENTE") return "bg-emerald-50 text-emerald-700 border-emerald-200";
     if (status === "VENCIDO") return "bg-red-50 text-red-700 border-red-200";
     if (status === "RENOVADA") return "bg-blue-50 text-blue-700 border-blue-200";
-    return "bg-slate-100 text-slate-700 border-slate-200";
+    return "bg-surface-hover text-text-primary border-border-subtle";
   }
 
   return (
@@ -153,30 +153,30 @@ export default function Home() {
         <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-4">
            {loading ? (
               Array.from({length: 6}).map((_, i) => (
-                 <div key={i} className="h-[104px] bg-slate-100 animate-pulse rounded-2xl border border-border-subtle" />
+                 <div key={i} className="h-[104px] bg-surface-hover animate-pulse rounded-2xl border border-border-subtle" />
               ))
            ) : (
               <>
-                <div className="bg-white rounded-2xl p-5 flex flex-col justify-center border border-border-subtle shadow-[var(--shadow-sm)]">
+                <div className="bg-surface-card rounded-2xl p-5 flex flex-col justify-center border border-border-subtle shadow-[var(--shadow-sm)]">
                    <div className="text-[11px] font-bold text-text-muted mb-1.5 uppercase tracking-wide">Simuladas (Mes)</div>
                    <div className="text-3xl font-bold tracking-tight text-text-primary">{simulationsMonth}</div>
                 </div>
-                <div className="bg-white rounded-2xl p-5 flex flex-col justify-center border border-border-subtle shadow-[var(--shadow-sm)]">
+                <div className="bg-surface-card rounded-2xl p-5 flex flex-col justify-center border border-border-subtle shadow-[var(--shadow-sm)]">
                    <div className="text-[11px] font-bold text-text-muted mb-1.5 uppercase tracking-wide">Vigentes</div>
                    <div className="text-3xl font-bold tracking-tight text-emerald-600">{activeSims}</div>
                 </div>
-                <div className="bg-white rounded-2xl p-5 flex flex-col justify-center border border-border-subtle shadow-[var(--shadow-sm)]">
+                <div className="bg-surface-card rounded-2xl p-5 flex flex-col justify-center border border-border-subtle shadow-[var(--shadow-sm)]">
                    <div className="text-[11px] font-bold text-text-muted mb-1.5 uppercase tracking-wide">Vencidas</div>
                    <div className="text-3xl font-bold tracking-tight text-red-600">{expiredSims}</div>
                 </div>
-                <div className={`rounded-2xl p-5 flex flex-col justify-center border shadow-[var(--shadow-sm)] ${productsNoPrice > 0 ? "bg-amber-50 border-amber-200" : "bg-white border-border-subtle"}`}>
+                <div className={`rounded-2xl p-5 flex flex-col justify-center border shadow-[var(--shadow-sm)] ${productsNoPrice > 0 ? "bg-amber-50 border-amber-200" : "bg-surface-card border-border-subtle"}`}>
                    <div className={`text-[11px] font-bold mb-1.5 uppercase tracking-wide ${productsNoPrice > 0 ? "text-amber-800" : "text-text-muted"}`}>Sin Precio Reglado</div>
                    <div className={`text-3xl font-bold tracking-tight flex items-center gap-2 ${productsNoPrice > 0 ? "text-amber-700" : "text-text-primary"}`}>
                       {productsNoPrice} 
                       {productsNoPrice > 0 && <AlertTriangle className="w-5 h-5 flex-shrink-0" />}
                    </div>
                 </div>
-                <div className={`col-span-2 rounded-2xl p-5 flex flex-col justify-center border shadow-[var(--shadow-sm)] ${!lastBomDate ? "bg-amber-50 border-amber-200" : "bg-white border-border-subtle"}`}>
+                <div className={`col-span-2 rounded-2xl p-5 flex flex-col justify-center border shadow-[var(--shadow-sm)] ${!lastBomDate ? "bg-amber-50 border-amber-200" : "bg-surface-card border-border-subtle"}`}>
                    <div className="text-[11px] font-bold text-text-muted mb-1.5 uppercase tracking-wide">Último Estándar (BOM)</div>
                    <div className="text-lg font-bold text-text-primary tracking-tight truncate">
                       {lastBomDate ? format(new Date(lastBomDate), "PPPp", { locale: es }) : "No se ha cargado BOM"}
@@ -193,33 +193,33 @@ export default function Home() {
            <div className="lg:col-span-2 space-y-6">
               
               {/* Acciones Rápidas */}
-              <div className="bg-white rounded-[1.25rem] border border-border-subtle shadow-[var(--shadow-sm)] p-6">
+              <div className="bg-surface-card rounded-[1.25rem] border border-border-subtle shadow-[var(--shadow-sm)] p-6">
                  <h2 className="text-xs font-bold tracking-widest text-text-muted uppercase mb-5">Operaciones Frecuentes</h2>
                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                    <button onClick={() => router.push("/simulator")} className="flex flex-col items-center justify-center p-4 rounded-xl bg-slate-50 hover:bg-brand-primary/[0.05] border border-border-subtle hover:border-brand-primary/30 transition-all group shadow-sm hover:shadow-md">
+                    <button onClick={() => router.push("/simulator")} className="flex flex-col items-center justify-center p-4 rounded-xl bg-surface-hover hover:bg-brand-primary/[0.05] border border-border-subtle hover:border-brand-primary/30 transition-all group shadow-sm hover:shadow-md">
                        <Plus className="w-6 h-6 text-brand-primary mb-2 group-hover:scale-110 transition-transform" />
                        <span className="text-sm font-semibold text-text-primary tracking-tight">Nueva Sim.</span>
                     </button>
-                    <button onClick={() => router.push("/price-lists")} className="flex flex-col items-center justify-center p-4 rounded-xl bg-slate-50 hover:bg-slate-100 border border-border-subtle hover:border-slate-300 transition-all group shadow-sm hover:shadow-md">
-                       <Tag className="w-6 h-6 text-slate-500 group-hover:text-slate-800 mb-2 transition-colors" />
+                    <button onClick={() => router.push("/price-lists")} className="flex flex-col items-center justify-center p-4 rounded-xl bg-surface-hover hover:bg-surface-hover border border-border-subtle hover:border-border-subtle transition-all group shadow-sm hover:shadow-md">
+                       <Tag className="w-6 h-6 text-text-muted group-hover:text-text-primary mb-2 transition-colors" />
                        <span className="text-sm font-semibold text-text-primary tracking-tight">Precios Base</span>
                     </button>
-                    <button onClick={() => router.push("/products")} className="flex flex-col items-center justify-center p-4 rounded-xl bg-slate-50 hover:bg-slate-100 border border-border-subtle hover:border-slate-300 transition-all group shadow-sm hover:shadow-md">
-                       <Package className="w-6 h-6 text-slate-500 group-hover:text-slate-800 mb-2 transition-colors" />
+                    <button onClick={() => router.push("/products")} className="flex flex-col items-center justify-center p-4 rounded-xl bg-surface-hover hover:bg-surface-hover border border-border-subtle hover:border-border-subtle transition-all group shadow-sm hover:shadow-md">
+                       <Package className="w-6 h-6 text-text-muted group-hover:text-text-primary mb-2 transition-colors" />
                        <span className="text-sm font-semibold text-text-primary tracking-tight">Prod. Maestro</span>
                     </button>
-                    <button onClick={() => router.push("/import")} className="flex flex-col items-center justify-center p-4 rounded-xl bg-slate-50 hover:bg-slate-100 border border-border-subtle hover:border-slate-300 transition-all group shadow-sm hover:shadow-md">
-                       <FileSpreadsheet className="w-6 h-6 text-slate-500 group-hover:text-slate-800 mb-2 transition-colors" />
+                    <button onClick={() => router.push("/import")} className="flex flex-col items-center justify-center p-4 rounded-xl bg-surface-hover hover:bg-surface-hover border border-border-subtle hover:border-border-subtle transition-all group shadow-sm hover:shadow-md">
+                       <FileSpreadsheet className="w-6 h-6 text-text-muted group-hover:text-text-primary mb-2 transition-colors" />
                        <span className="text-sm font-semibold text-text-primary tracking-tight">Cargar BOM</span>
                     </button>
                  </div>
               </div>
 
               {/* Simulaciones Recientes */}
-              <div className="bg-white rounded-[1.25rem] border border-border-subtle shadow-[var(--shadow-sm)] flex flex-col overflow-hidden">
-                 <div className="px-6 py-5 border-b border-border-subtle flex items-center justify-between bg-slate-50/50">
+              <div className="bg-surface-card rounded-[1.25rem] border border-border-subtle shadow-[var(--shadow-sm)] flex flex-col overflow-hidden">
+                 <div className="px-6 py-5 border-b border-border-subtle flex items-center justify-between bg-surface-hover/50">
                     <h2 className="text-xs font-bold tracking-widest text-text-muted uppercase flex items-center gap-2">
-                       <History className="w-4 h-4 text-slate-400" /> Histórico Reciente
+                       <History className="w-4 h-4 text-text-muted" /> Histórico Reciente
                     </h2>
                     <Link href="/scenarios" className="text-xs font-semibold text-brand-primary hover:text-brand-accent flex items-center gap-1 transition-colors">
                        Revisar todo <ChevronRight className="w-3.5 h-3.5" />
@@ -228,7 +228,7 @@ export default function Home() {
                  
                  <div className="overflow-x-auto min-h-[350px]">
                     <table className="w-full text-sm">
-                       <thead className="bg-white border-b border-border-subtle text-left">
+                       <thead className="bg-surface-card border-b border-border-subtle text-left">
                           <tr>
                              <th className="px-6 py-4 font-semibold text-text-muted text-[11px] uppercase tracking-wider">Cliente/Negocio</th>
                              <th className="px-6 py-4 font-semibold text-text-muted text-[11px] uppercase tracking-wider">Categoría</th>
@@ -245,18 +245,18 @@ export default function Home() {
                              recentSims.map(sim => {
                                 const customerName = sim.customers && Array.isArray(sim.customers) ? sim.customers[0]?.name : (sim.customers as any)?.name;
                                 return (
-                                <tr key={sim.id} onClick={() => router.push(`/simulator?id=${sim.id}`)} className="hover:bg-slate-50/80 cursor-pointer transition-colors group">
+                                <tr key={sim.id} onClick={() => router.push(`/simulator?id=${sim.id}`)} className="hover:bg-surface-hover/80 cursor-pointer transition-colors group">
                                    <td className="px-6 py-4">
                                       <div className="font-semibold text-text-primary group-hover:text-brand-primary transition-colors">{customerName || "No vinculado"}</div>
                                       <div className="text-[12px] text-text-muted">{sim.project_name || "—"}</div>
                                    </td>
                                    <td className="px-6 py-4">
-                                      <span className="flex items-center text-xs font-medium text-slate-600 bg-slate-100 px-2.5 py-1 rounded w-max">
+                                      <span className="flex items-center text-xs font-medium text-text-muted bg-surface-hover px-2.5 py-1 rounded w-max">
                                          {sim.simulation_type === "PRICE_LIST" ? "Lista Estándar" : "Promo Especial"}
                                       </span>
                                    </td>
                                    <td className="px-6 py-4 text-center">
-                                      <span className="text-xs text-slate-500 font-medium">{timeAgo(sim.created_at)}</span>
+                                      <span className="text-xs text-text-muted font-medium">{timeAgo(sim.created_at)}</span>
                                    </td>
                                    <td className="px-6 py-4">
                                       <span className={`inline-flex items-center px-2 py-0.5 text-[10px] font-bold uppercase tracking-widest border rounded ${getStatusStyle(sim.status)}`}>
@@ -285,13 +285,13 @@ export default function Home() {
                     <h2 className="text-xs font-bold tracking-widest text-red-700 uppercase mb-4 relative z-10">Focos de Riesgo</h2>
                     <ul className="space-y-3 relative z-10">
                        {productsNoPrice > 0 && (
-                          <li className="flex items-start gap-3 text-[13px] text-red-800 bg-white border border-red-50 p-3.5 rounded-xl shadow-sm">
+                          <li className="flex items-start gap-3 text-[13px] text-red-800 bg-surface-card border border-red-50 p-3.5 rounded-xl shadow-sm">
                              <span className="font-extrabold text-red-600 text-base leading-none">{productsNoPrice}</span>
                              <span className="font-medium leading-snug">Productos activos en SAP no tienen una base tarifaria asociada (Error de Margen 100%).</span>
                           </li>
                        )}
                        {expiredSims > 0 && (
-                          <li className="flex items-start gap-3 text-[13px] text-red-800 bg-white border border-red-50 p-3.5 rounded-xl shadow-sm">
+                          <li className="flex items-start gap-3 text-[13px] text-red-800 bg-surface-card border border-red-50 p-3.5 rounded-xl shadow-sm">
                              <span className="font-extrabold text-red-600 text-base leading-none">{expiredSims}</span>
                              <span className="font-medium leading-snug">Simulaciones vencidas. Posible riesgo comercial o fuga de valor.</span>
                           </li>
@@ -301,31 +301,31 @@ export default function Home() {
               )}
 
               {/* Data Health / Integrity */}
-              <div className="bg-white rounded-[1.25rem] border border-border-subtle shadow-[var(--shadow-sm)] p-6">
+              <div className="bg-surface-card rounded-[1.25rem] border border-border-subtle shadow-[var(--shadow-sm)] p-6">
                  <h2 className="text-xs font-bold tracking-widest text-text-muted uppercase mb-5 flex items-center gap-2">
                     <Activity className="w-4 h-4 text-emerald-500" /> Salud de Datos
                  </h2>
                  <div className="space-y-4">
                     <div className="flex items-center justify-between text-[13px] border-b border-slate-50 pb-3">
-                       <span className="text-slate-500 font-medium">Bases SAP Activas</span>
-                       <span className="font-bold text-text-primary">{loading ? "..." : totalProducts} <span className="text-slate-400 font-normal">Refs</span></span>
+                       <span className="text-text-muted font-medium">Bases SAP Activas</span>
+                       <span className="font-bold text-text-primary">{loading ? "..." : totalProducts} <span className="text-text-muted font-normal">Refs</span></span>
                     </div>
                     <div className="flex items-center justify-between text-[13px] border-b border-slate-50 pb-3">
-                       <span className="text-slate-500 font-medium">Costos MP Inyectados</span>
-                       <span className="font-bold text-text-primary">{loading ? "..." : costsLoaded} <span className="text-slate-400 font-normal">Mat. Primas</span></span>
+                       <span className="text-text-muted font-medium">Costos MP Inyectados</span>
+                       <span className="font-bold text-text-primary">{loading ? "..." : costsLoaded} <span className="text-text-muted font-normal">Mat. Primas</span></span>
                     </div>
                     <div className="flex items-center justify-between text-[13px] pb-1">
-                       <span className="text-slate-500 font-medium">Canales Activos</span>
-                       <span className="font-bold text-text-primary">{loading ? "..." : activeChannels} <span className="text-slate-400 font-normal">Segmentos</span></span>
+                       <span className="text-text-muted font-medium">Canales Activos</span>
+                       <span className="font-bold text-text-primary">{loading ? "..." : activeChannels} <span className="text-text-muted font-normal">Segmentos</span></span>
                     </div>
                     
-                    <div className="w-full bg-slate-100 h-2 rounded-full mt-5 overflow-hidden">
+                    <div className="w-full bg-surface-hover h-2 rounded-full mt-5 overflow-hidden">
                        <div 
                          className={`h-full transition-all duration-1000 ${productsNoPrice > 0 ? "bg-amber-400" : "bg-emerald-500"}`}
                          style={{ width: `${totalProducts > 0 ? Math.max(5, ((totalProducts - productsNoPrice) / totalProducts) * 100) : 0}%` }}
                        />
                     </div>
-                    <div className="text-[11px] font-bold text-slate-400 uppercase tracking-wide flex justify-between mt-2">
+                    <div className="text-[11px] font-bold text-text-muted uppercase tracking-wide flex justify-between mt-2">
                        <span>Cobertura Precio Base</span>
                        <span>{totalProducts > 0 ? Math.round(((totalProducts - productsNoPrice) / totalProducts) * 100) : 0}%</span>
                     </div>
@@ -333,8 +333,8 @@ export default function Home() {
               </div>
 
               {/* Activity Log */}
-              <div className="bg-white rounded-[1.25rem] border border-border-subtle shadow-[var(--shadow-sm)] flex flex-col min-h-[300px]">
-                 <div className="px-6 py-5 border-b border-border-subtle bg-slate-50/50">
+              <div className="bg-surface-card rounded-[1.25rem] border border-border-subtle shadow-[var(--shadow-sm)] flex flex-col min-h-[300px]">
+                 <div className="px-6 py-5 border-b border-border-subtle bg-surface-hover/50">
                     <h2 className="text-xs font-bold tracking-widest text-text-muted uppercase">Bitácora Global</h2>
                  </div>
                  <div className="p-6 flex-1">
@@ -357,11 +357,11 @@ export default function Home() {
                                       </div>
                                    )}
                                 </div>
-                                <div className="flex-1 bg-white">
+                                <div className="flex-1 bg-surface-card">
                                    <p className="text-[13px] font-medium text-text-primary leading-relaxed break-words pr-2">
                                      {log.text}
                                    </p>
-                                   <p className="text-[11px] font-bold uppercase tracking-wider text-slate-400 mt-1">
+                                   <p className="text-[11px] font-bold uppercase tracking-wider text-text-muted mt-1">
                                      {timeAgo(log.date)}
                                    </p>
                                 </div>

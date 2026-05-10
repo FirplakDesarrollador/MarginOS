@@ -173,9 +173,9 @@ export function PriceListModal({ isOpen, onClose, onSuccess }: PriceListModalPro
         onClick={onClose}
       />
       
-      <div className="relative w-full max-w-lg bg-white rounded-2xl shadow-xl border border-border-subtle flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+      <div className="relative w-full max-w-lg bg-surface-card rounded-2xl shadow-xl border border-border-subtle flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200">
         
-        <div className="flex items-center justify-between px-6 py-4 border-b border-border-subtle bg-slate-50/50">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-border-subtle bg-surface-hover/50">
           <div className="flex items-center gap-3">
             <div className="p-2 bg-brand-primary/10 text-brand-primary rounded-xl">
               <Tag className="w-5 h-5" />
@@ -186,7 +186,7 @@ export function PriceListModal({ isOpen, onClose, onSuccess }: PriceListModalPro
           </div>
           <button 
             onClick={onClose}
-            className="p-2 text-text-muted hover:text-text-primary hover:bg-slate-100 rounded-xl transition-colors"
+            className="p-2 text-text-muted hover:text-text-primary hover:bg-surface-hover rounded-xl transition-colors"
           >
             <X className="w-5 h-5" />
           </button>
@@ -206,7 +206,7 @@ export function PriceListModal({ isOpen, onClose, onSuccess }: PriceListModalPro
                 <select 
                   value={formData.channel_id}
                   onChange={(e) => setFormData({...formData, channel_id: e.target.value})}
-                  className="w-full border border-border-subtle rounded-xl px-3 py-2 focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary text-sm transition-all bg-white"
+                  className="w-full border border-border-subtle rounded-xl px-3 py-2 focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary text-sm transition-all bg-surface-card"
                   disabled={loadingInitial}
                   required
                 >
@@ -253,7 +253,7 @@ export function PriceListModal({ isOpen, onClose, onSuccess }: PriceListModalPro
                     />
                     
                     {isDropdownOpen && productSearch.length > 0 && (
-                      <div className="absolute z-10 mx-auto w-full mt-1 bg-white border border-border-subtle rounded-xl shadow-lg max-h-60 overflow-y-auto">
+                      <div className="absolute z-10 mx-auto w-full mt-1 bg-surface-card border border-border-subtle rounded-xl shadow-lg max-h-60 overflow-y-auto">
                         {filteredProducts.length === 0 ? (
                           <div className="p-3 text-sm text-text-muted text-center">No se encontraron productos</div>
                         ) : (
@@ -266,7 +266,7 @@ export function PriceListModal({ isOpen, onClose, onSuccess }: PriceListModalPro
                                 setSelectedProductName(`[${p.sap_code}] ${p.description}`);
                                 setIsDropdownOpen(false);
                               }}
-                              className="w-full text-left px-4 py-2 text-sm hover:bg-slate-50 border-b border-border-subtle last:border-0"
+                              className="w-full text-left px-4 py-2 text-sm hover:bg-surface-hover border-b border-border-subtle last:border-0"
                             >
                               <span className="font-semibold text-text-primary mr-2 block">{p.sap_code}</span>
                               <span className="text-text-muted truncate block">{p.description}</span>
@@ -285,7 +285,7 @@ export function PriceListModal({ isOpen, onClose, onSuccess }: PriceListModalPro
                   <select 
                     value={formData.currency}
                     onChange={(e) => setFormData({...formData, currency: e.target.value})}
-                    className="w-full border border-border-subtle bg-white rounded-xl px-3 py-2 focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary text-sm transition-all"
+                    className="w-full border border-border-subtle bg-surface-card rounded-xl px-3 py-2 focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary text-sm transition-all"
                   >
                     <option value="COP">COP (Pesos)</option>
                     <option value="USD">USD (Dólares)</option>
@@ -313,7 +313,7 @@ export function PriceListModal({ isOpen, onClose, onSuccess }: PriceListModalPro
                     value={formData.valid_from}
                     onChange={(e) => setFormData({...formData, valid_from: e.target.value})}
                     disabled={useAnnualValidity}
-                    className="w-full border border-border-subtle rounded-xl px-3 py-2 focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary text-sm text-text-muted transition-all disabled:bg-slate-50 disabled:opacity-70"
+                    className="w-full border border-border-subtle rounded-xl px-3 py-2 focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary text-sm text-text-muted transition-all disabled:bg-surface-hover disabled:opacity-70"
                   />
                 </div>
                 <div>
@@ -323,7 +323,7 @@ export function PriceListModal({ isOpen, onClose, onSuccess }: PriceListModalPro
                     value={formData.valid_to}
                     onChange={(e) => setFormData({...formData, valid_to: e.target.value})}
                     disabled={useAnnualValidity}
-                    className="w-full border border-border-subtle rounded-xl px-3 py-2 focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary text-sm text-text-muted transition-all disabled:bg-slate-50 disabled:opacity-70"
+                    className="w-full border border-border-subtle rounded-xl px-3 py-2 focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary text-sm text-text-muted transition-all disabled:bg-surface-hover disabled:opacity-70"
                   />
                 </div>
               </div>
@@ -356,7 +356,7 @@ export function PriceListModal({ isOpen, onClose, onSuccess }: PriceListModalPro
                     <select
                       value={selectedYear}
                       onChange={(e) => setSelectedYear(e.target.value)}
-                      className="border border-border-subtle rounded-xl px-3 py-1 focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary text-sm transition-all bg-white min-w-[90px]"
+                      className="border border-border-subtle rounded-xl px-3 py-1 focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary text-sm transition-all bg-surface-card min-w-[90px]"
                     >
                       {[currentYear - 1, currentYear, currentYear + 1, currentYear + 2, currentYear + 3].map(y => (
                         <option key={y} value={y}>{y}</option>
@@ -370,11 +370,11 @@ export function PriceListModal({ isOpen, onClose, onSuccess }: PriceListModalPro
           </form>
         </div>
         
-        <div className="p-4 border-t border-border-subtle bg-slate-50/50 flex justify-end gap-3 text-sm mt-auto">
+        <div className="p-4 border-t border-border-subtle bg-surface-hover/50 flex justify-end gap-3 text-sm mt-auto">
           <button
             type="button"
             onClick={onClose}
-            className="px-4 py-2 border border-border-subtle text-text-primary bg-white rounded-xl hover:bg-slate-50 transition-colors"
+            className="px-4 py-2 border border-border-subtle text-text-primary bg-surface-card rounded-xl hover:bg-surface-hover transition-colors"
           >
             Cancelar
           </button>
@@ -382,7 +382,7 @@ export function PriceListModal({ isOpen, onClose, onSuccess }: PriceListModalPro
             type="submit"
             form="create-price-form"
             disabled={loading}
-            className="px-6 py-2 bg-brand-primary text-white font-medium rounded-xl hover:bg-brand-accent transition-colors disabled:opacity-50 inline-flex justify-center items-center"
+            className="px-6 py-2 btn-primary font-medium rounded-xl inline-flex justify-center items-center"
           >
             {loading ? "Guardando..." : "Guardar Tarifa"}
           </button>

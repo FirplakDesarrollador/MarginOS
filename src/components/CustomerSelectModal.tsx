@@ -80,9 +80,9 @@ export function CustomerSelectModal({ isOpen, onClose, onSelect }: CustomerSelec
         onClick={onClose}
       />
       
-      <div className="relative w-full max-w-2xl max-h-[85vh] bg-white rounded-2xl shadow-xl border border-border-subtle flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+      <div className="relative w-full max-w-2xl max-h-[85vh] bg-surface-card rounded-2xl shadow-xl border border-border-subtle flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200">
         
-        <div className="flex items-center justify-between px-6 py-4 border-b border-border-subtle bg-slate-50/50">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-border-subtle bg-surface-hover/50">
           <div className="flex items-center gap-3">
             <div className="p-2 bg-brand-primary/10 text-brand-primary rounded-xl">
               <Building2 className="w-5 h-5" />
@@ -93,13 +93,13 @@ export function CustomerSelectModal({ isOpen, onClose, onSelect }: CustomerSelec
           </div>
           <button 
             onClick={onClose}
-            className="p-2 text-text-muted hover:text-text-primary hover:bg-slate-100 rounded-xl transition-colors"
+            className="p-2 text-text-muted hover:text-text-primary hover:bg-surface-hover rounded-xl transition-colors"
           >
             <X className="w-5 h-5" />
           </button>
         </div>
 
-        <div className="p-4 border-b border-border-subtle bg-white flex flex-col sm:flex-row gap-3">
+        <div className="p-4 border-b border-border-subtle bg-surface-card flex flex-col sm:flex-row gap-3">
           <div className="relative flex-1">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-text-muted" />
             <input 
@@ -113,7 +113,7 @@ export function CustomerSelectModal({ isOpen, onClose, onSelect }: CustomerSelec
           <select 
             value={channelFilter}
             onChange={(e) => setChannelFilter(e.target.value)}
-            className="border border-border-subtle rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary transition-all bg-white sm:w-48"
+            className="border border-border-subtle rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary transition-all bg-surface-card sm:w-48"
           >
             <option value="">Todos los canales</option>
             {channels.map((ch) => (
@@ -122,7 +122,7 @@ export function CustomerSelectModal({ isOpen, onClose, onSelect }: CustomerSelec
           </select>
         </div>
 
-        <div className="flex-1 overflow-y-auto p-4 bg-slate-50/30">
+        <div className="flex-1 overflow-y-auto p-4 bg-surface-hover/30">
           {loading ? (
             <div className="py-12 flex flex-col items-center justify-center text-text-muted">
               <div className="w-8 h-8 border-2 border-brand-primary border-t-transparent rounded-full animate-spin mb-4" />
@@ -140,7 +140,7 @@ export function CustomerSelectModal({ isOpen, onClose, onSelect }: CustomerSelec
                 <button
                   key={c.id}
                   onClick={() => onSelect(c)}
-                  className="w-full flex items-center justify-between p-4 rounded-xl border border-border-subtle bg-white hover:border-brand-primary/40 hover:shadow-sm transition-all text-left group"
+                  className="w-full flex items-center justify-between p-4 rounded-xl border border-border-subtle bg-surface-card hover:border-brand-primary/40 hover:shadow-sm transition-all text-left group"
                 >
                   <div className="flex flex-col gap-1">
                     <span className="font-semibold text-text-primary group-hover:text-brand-primary transition-colors">

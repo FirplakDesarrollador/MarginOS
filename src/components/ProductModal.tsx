@@ -139,9 +139,9 @@ export function ProductModal({ isOpen, onClose, onSuccess, product }: ProductMod
         onClick={onClose}
       />
       
-      <div className="relative w-full max-w-lg bg-white rounded-2xl shadow-xl border border-border-subtle flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+      <div className="relative w-full max-w-lg bg-surface-card rounded-2xl shadow-xl border border-border-subtle flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200">
         
-        <div className="flex items-center justify-between px-6 py-4 border-b border-border-subtle bg-slate-50/50">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-border-subtle bg-surface-hover/50">
           <div className="flex items-center gap-3">
             <div className="p-2 bg-brand-primary/10 text-brand-primary rounded-xl">
               <Package className="w-5 h-5" />
@@ -154,7 +154,7 @@ export function ProductModal({ isOpen, onClose, onSuccess, product }: ProductMod
           </div>
           <button 
             onClick={onClose}
-            className="p-2 text-text-muted hover:text-text-primary hover:bg-slate-100 rounded-xl transition-colors"
+            className="p-2 text-text-muted hover:text-text-primary hover:bg-surface-hover rounded-xl transition-colors"
           >
             <X className="w-5 h-5" />
           </button>
@@ -176,7 +176,7 @@ export function ProductModal({ isOpen, onClose, onSuccess, product }: ProductMod
                   type="text" 
                   value={formData.sap_code}
                   onChange={(e) => setFormData({...formData, sap_code: e.target.value})}
-                  className="w-full border border-border-subtle rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary transition-all bg-white"
+                  className="w-full border border-border-subtle rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary transition-all bg-surface-card"
                   placeholder="Ej: 43003001"
                   required
                 />
@@ -188,7 +188,7 @@ export function ProductModal({ isOpen, onClose, onSuccess, product }: ProductMod
                   type="text" 
                   value={formData.description}
                   onChange={(e) => setFormData({...formData, description: e.target.value})}
-                  className="w-full border border-border-subtle rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary transition-all bg-white"
+                  className="w-full border border-border-subtle rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary transition-all bg-surface-card"
                   placeholder="Ej: Pintura Acrílica Galón"
                   required
                 />
@@ -201,7 +201,7 @@ export function ProductModal({ isOpen, onClose, onSuccess, product }: ProductMod
                     type="text" 
                     value={formData.category || ""}
                     onChange={(e) => setFormData({...formData, category: e.target.value})}
-                    className="w-full border border-border-subtle rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary transition-all bg-white"
+                    className="w-full border border-border-subtle rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary transition-all bg-surface-card"
                     placeholder="Ej: Pinturas"
                   />
                 </div>
@@ -211,7 +211,7 @@ export function ProductModal({ isOpen, onClose, onSuccess, product }: ProductMod
                     type="text" 
                     value={formData.uom || ""}
                     onChange={(e) => setFormData({...formData, uom: e.target.value})}
-                    className="w-full border border-border-subtle rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary transition-all bg-white"
+                    className="w-full border border-border-subtle rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary transition-all bg-surface-card"
                     placeholder="Ej: GAL, UND, MT"
                   />
                 </div>
@@ -224,7 +224,7 @@ export function ProductModal({ isOpen, onClose, onSuccess, product }: ProductMod
                   step="0.1"
                   value={formData.target_margin_pct ?? ""}
                   onChange={(e) => setFormData({...formData, target_margin_pct: e.target.value ? Number(e.target.value) : null})}
-                  className="w-full border border-border-subtle rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary transition-all bg-white"
+                  className="w-full border border-border-subtle rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary transition-all bg-surface-card"
                   placeholder="Dejar vacío para usar margen global (65%)"
                 />
               </div>
@@ -243,11 +243,11 @@ export function ProductModal({ isOpen, onClose, onSuccess, product }: ProductMod
           </form>
         </div>
         
-        <div className="p-4 border-t border-border-subtle bg-slate-50/50 flex justify-end gap-3 text-sm mt-auto">
+        <div className="p-4 border-t border-border-subtle bg-surface-hover/50 flex justify-end gap-3 text-sm mt-auto">
           <button
             type="button"
             onClick={onClose}
-            className="px-4 py-2 border border-border-subtle text-text-primary bg-white rounded-xl hover:bg-slate-50 transition-colors shadow-sm"
+            className="px-4 py-2 border border-border-subtle text-text-primary bg-surface-card rounded-xl hover:bg-surface-hover transition-colors shadow-sm"
           >
             Cancelar
           </button>
@@ -255,7 +255,7 @@ export function ProductModal({ isOpen, onClose, onSuccess, product }: ProductMod
             type="submit"
             form="product-form"
             disabled={loading}
-            className="px-6 py-2 bg-brand-primary text-white font-medium rounded-xl hover:bg-brand-accent transition-colors disabled:opacity-50 inline-flex justify-center items-center shadow-sm shadow-brand-primary/20"
+            className="px-6 py-2 btn-primary font-medium rounded-xl inline-flex justify-center items-center shadow-brand-primary/20"
           >
             {loading ? "Guardando..." : "Guardar Producto"}
           </button>

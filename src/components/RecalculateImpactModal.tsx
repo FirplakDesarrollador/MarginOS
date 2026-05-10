@@ -100,10 +100,10 @@ export function RecalculateImpactModal({ isOpen, onClose, onConfirm, impacts }: 
         onClick={() => !isUpdating && onClose()}
       />
       
-      <div className="relative w-full max-w-5xl max-h-[90vh] bg-white rounded-2xl shadow-xl border border-border-subtle flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+      <div className="relative w-full max-w-5xl max-h-[90vh] bg-surface-card rounded-2xl shadow-xl border border-border-subtle flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200">
         
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-5 border-b border-border-subtle bg-slate-50/50">
+        <div className="flex items-center justify-between px-6 py-5 border-b border-border-subtle bg-surface-hover/50">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-xl bg-brand-primary/10 flex items-center justify-center">
                <Activity className="w-5 h-5 text-brand-primary" />
@@ -127,15 +127,15 @@ export function RecalculateImpactModal({ isOpen, onClose, onConfirm, impacts }: 
            
            {/* KPI Row */}
            <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
-              <div className="p-4 rounded-xl border border-border-subtle bg-white shadow-sm flex flex-col">
+              <div className="p-4 rounded-xl border border-border-subtle bg-surface-card shadow-sm flex flex-col">
                  <span className="text-xs font-medium text-text-muted mb-1">Total Analizados</span>
                  <span className="text-2xl font-bold text-text-primary">{totalAnalyzed}</span>
               </div>
-              <div className="p-4 rounded-xl border border-border-subtle bg-white shadow-sm flex flex-col">
+              <div className="p-4 rounded-xl border border-border-subtle bg-surface-card shadow-sm flex flex-col">
                  <span className="text-xs font-medium text-text-muted mb-1">Sin Cambio</span>
-                 <span className="text-2xl font-bold text-slate-500">{unchangedCount}</span>
+                 <span className="text-2xl font-bold text-text-muted">{unchangedCount}</span>
               </div>
-              <div className="p-4 rounded-xl border border-border-subtle bg-slate-50 shadow-sm flex flex-col">
+              <div className="p-4 rounded-xl border border-border-subtle bg-surface-hover shadow-sm flex flex-col">
                  <span className="text-xs font-medium text-text-muted mb-1">Afectados</span>
                  <span className="text-2xl font-bold text-brand-primary">{affectedCount}</span>
               </div>
@@ -150,14 +150,14 @@ export function RecalculateImpactModal({ isOpen, onClose, onConfirm, impacts }: 
            </div>
 
            {affectedCount === 0 ? (
-              <div className="py-16 flex flex-col items-center justify-center text-center border-2 border-dashed border-border-subtle rounded-2xl bg-slate-50/50">
+              <div className="py-16 flex flex-col items-center justify-center text-center border-2 border-dashed border-border-subtle rounded-2xl bg-surface-hover/50">
                  <CheckCircle className="w-12 h-12 text-emerald-500 mb-4" />
                  <h3 className="text-lg font-semibold text-text-primary mb-1">Sin Alteraciones Estructurales</h3>
                  <p className="text-sm text-text-muted max-w-sm">Los costos reales modificados actualmente no impactan a ningún producto ensamblado base en public.bom_products.</p>
               </div>
            ) : (
              <div className="flex flex-col flex-1 min-h-0 border border-border-subtle rounded-xl overflow-hidden shadow-sm">
-                <div className="px-4 py-3 bg-slate-50 border-b border-border-subtle relative flex items-center justify-between">
+                <div className="px-4 py-3 bg-surface-hover border-b border-border-subtle relative flex items-center justify-between">
                    <h3 className="text-sm font-semibold text-text-primary">Detalle de Impacto (Productos Afectados)</h3>
                    <div className="relative">
                       <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-4 h-4 text-text-muted" />
@@ -166,14 +166,14 @@ export function RecalculateImpactModal({ isOpen, onClose, onConfirm, impacts }: 
                          placeholder="Buscar SAP o nombre..."
                          value={searchQuery}
                          onChange={e => setSearchQuery(e.target.value)}
-                         className="pl-8 pr-3 py-1.5 text-sm border border-border-subtle rounded-lg focus:outline-none focus:ring-1 focus:ring-brand-primary/30 w-64 bg-white"
+                         className="pl-8 pr-3 py-1.5 text-sm border border-border-subtle rounded-lg focus:outline-none focus:ring-1 focus:ring-brand-primary/30 w-64 bg-surface-card"
                       />
                    </div>
                 </div>
                 
                 <div className="overflow-x-auto flex-1 h-[400px]">
                    <table className="w-full text-sm text-left">
-                     <thead className="bg-white sticky top-0 shadow-sm z-10">
+                     <thead className="bg-surface-card sticky top-0 shadow-sm z-10">
                        <tr className="border-b border-border-subtle text-xs uppercase tracking-wide text-text-muted">
                          <th className="px-4 py-3 font-semibold w-32">Código SAP</th>
                          <th className="px-4 py-3 font-semibold">Producto Nivel 1</th>
@@ -187,26 +187,26 @@ export function RecalculateImpactModal({ isOpen, onClose, onConfirm, impacts }: 
                      </thead>
                      <tbody className="divide-y divide-border-subtle">
                        {filteredImpacts.map(item => (
-                         <tr key={item.bom_product_id} className="hover:bg-slate-50/50 bg-white group">
+                         <tr key={item.bom_product_id} className="hover:bg-surface-hover/50 bg-surface-card group">
                            <td className="px-4 py-3 font-mono font-semibold text-text-primary">{item.sap_code}</td>
                            <td className="px-4 py-3 text-text-muted">
                               <div className="truncate max-w-[200px]" title={item.description}>{item.description}</div>
                               {item.affected_components.length > 0 && (
                                  <div className="flex gap-1 mt-1 flex-wrap">
                                     {item.affected_components.slice(0, 3).map(c => (
-                                       <span key={c.codigo} className="text-[10px] px-1.5 py-0.5 bg-slate-100 rounded border border-slate-200 text-slate-600 font-mono">
+                                       <span key={c.codigo} className="text-[10px] px-1.5 py-0.5 bg-surface-hover rounded border border-border-subtle text-text-muted font-mono">
                                           {c.codigo}
                                        </span>
                                     ))}
                                     {item.affected_components.length > 3 && (
-                                       <span className="text-[10px] px-1.5 py-0.5 bg-slate-100 rounded border border-slate-200 text-slate-600 font-mono">
+                                       <span className="text-[10px] px-1.5 py-0.5 bg-surface-hover rounded border border-border-subtle text-text-muted font-mono">
                                           +{item.affected_components.length - 3}
                                        </span>
                                     )}
                                  </div>
                               )}
                            </td>
-                           <td className="px-4 py-3 text-right font-medium text-slate-500">{formatMoney(item.old_cost)}</td>
+                           <td className="px-4 py-3 text-right font-medium text-text-muted">{formatMoney(item.old_cost)}</td>
                            <td className="px-0 py-3 text-center"><ArrowRight className="w-3 h-3 text-slate-300 mx-auto" /></td>
                            <td className="px-4 py-3 text-right font-semibold text-text-primary">{formatMoney(item.new_cost)}</td>
                            <td className="px-4 py-3 text-right">
@@ -237,7 +237,7 @@ export function RecalculateImpactModal({ isOpen, onClose, onConfirm, impacts }: 
         </div>
 
         {/* Footer */}
-        <div className="px-6 py-4 flex items-center justify-between border-t border-border-subtle bg-slate-50/50">
+        <div className="px-6 py-4 flex items-center justify-between border-t border-border-subtle bg-surface-hover/50">
           <div className="text-xs text-text-muted flex items-center gap-2">
              <AlertTriangle className="w-4 h-4 text-amber-500" />
              Las simulaciones históricas (versiones base) no serán alteradas.
@@ -247,7 +247,7 @@ export function RecalculateImpactModal({ isOpen, onClose, onConfirm, impacts }: 
                type="button"
                onClick={onClose}
                disabled={isUpdating}
-               className="px-5 py-2.5 bg-white border border-border-subtle text-text-primary text-sm font-medium rounded-xl hover:bg-slate-50 transition-colors disabled:opacity-50"
+               className="px-5 py-2.5 bg-surface-card border border-border-subtle text-text-primary text-sm font-medium rounded-xl hover:bg-surface-hover transition-colors disabled:opacity-50"
              >
                Cancelar Recálculo
              </button>
@@ -256,7 +256,7 @@ export function RecalculateImpactModal({ isOpen, onClose, onConfirm, impacts }: 
                   type="button"
                   onClick={handleConfirm}
                   disabled={isUpdating}
-                  className="inline-flex items-center gap-2 px-6 py-2.5 bg-brand-primary text-white text-sm font-medium rounded-xl hover:bg-brand-accent transition-all shadow-sm shadow-brand-primary/20 hover:-translate-y-0.5 disabled:opacity-50"
+                  className="inline-flex items-center gap-2 px-6 py-2.5 btn-primary text-sm font-medium rounded-xl hover:-translate-y-0.5"
                 >
                   {isUpdating ? (
                     <span className="w-4 h-4 border-2 border-white/50 border-t-white rounded-full animate-spin" />

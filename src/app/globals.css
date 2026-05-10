@@ -1,25 +1,14 @@
 @import "tailwindcss";
 @import "../styles/tokens.css";
 
-html, body {
-  background: var(--bg);
-  color: var(--text);
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-@theme {
-  --font-sans: var(--font-poppins), system-ui, sans-serif;
-
-  /* Color Tokens from STYLE_GUIDE.md */
+:root {
   --color-brand-primary: #0B1F3B;
-  /* Dark Blue */
+  --color-brand-primary-foreground: #FFFFFF;
   --color-brand-accent: #1D4ED8;
-  /* Blue */
 
   --color-surface-bg: #F8FAFC;
-  /* Background */
   --color-surface-card: #FFFFFF;
+  --color-surface-hover: #F1F5F9;
 
   --color-text-primary: #0F172A;
   --color-text-muted: #64748B;
@@ -27,9 +16,60 @@ html, body {
   --color-border-subtle: #E2E8F0;
 }
 
-/* Utility to enforce smoother font rendering */
-body {
-  @apply bg-surface-bg text-text-primary antialiased font-sans;
-  background-color: var(--color-surface-bg);
+.dark {
+  --color-brand-primary: #F8FAFC;
+  --color-brand-primary-foreground: #020617;
+  --color-brand-accent: #3B82F6;
+
+  --color-surface-bg: #020617;
+  --color-surface-card: #0F172A;
+  --color-surface-hover: #1E293B;
+
+  --color-text-primary: #F8FAFC;
+  --color-text-muted: #94A3B8;
+
+  --color-border-subtle: #334155;
+}
+
+@theme {
+  --font-sans: var(--font-poppins), system-ui, sans-serif;
+
+  --color-brand-primary: var(--color-brand-primary);
+  --color-brand-primary-foreground: var(--color-brand-primary-foreground);
+  --color-brand-accent: var(--color-brand-accent);
+  --color-surface-bg: var(--color-surface-bg);
+  --color-surface-card: var(--color-surface-card);
+  --color-surface-hover: var(--color-surface-hover);
+  --color-text-primary: var(--color-text-primary);
+  --color-text-muted: var(--color-text-muted);
+  --color-border-subtle: var(--color-border-subtle);
+}
+
+html, body {
+  background: var(--color-surface-bg);
   color: var(--color-text-primary);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  @apply bg-surface-bg text-text-primary antialiased font-sans transition-colors duration-200;
+}
+
+@layer components {
+  .btn-primary {
+    @apply bg-brand-primary text-brand-primary-foreground hover:bg-brand-accent shadow-sm transition-all disabled:opacity-50;
+  }
+  .btn-secondary {
+    @apply bg-surface-card border border-border-subtle text-text-primary hover:border-brand-primary/30 hover:text-brand-primary shadow-sm transition-all disabled:opacity-50;
+  }
+  .btn-ghost {
+    @apply bg-transparent text-text-muted hover:text-text-primary hover:bg-surface-hover transition-all disabled:opacity-50;
+  }
+  .btn-danger {
+    @apply bg-red-600 text-white dark:text-red-50 hover:bg-red-700 shadow-sm transition-all disabled:opacity-50;
+  }
+  .btn-table-action {
+    @apply inline-flex items-center justify-center gap-1 bg-surface-card border border-border-subtle text-text-primary hover:bg-surface-hover hover:border-brand-primary/30 hover:text-brand-primary shadow-sm transition-all disabled:opacity-50 text-xs font-semibold rounded-lg;
+  }
 }

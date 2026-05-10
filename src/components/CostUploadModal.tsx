@@ -108,9 +108,9 @@ export function CostUploadModal({ isOpen, onClose, onSuccess }: Props) {
         className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm transition-opacity" 
         onClick={closeModal}
       />
-      <div className="relative w-full max-w-lg bg-white rounded-2xl shadow-xl border border-border-subtle flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+      <div className="relative w-full max-w-lg bg-surface-card rounded-2xl shadow-xl border border-border-subtle flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200">
         
-        <div className="flex items-center justify-between px-6 py-4 border-b border-border-subtle bg-slate-50/50">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-border-subtle bg-surface-hover/50">
           <h2 className="text-lg font-semibold text-text-primary">
             Cargar Costos de Componentes
           </h2>
@@ -125,8 +125,8 @@ export function CostUploadModal({ isOpen, onClose, onSuccess }: Props) {
 
         <div className="p-6">
           {!result && !isProcessing && (
-             <div className="flex flex-col items-center justify-center border-2 border-dashed border-border-subtle rounded-2xl p-8 bg-slate-50/50 hover:bg-slate-50 transition-colors">
-               <div className="w-12 h-12 bg-white border border-border-subtle rounded-xl flex items-center justify-center mb-4 shadow-sm">
+             <div className="flex flex-col items-center justify-center border-2 border-dashed border-border-subtle rounded-2xl p-8 bg-surface-hover/50 hover:bg-surface-hover transition-colors">
+               <div className="w-12 h-12 bg-surface-card border border-border-subtle rounded-xl flex items-center justify-center mb-4 shadow-sm">
                  <UploadCloud className="w-6 h-6 text-brand-primary" />
                </div>
                
@@ -137,7 +137,7 @@ export function CostUploadModal({ isOpen, onClose, onSuccess }: Props) {
                  Formato esperado con columnas: codigo, costo_unitario, moneda, description
                </p>
 
-               <label className="inline-flex cursor-pointer items-center justify-center px-6 py-2.5 bg-brand-primary text-white text-sm font-medium rounded-xl hover:bg-brand-accent transition-all shadow-sm shadow-brand-primary/20 hover:-translate-y-0.5">
+               <label className="inline-flex cursor-pointer items-center justify-center px-6 py-2.5 btn-primary text-sm font-medium rounded-xl hover:-translate-y-0.5">
                  Explorar Archivo
                  <input
                    type="file"
@@ -187,10 +187,10 @@ export function CostUploadModal({ isOpen, onClose, onSuccess }: Props) {
         </div>
 
         {result && !isProcessing && (
-           <div className="px-6 py-4 flex justify-end gap-3 border-t border-border-subtle bg-slate-50/50">
+           <div className="px-6 py-4 flex justify-end gap-3 border-t border-border-subtle bg-surface-hover/50">
              <button
                onClick={closeModal}
-               className="px-5 py-2.5 bg-brand-primary text-white text-sm font-medium rounded-xl hover:bg-brand-accent transition-all shadow-sm"
+               className="px-5 py-2.5 btn-primary text-sm font-medium rounded-xl"
              >
                Finalizar
              </button>

@@ -18,10 +18,10 @@ export function VersionModal({ isOpen, onClose, onConfirm, isSaving }: Props) {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       <div className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm transition-opacity" onClick={() => !isSaving && onClose()} />
-      <div className="relative w-full max-w-lg bg-white rounded-2xl shadow-xl border border-border-subtle flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+      <div className="relative w-full max-w-lg bg-surface-card rounded-2xl shadow-xl border border-border-subtle flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200">
         
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-border-subtle bg-slate-50/50">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-border-subtle bg-surface-hover/50">
           <h2 className="text-lg font-semibold text-text-primary">
             Crear nueva versión de simulación
           </h2>
@@ -43,10 +43,10 @@ export function VersionModal({ isOpen, onClose, onConfirm, isSaving }: Props) {
             className={`flex items-start gap-4 p-4 rounded-xl border-2 text-left transition-all ${
               selectedOption === "CLONE" 
                 ? "border-brand-primary bg-brand-primary/5" 
-                : "border-border-subtle hover:border-brand-primary/40 hover:bg-slate-50"
+                : "border-border-subtle hover:border-brand-primary/40 hover:bg-surface-hover"
             }`}
           >
-            <div className={`p-2 rounded-lg shrink-0 ${selectedOption === "CLONE" ? "bg-brand-primary/20 text-brand-primary" : "bg-slate-100 text-slate-500"}`}>
+            <div className={`p-2 rounded-lg shrink-0 ${selectedOption === "CLONE" ? "bg-brand-primary/20 text-brand-primary" : "bg-surface-hover text-text-muted"}`}>
                <Copy className="w-6 h-6" />
             </div>
             <div>
@@ -65,10 +65,10 @@ export function VersionModal({ isOpen, onClose, onConfirm, isSaving }: Props) {
             className={`flex items-start gap-4 p-4 rounded-xl border-2 text-left transition-all ${
               selectedOption === "COST_UPDATE" 
                 ? "border-emerald-500 bg-emerald-50" 
-                : "border-border-subtle hover:border-emerald-500/40 hover:bg-slate-50"
+                : "border-border-subtle hover:border-emerald-500/40 hover:bg-surface-hover"
             }`}
           >
-            <div className={`p-2 rounded-lg shrink-0 ${selectedOption === "COST_UPDATE" ? "bg-emerald-200 text-emerald-700" : "bg-slate-100 text-slate-500"}`}>
+            <div className={`p-2 rounded-lg shrink-0 ${selectedOption === "COST_UPDATE" ? "bg-emerald-200 text-emerald-700" : "bg-surface-hover text-text-muted"}`}>
                <RefreshCw className="w-6 h-6" />
             </div>
             <div>
@@ -84,19 +84,19 @@ export function VersionModal({ isOpen, onClose, onConfirm, isSaving }: Props) {
         </div>
 
         {/* Footer */}
-        <div className="px-6 py-4 flex justify-end gap-3 border-t border-border-subtle bg-slate-50/50">
+        <div className="px-6 py-4 flex justify-end gap-3 border-t border-border-subtle bg-surface-hover/50">
           <button
             type="button"
             onClick={onClose}
             disabled={isSaving}
-            className="px-5 py-2.5 bg-white border border-border-subtle text-text-primary text-sm font-medium rounded-xl hover:bg-slate-50 transition-colors disabled:opacity-50 shadow-sm"
+            className="px-5 py-2.5 bg-surface-card border border-border-subtle text-text-primary text-sm font-medium rounded-xl hover:bg-surface-hover transition-colors disabled:opacity-50 shadow-sm"
           >
             Cancelar
           </button>
           <button
             onClick={() => onConfirm(selectedOption)}
             disabled={isSaving || !selectedOption}
-            className={`inline-flex items-center justify-center gap-2 px-6 py-2.5 text-white text-sm font-medium rounded-xl transition-all shadow-sm disabled:opacity-50 ${
+            className={`inline-flex items-center justify-center gap-2 px-6 py-2.5 btn-primary text-sm font-medium rounded-xl ${
               selectedOption === "COST_UPDATE" 
                 ? "bg-emerald-600 hover:bg-emerald-700 hover:shadow-emerald-600/20" 
                 : "bg-brand-primary hover:bg-brand-accent hover:shadow-brand-primary/20"
