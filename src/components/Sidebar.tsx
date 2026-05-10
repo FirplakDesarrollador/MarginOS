@@ -16,6 +16,7 @@ import {
   ChevronLeft,
   ChevronRight,
   X,
+  BadgeDollarSign,
 } from "lucide-react";
 import { useSidebar } from "@/contexts/SidebarContext";
 
@@ -35,6 +36,7 @@ const navGroups = [
       { icon: FileSpreadsheet, title: "Importar BOM", href: "/import" },
       { icon: Settings, title: "Costos Reales", href: "/admin/costs" },
       { icon: Package, title: "Productos", href: "/products" },
+      { icon: BadgeDollarSign, title: "Pricing Manager", href: "/pricing-manager" },
       { icon: Tag, title: "Listas de Precios", href: "/price-lists" },
       { icon: Store, title: "Canales de Venta", href: "/sales-channels" },
     ],
