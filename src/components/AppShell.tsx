@@ -13,7 +13,7 @@ function ShellInner({
   title?: string;
 }) {
   return (
-    <div className="flex min-h-[100dvh] bg-slate-50/50 text-text-primary overflow-hidden">
+    <div className="flex min-h-[100dvh] bg-surface-hover/50 text-text-primary overflow-hidden">
       {/* Desktop sidebar */}
       <Sidebar />
 

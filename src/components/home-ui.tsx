@@ -12,7 +12,7 @@ export function ActionCard({ icon: Icon, title, description, href }: ActionCardP
     return (
         <Link
             href={href}
-            className="group relative flex flex-col p-8 h-full bg-white rounded-2xl border border-border-subtle shadow-sm transition-all duration-300 hover:shadow-md hover:-translate-y-1 hover:border-brand-accent/20"
+            className="group relative flex flex-col p-8 h-full bg-surface-card rounded-2xl border border-border-subtle shadow-sm transition-all duration-300 hover:shadow-md hover:-translate-y-1 hover:border-brand-accent/20"
         >
             <div className="mb-6 p-4 w-fit rounded-2xl bg-surface-bg text-brand-primary group-hover:bg-brand-primary group-hover:text-white transition-colors duration-300">
                 <Icon className="w-6 h-6" strokeWidth={1.5} />
@@ -45,7 +45,7 @@ interface HeroSectionProps {
 export function HeroSection({ version, title, subtitle, ctaText, ctaHref }: HeroSectionProps) {
     return (
         <section className="text-center space-y-10 max-w-4xl mx-auto py-12">
-            <div className="inline-flex items-center px-4 py-1.5 rounded-full bg-white text-text-muted text-xs font-medium tracking-wider uppercase border border-border-subtle shadow-sm">
+            <div className="inline-flex items-center px-4 py-1.5 rounded-full bg-surface-card text-text-muted text-xs font-medium tracking-wider uppercase border border-border-subtle shadow-sm">
                 {version}
             </div>
 

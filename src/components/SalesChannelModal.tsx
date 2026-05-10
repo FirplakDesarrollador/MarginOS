@@ -106,10 +106,10 @@ export function SalesChannelModal({ isOpen, onClose, onSuccess, editChannel }: P
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       <div className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm transition-opacity" onClick={() => !isSaving && onClose()} />
-      <div className="relative w-full max-w-md bg-white rounded-2xl shadow-xl border border-border-subtle flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+      <div className="relative w-full max-w-md bg-surface-card rounded-2xl shadow-xl border border-border-subtle flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200">
         
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-border-subtle bg-slate-50/50">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-border-subtle bg-surface-hover/50">
           <h2 className="text-lg font-semibold text-text-primary">
             {editChannel ? "Editar Canal de Venta" : "Nuevo Canal de Venta"}
           </h2>
@@ -142,7 +142,7 @@ export function SalesChannelModal({ isOpen, onClose, onSuccess, editChannel }: P
               onChange={(e) => setName(e.target.value)}
               disabled={isSaving}
               placeholder="Ej. Distribuidores ZS"
-              className="w-full px-3 py-2 bg-white border border-border-subtle rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary transition-all disabled:opacity-50"
+              className="w-full px-3 py-2 bg-surface-card border border-border-subtle rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary transition-all disabled:opacity-50"
             />
           </div>
 
@@ -154,7 +154,7 @@ export function SalesChannelModal({ isOpen, onClose, onSuccess, editChannel }: P
               value={currency}
               onChange={(e) => setCurrency(e.target.value)}
               disabled={isSaving}
-              className="w-full px-3 py-2 bg-white border border-border-subtle rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary transition-all disabled:opacity-50"
+              className="w-full px-3 py-2 bg-surface-card border border-border-subtle rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary transition-all disabled:opacity-50"
             >
               <option value="COP">COP</option>
               <option value="USD">USD</option>
@@ -172,7 +172,7 @@ export function SalesChannelModal({ isOpen, onClose, onSuccess, editChannel }: P
               onChange={(e) => setMinMargin(e.target.value ? Number(e.target.value) : "")}
               disabled={isSaving}
               placeholder="Ej. 15.5"
-              className="w-full px-3 py-2 bg-white border border-border-subtle rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary transition-all disabled:opacity-50"
+              className="w-full px-3 py-2 bg-surface-card border border-border-subtle rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary transition-all disabled:opacity-50"
             />
           </div>
 
@@ -183,7 +183,7 @@ export function SalesChannelModal({ isOpen, onClose, onSuccess, editChannel }: P
               disabled={isSaving}
               className={`relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${isActive ? 'bg-emerald-500' : 'bg-slate-300'} disabled:opacity-50`}
             >
-              <span className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${isActive ? 'translate-x-5' : 'translate-x-0'}`} />
+              <span className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-surface-card shadow ring-0 transition duration-200 ease-in-out ${isActive ? 'translate-x-5' : 'translate-x-0'}`} />
             </button>
             <span className="text-sm font-medium text-text-primary">
               {isActive ? "Canal Activo" : "Canal Inactivo"}
@@ -195,14 +195,14 @@ export function SalesChannelModal({ isOpen, onClose, onSuccess, editChannel }: P
               type="button"
               onClick={onClose}
               disabled={isSaving}
-              className="flex-1 px-4 py-2 bg-white border border-border-subtle text-text-primary text-sm font-medium rounded-xl hover:bg-slate-50 transition-colors disabled:opacity-50 shadow-sm"
+              className="flex-1 px-4 py-2 bg-surface-card border border-border-subtle text-text-primary text-sm font-medium rounded-xl hover:bg-surface-hover transition-colors disabled:opacity-50 shadow-sm"
             >
               Cancelar
             </button>
             <button
               type="submit"
               disabled={isSaving}
-              className="flex-1 inline-flex items-center justify-center gap-2 px-4 py-2 bg-brand-primary text-white text-sm font-medium rounded-xl hover:bg-brand-accent transition-all shadow-sm disabled:opacity-50"
+              className="flex-1 inline-flex items-center justify-center gap-2 px-4 py-2 btn-primary text-sm font-medium rounded-xl"
             >
               {isSaving ? <span className="w-4 h-4 border-2 border-white/50 border-t-white rounded-full animate-spin" /> : <Save className="w-4 h-4" />}
               Guardar

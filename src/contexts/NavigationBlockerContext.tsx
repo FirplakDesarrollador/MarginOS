@@ -98,7 +98,7 @@ export function NavigationBlockerProvider({ children }: { children: React.ReactN
           />
 
           {/* Dialog */}
-          <div className="relative w-full max-w-md bg-white rounded-2xl shadow-2xl border border-border-subtle overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+          <div className="relative w-full max-w-md bg-surface-card rounded-2xl shadow-2xl border border-border-subtle overflow-hidden animate-in fade-in zoom-in-95 duration-200">
             {/* Header */}
             <div className="flex items-start justify-between px-6 pt-6 pb-4 border-b border-border-subtle">
               <div className="flex items-center gap-3">
@@ -114,7 +114,7 @@ export function NavigationBlockerProvider({ children }: { children: React.ReactN
               </div>
               <button
                 onClick={handleStay}
-                className="p-1.5 rounded-lg text-text-muted hover:text-text-primary hover:bg-slate-100 transition-colors"
+                className="p-1.5 rounded-lg text-text-muted hover:text-text-primary hover:bg-surface-hover transition-colors"
               >
                 <X className="w-4 h-4" />
               </button>
@@ -134,7 +134,7 @@ export function NavigationBlockerProvider({ children }: { children: React.ReactN
             <div className="px-6 pb-6 flex flex-col-reverse sm:flex-row gap-3 sm:justify-end">
               <button
                 onClick={handleLeave}
-                className="px-4 py-2.5 rounded-xl text-sm font-medium text-slate-600 bg-white border border-border-subtle hover:bg-red-50 hover:text-red-600 hover:border-red-200 transition-all"
+                className="px-4 py-2.5 rounded-xl text-sm font-medium text-text-muted bg-surface-card border border-border-subtle hover:bg-red-50 hover:text-red-600 hover:border-red-200 transition-all"
               >
                 Salir sin guardar
               </button>

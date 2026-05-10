@@ -93,14 +93,14 @@ export default function SalesChannelsPage() {
           <div className="flex flex-wrap items-center gap-3">
             <button
               onClick={handleDownloadTemplate}
-              className="inline-flex items-center gap-2 px-4 py-2 border border-border-subtle bg-white text-text-primary text-sm font-medium rounded-xl hover:bg-slate-50 transition-colors shadow-sm"
+              className="inline-flex items-center gap-2 px-4 py-2 border border-border-subtle bg-surface-card text-text-primary text-sm font-medium rounded-xl hover:bg-surface-hover transition-colors shadow-sm"
             >
               <Download className="w-4 h-4 text-text-muted" />
               Descargar Plantilla
             </button>
             <button
               onClick={() => setIsUploadModalOpen(true)}
-              className="inline-flex items-center gap-2 px-4 py-2 border border-border-subtle bg-white text-text-primary text-sm font-medium rounded-xl hover:bg-slate-50 transition-colors shadow-sm"
+              className="inline-flex items-center gap-2 px-4 py-2 border border-border-subtle bg-surface-card text-text-primary text-sm font-medium rounded-xl hover:bg-surface-hover transition-colors shadow-sm"
             >
               <Upload className="w-4 h-4 text-text-muted" />
               Cargar Canales
@@ -110,7 +110,7 @@ export default function SalesChannelsPage() {
                 setEditingChannel(null);
                 setIsCreateModalOpen(true);
               }}
-              className="inline-flex items-center gap-2 px-5 py-2 bg-brand-primary text-white text-sm font-medium rounded-xl hover:bg-brand-accent transition-all shadow-sm shadow-brand-primary/20 hover:-translate-y-0.5"
+              className="inline-flex items-center gap-2 px-5 py-2 btn-primary text-sm font-medium rounded-xl hover:-translate-y-0.5"
             >
               <Plus className="w-4 h-4" />
               Nuevo Canal
@@ -119,7 +119,7 @@ export default function SalesChannelsPage() {
         </div>
 
         {/* Filters */}
-        <div className="mt-8 flex flex-col sm:flex-row items-center gap-4 bg-white p-4 border border-border-subtle rounded-2xl shadow-sm">
+        <div className="mt-8 flex flex-col sm:flex-row items-center gap-4 bg-surface-card p-4 border border-border-subtle rounded-2xl shadow-sm">
           <div className="relative w-full sm:max-w-md">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-text-muted" />
             <input
@@ -127,7 +127,7 @@ export default function SalesChannelsPage() {
               placeholder="Buscar por nombre..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-9 pr-4 py-2 border border-border-subtle rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary transition-all bg-slate-50/50"
+              className="w-full pl-9 pr-4 py-2 border border-border-subtle rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary transition-all bg-surface-hover/50"
             />
           </div>
           
@@ -136,7 +136,7 @@ export default function SalesChannelsPage() {
             <select
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value as any)}
-              className="w-full sm:w-40 px-3 py-2 border border-border-subtle rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary transition-all bg-slate-50/50 text-text-primary font-medium"
+              className="w-full sm:w-40 px-3 py-2 border border-border-subtle rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary transition-all bg-surface-hover/50 text-text-primary font-medium"
             >
               <option value="ALL">Todos los canales</option>
               <option value="ACTIVE">Activos</option>
@@ -147,13 +147,13 @@ export default function SalesChannelsPage() {
 
         {/* Table Area */}
         {loading ? (
-          <div className="mt-6 py-24 flex flex-col items-center justify-center border border-border-subtle rounded-2xl bg-white shadow-sm">
+          <div className="mt-6 py-24 flex flex-col items-center justify-center border border-border-subtle rounded-2xl bg-surface-card shadow-sm">
              <div className="w-8 h-8 border-2 border-brand-primary border-t-transparent rounded-full animate-spin mb-4" />
              <p className="text-sm font-medium text-text-muted">Cargando canales...</p>
           </div>
         ) : filteredChannels.length === 0 ? (
-          <div className="mt-6 border-2 border-dashed border-border-subtle rounded-3xl py-24 px-6 text-center bg-slate-50/50 shadow-sm flex flex-col items-center justify-center">
-            <div className="w-16 h-16 bg-white border border-border-subtle rounded-2xl flex items-center justify-center mb-6 shadow-sm">
+          <div className="mt-6 border-2 border-dashed border-border-subtle rounded-3xl py-24 px-6 text-center bg-surface-hover/50 shadow-sm flex flex-col items-center justify-center">
+            <div className="w-16 h-16 bg-surface-card border border-border-subtle rounded-2xl flex items-center justify-center mb-6 shadow-sm">
               <Store className="w-8 h-8 text-text-muted/50" />
             </div>
             <h3 className="text-xl font-semibold text-text-primary mb-2 tracking-tight">
@@ -170,16 +170,16 @@ export default function SalesChannelsPage() {
                   setEditingChannel(null);
                   setIsCreateModalOpen(true);
                 }}
-                className="inline-flex items-center gap-2 px-5 py-2.5 border border-border-subtle bg-white text-text-primary text-sm font-medium rounded-xl hover:bg-slate-50 transition-colors shadow-sm"
+                className="inline-flex items-center gap-2 px-5 py-2.5 border border-border-subtle bg-surface-card text-text-primary text-sm font-medium rounded-xl hover:bg-surface-hover transition-colors shadow-sm"
               >
                 Agregar mi primer canal
               </button>
             )}
           </div>
         ) : (
-          <div className="mt-6 overflow-x-auto rounded-[var(--radius-lg)] border border-[color:var(--border)] bg-white shadow-sm">
+          <div className="mt-6 overflow-x-auto rounded-[var(--radius-lg)] border border-[color:var(--border)] bg-surface-card shadow-sm">
             <table className="w-full text-sm">
-              <thead className="bg-slate-50/80 border-b border-border-subtle">
+              <thead className="bg-surface-hover/80 border-b border-border-subtle">
                 <tr>
                   <th className="px-6 py-4 text-left font-semibold text-text-primary">Nombre del canal</th>
                   <th className="px-6 py-4 text-left font-semibold text-text-primary">Moneda por defecto</th>
@@ -190,12 +190,12 @@ export default function SalesChannelsPage() {
               </thead>
               <tbody className="divide-y divide-border-subtle">
                 {filteredChannels.map((c) => (
-                  <tr key={c.id} className="hover:bg-slate-50/50 transition-colors group">
+                  <tr key={c.id} className="hover:bg-surface-hover/50 transition-colors group">
                     <td className="px-6 py-5 font-medium text-text-primary align-middle">
                       {c.name}
                     </td>
                     <td className="px-6 py-5 align-middle">
-                      <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-semibold bg-slate-100 text-slate-700 border border-slate-200">
+                      <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-semibold bg-surface-hover text-text-primary border border-border-subtle">
                         {c.default_currency}
                       </span>
                     </td>
@@ -213,7 +213,7 @@ export default function SalesChannelsPage() {
                            Activo
                         </span>
                       ) : (
-                        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-semibold bg-slate-100 text-slate-700 border border-slate-200">
+                        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-semibold bg-surface-hover text-text-primary border border-border-subtle">
                            <span className="w-1.5 h-1.5 rounded-full bg-slate-400"></span>
                            Inactivo
                         </span>
@@ -225,7 +225,7 @@ export default function SalesChannelsPage() {
                           setEditingChannel(c);
                           setIsCreateModalOpen(true);
                         }}
-                        className="p-2 text-brand-primary hover:text-white hover:bg-brand-primary rounded-lg transition-colors border border-brand-primary/20 hover:border-transparent opacity-0 group-hover:opacity-100 shadow-sm"
+                        className="btn-table-action px-3 py-1.5 opacity-0 group-hover:opacity-100"
                         title="Editar Canal"
                       >
                          Editar

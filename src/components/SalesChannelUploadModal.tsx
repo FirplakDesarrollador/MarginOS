@@ -202,10 +202,10 @@ export function SalesChannelUploadModal({ isOpen, onClose, onSuccess }: Props) {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       <div className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm transition-opacity" onClick={() => !isSaving && onClose()} />
-      <div className="relative w-full max-w-2xl bg-white rounded-2xl shadow-xl border border-border-subtle flex flex-col overflow-hidden max-h-[90vh] animate-in fade-in zoom-in-95 duration-200">
+      <div className="relative w-full max-w-2xl bg-surface-card rounded-2xl shadow-xl border border-border-subtle flex flex-col overflow-hidden max-h-[90vh] animate-in fade-in zoom-in-95 duration-200">
         
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-border-subtle bg-slate-50/50">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-border-subtle bg-surface-hover/50">
           <div className="flex items-center gap-3">
             <div className="p-2 bg-brand-primary/10 rounded-lg">
               <Upload className="w-5 h-5 text-brand-primary" />
@@ -228,7 +228,7 @@ export function SalesChannelUploadModal({ isOpen, onClose, onSuccess }: Props) {
               onDragOver={handleDragOver}
               onDrop={handleDrop}
               onClick={() => fileInputRef.current?.click()}
-              className="border-2 border-dashed border-border-subtle rounded-2xl p-10 flex flex-col items-center justify-center text-center hover:bg-slate-50 hover:border-brand-primary/30 transition-colors cursor-pointer cursor"
+              className="border-2 border-dashed border-border-subtle rounded-2xl p-10 flex flex-col items-center justify-center text-center hover:bg-surface-hover hover:border-brand-primary/30 transition-colors cursor-pointer cursor"
             >
               <input
                 type="file"
@@ -258,7 +258,7 @@ export function SalesChannelUploadModal({ isOpen, onClose, onSuccess }: Props) {
             <div className="space-y-6">
               {/* Summary Stats */}
               <div className="grid grid-cols-3 gap-4">
-                <div className="p-4 bg-slate-50 border border-border-subtle rounded-xl flex flex-col items-center justify-center">
+                <div className="p-4 bg-surface-hover border border-border-subtle rounded-xl flex flex-col items-center justify-center">
                   <span className="text-2xl font-bold text-text-primary">{rows.length}</span>
                   <span className="text-xs font-medium text-text-muted mt-1">Total Filas</span>
                 </div>
@@ -274,7 +274,7 @@ export function SalesChannelUploadModal({ isOpen, onClose, onSuccess }: Props) {
 
               {/* Invalid Rows List */}
               {invalidRows.length > 0 && (
-                <div className="border border-red-100 bg-white rounded-xl overflow-hidden">
+                <div className="border border-red-100 bg-surface-card rounded-xl overflow-hidden">
                   <div className="px-4 py-3 bg-red-50/50 border-b border-red-100 flex items-center gap-2">
                     <AlertCircle className="w-4 h-4 text-red-500" />
                     <span className="text-sm font-semibold text-red-700">Filas omitidas ({invalidRows.length})</span>
@@ -283,7 +283,7 @@ export function SalesChannelUploadModal({ isOpen, onClose, onSuccess }: Props) {
                     {invalidRows.map((r, i) => (
                       <div key={i} className="px-4 py-3 flex items-start gap-3">
                         <div className="min-w-16">
-                           <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-semibold bg-slate-100 text-slate-500">
+                           <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-semibold bg-surface-hover text-text-muted">
                              Fila {r.rowIndex}
                            </span>
                         </div>
@@ -319,11 +319,11 @@ export function SalesChannelUploadModal({ isOpen, onClose, onSuccess }: Props) {
         </div>
 
         {/* Footer */}
-        <div className="p-4 border-t border-border-subtle bg-slate-50/50 flex items-center justify-between">
+        <div className="p-4 border-t border-border-subtle bg-surface-hover/50 flex items-center justify-between">
           <button
              onClick={() => setFile(null)}
              disabled={!file || isSaving}
-             className="text-sm font-medium text-slate-500 hover:text-text-primary disabled:opacity-0 transition-colors"
+             className="text-sm font-medium text-text-muted hover:text-text-primary disabled:opacity-0 transition-colors"
           >
             Subir otro archivo
           </button>
@@ -331,14 +331,14 @@ export function SalesChannelUploadModal({ isOpen, onClose, onSuccess }: Props) {
             <button
               onClick={onClose}
               disabled={isSaving}
-              className="px-5 py-2.5 bg-white border border-border-subtle text-text-primary text-sm font-medium rounded-xl hover:bg-slate-50 transition-colors disabled:opacity-50 shadow-sm"
+              className="px-5 py-2.5 bg-surface-card border border-border-subtle text-text-primary text-sm font-medium rounded-xl hover:bg-surface-hover transition-colors disabled:opacity-50 shadow-sm"
             >
               Cancelar
             </button>
             <button
               onClick={handleSave}
               disabled={isSaving || !file || validRows.length === 0}
-              className="inline-flex items-center justify-center gap-2 px-6 py-2.5 bg-brand-primary text-white text-sm font-medium rounded-xl hover:bg-brand-accent transition-all shadow-sm disabled:opacity-50"
+              className="inline-flex items-center justify-center gap-2 px-6 py-2.5 btn-primary text-sm font-medium rounded-xl"
             >
               {isSaving ? <span className="w-4 h-4 border-2 border-white/50 border-t-white rounded-full animate-spin" /> : "Importar Filas Validas"}
             </button>

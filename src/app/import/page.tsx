@@ -528,7 +528,7 @@ export default function ImportBOMPage() {
             </div>
             <div className="flex items-center gap-2">
               <button type="button" onClick={handleSave} disabled={!canSave}
-                className="rounded-2xl px-4 py-2 text-sm font-medium text-white shadow-[var(--shadow-sm)] transition disabled:opacity-50 disabled:cursor-not-allowed hover:shadow-[var(--shadow-md)]"
+                className="rounded-2xl px-4 py-2 text-sm font-medium btn-primary disabled:cursor-not-allowed"
                 style={{ background: "var(--primary)" }}>
                 <span className="inline-flex items-center gap-2">
                   <Save className="h-4 w-4" /> Guardar
@@ -541,7 +541,7 @@ export default function ImportBOMPage() {
           <div className="mt-8 rounded-[var(--radius-lg)] border border-[color:var(--border)] bg-[color:var(--surface)] shadow-[var(--shadow-sm)]">
             <div className="p-6">
               <div className="flex items-center gap-3">
-                <div className="flex h-10 w-10 items-center justify-center rounded-2xl border border-[color:var(--border)] bg-white shadow-[var(--shadow-sm)]">
+                <div className="flex h-10 w-10 items-center justify-center rounded-2xl border border-[color:var(--border)] bg-surface-card shadow-[var(--shadow-sm)]">
                   <UploadCloud className="h-5 w-5 opacity-80" />
                 </div>
                 <div>
@@ -554,7 +554,7 @@ export default function ImportBOMPage() {
 
               <div className="mt-6 flex flex-wrap items-center gap-3">
                 <label htmlFor="file-upload"
-                  className="inline-flex cursor-pointer items-center rounded-2xl px-5 py-2.5 text-sm font-medium text-white shadow-[var(--shadow-sm)] hover:shadow-[var(--shadow-md)] transition"
+                  className="inline-flex cursor-pointer items-center rounded-2xl px-5 py-2.5 text-sm font-medium btn-primary hover:shadow-[var(--shadow-md)] transition"
                   style={{ background: "var(--primary)" }}>
                   Seleccionar archivo
                 </label>
@@ -591,7 +591,7 @@ export default function ImportBOMPage() {
               </div>
               <div className="mt-4 overflow-x-auto rounded-[var(--radius-lg)] border border-[color:var(--border)] bg-[color:var(--surface)] shadow-[var(--shadow-sm)]">
                 <table className="w-full text-sm">
-                  <thead className="bg-white/60">
+                  <thead className="bg-surface-card/60">
                     <tr className="border-b border-[color:var(--border)]">
                       <th className="px-4 py-3 text-left font-semibold">Código</th>
                       <th className="px-4 py-3 text-left font-semibold">Descripción</th>
@@ -611,7 +611,7 @@ export default function ImportBOMPage() {
                         <td className="px-4 py-3 text-right text-[color:var(--muted)]">{p.componentes_count || "—"}</td>
                         <td className="px-4 py-3 text-right text-[color:var(--muted)]">{p.excluidos_PZ_count || "—"}</td>
                         <td className="px-4 py-3 text-right text-emerald-600 font-medium">{p.usaron_costo_real || 0}</td>
-                        <td className="px-4 py-3 text-right text-slate-400 font-medium">{p.usaron_costo_excel || 0}</td>
+                        <td className="px-4 py-3 text-right text-text-muted font-medium">{p.usaron_costo_excel || 0}</td>
                       </tr>
                     ))}
                   </tbody>
@@ -636,19 +636,19 @@ export default function ImportBOMPage() {
             </div>
 
             {loadingHistory ? (
-              <div className="py-12 flex flex-col items-center justify-center border border-border-subtle rounded-2xl bg-white shadow-sm">
+              <div className="py-12 flex flex-col items-center justify-center border border-border-subtle rounded-2xl bg-surface-card shadow-sm">
                 <div className="w-6 h-6 border-2 border-brand-primary border-t-transparent rounded-full animate-spin mb-3" />
                 <p className="text-sm text-text-muted">Cargando histórico...</p>
               </div>
             ) : bomImports.length === 0 ? (
-              <div className="border-2 border-dashed border-border-subtle rounded-2xl py-16 text-center bg-slate-50/50">
+              <div className="border-2 border-dashed border-border-subtle rounded-2xl py-16 text-center bg-surface-hover/50">
                 <FolderOpen className="w-8 h-8 text-text-muted/40 mx-auto mb-3" />
                 <p className="text-sm text-text-muted">No hay importaciones registradas aún.</p>
               </div>
             ) : (
-              <div className="overflow-x-auto rounded-[var(--radius-lg)] border border-[color:var(--border)] bg-white shadow-sm">
+              <div className="overflow-x-auto rounded-[var(--radius-lg)] border border-[color:var(--border)] bg-surface-card shadow-sm">
                 <table className="w-full text-sm">
-                  <thead className="bg-slate-50/80 border-b border-border-subtle">
+                  <thead className="bg-surface-hover/80 border-b border-border-subtle">
                     <tr>
                       <th className="px-6 py-4 text-left font-semibold text-text-primary">Archivo</th>
                       <th className="px-6 py-4 text-left font-semibold text-text-primary">Fuente</th>
@@ -658,7 +658,7 @@ export default function ImportBOMPage() {
                   </thead>
                   <tbody className="divide-y divide-border-subtle">
                     {bomImports.map((bi) => (
-                      <tr key={bi.id} className="hover:bg-slate-50/50 transition-colors">
+                      <tr key={bi.id} className="hover:bg-surface-hover/50 transition-colors">
                         <td className="px-6 py-4 align-middle">
                           <div className="flex items-center gap-2.5">
                             <FileSpreadsheet className="w-4 h-4 text-emerald-500 flex-shrink-0" />
@@ -666,7 +666,7 @@ export default function ImportBOMPage() {
                           </div>
                         </td>
                         <td className="px-6 py-4 align-middle">
-                          <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-semibold bg-slate-100 text-slate-700 border border-slate-200">
+                          <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-semibold bg-surface-hover text-text-primary border border-border-subtle">
                             {bi.source}
                           </span>
                         </td>
@@ -702,19 +702,19 @@ export default function ImportBOMPage() {
             </div>
 
             {loadingHistory ? (
-              <div className="py-12 flex flex-col items-center justify-center border border-border-subtle rounded-2xl bg-white shadow-sm">
+              <div className="py-12 flex flex-col items-center justify-center border border-border-subtle rounded-2xl bg-surface-card shadow-sm">
                 <div className="w-6 h-6 border-2 border-brand-primary border-t-transparent rounded-full animate-spin mb-3" />
                 <p className="text-sm text-text-muted">Cargando costos...</p>
               </div>
             ) : bomProducts.length === 0 ? (
-              <div className="border-2 border-dashed border-border-subtle rounded-2xl py-16 text-center bg-slate-50/50">
+              <div className="border-2 border-dashed border-border-subtle rounded-2xl py-16 text-center bg-surface-hover/50">
                 <Package className="w-8 h-8 text-text-muted/40 mx-auto mb-3" />
                 <p className="text-sm text-text-muted">No hay productos BOM procesados aún.</p>
               </div>
             ) : (
-              <div className="overflow-x-auto rounded-[var(--radius-lg)] border border-[color:var(--border)] bg-white shadow-sm">
+              <div className="overflow-x-auto rounded-[var(--radius-lg)] border border-[color:var(--border)] bg-surface-card shadow-sm">
                 <table className="w-full text-sm">
-                  <thead className="bg-slate-50/80 border-b border-border-subtle">
+                  <thead className="bg-surface-hover/80 border-b border-border-subtle">
                     <tr>
                       <th className="px-6 py-4 text-left font-semibold text-text-primary">Código SAP</th>
                       <th className="px-6 py-4 text-left font-semibold text-text-primary">Descripción</th>
@@ -726,9 +726,9 @@ export default function ImportBOMPage() {
                   </thead>
                   <tbody className="divide-y divide-border-subtle">
                     {bomProducts.map((bp) => (
-                      <tr key={bp.id} className="hover:bg-slate-50/50 transition-colors">
+                      <tr key={bp.id} className="hover:bg-surface-hover/50 transition-colors">
                         <td className="px-6 py-4 align-middle">
-                          <span className="inline-flex items-center px-2 py-1 rounded-md text-xs font-semibold bg-slate-100 text-slate-800 tracking-tight">
+                          <span className="inline-flex items-center px-2 py-1 rounded-md text-xs font-semibold bg-surface-hover text-text-primary tracking-tight">
                             {bp.sap_code}
                           </span>
                         </td>
