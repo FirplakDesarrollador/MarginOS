@@ -506,7 +506,7 @@ export default function ScenariosPage() {
                           e.stopPropagation();
                           setSelectedGroup(group);
                         }}
-                        className="inline-flex items-center gap-1 px-3 py-2 text-xs font-semibold text-brand-primary hover:text-white hover:bg-brand-primary rounded-lg transition-all border border-brand-primary/20 hover:border-transparent shadow-sm"
+                        className="btn-table-action px-3 py-2"
                       >
                         Ver
                         <ChevronRight className="w-3.5 h-3.5" />
@@ -658,7 +658,7 @@ export default function ScenariosPage() {
                         <td className="px-5 py-4 text-center align-middle">
                           <button
                             onClick={() => setActionSim(sim)}
-                            className="inline-flex items-center gap-1 px-3 py-1.5 text-xs font-semibold text-brand-primary hover:text-white hover:bg-brand-primary rounded-lg transition-all border border-brand-primary/20 hover:border-transparent shadow-sm"
+                            className="btn-table-action px-3 py-1.5"
                           >
                             Acciones
                           </button>
