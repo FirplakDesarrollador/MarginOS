@@ -795,7 +795,7 @@ function SimulatorContent() {
               <h1 className="text-2xl font-bold tracking-tight text-text-primary">
                 Simulador de Negocio
                 {simulationNumber && (
-                  <span className="ml-3 inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-semibold bg-slate-100 text-slate-700 border border-slate-200 align-middle">
+                  <span className="ml-3 inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-semibold bg-surface-hover text-text-primary border border-border-subtle align-middle">
                     {simulationNumber}
                   </span>
                 )}
@@ -824,7 +824,7 @@ function SimulatorContent() {
             )}
           </div>
 
-        <div className="w-full md:w-auto rounded-2xl border border-border-subtle bg-white p-4 shadow-sm">
+        <div className="w-full md:w-auto rounded-2xl border border-border-subtle bg-surface-card p-4 shadow-sm">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6 px-2">
             <div>
               <div className="text-xs font-medium text-text-muted mb-1">Ingreso Neto Total</div>
@@ -878,8 +878,8 @@ function SimulatorContent() {
       {/* ========================================== */}
       {/* CABECERA DE METADATOS CLlENTE / PROYECTO */}
       {/* ========================================== */}
-      <div className="mt-8 rounded-2xl border border-border-subtle bg-white overflow-hidden shadow-sm">
-        <div className="flex flex-col md:flex-row items-center justify-between border-b border-border-subtle bg-slate-50/80 px-6 py-4 gap-4">
+      <div className="mt-8 rounded-2xl border border-border-subtle bg-surface-card overflow-hidden shadow-sm">
+        <div className="flex flex-col md:flex-row items-center justify-between border-b border-border-subtle bg-surface-hover/80 px-6 py-4 gap-4">
           <h2 className="text-lg font-semibold text-text-primary flex items-center gap-2">
             <Building2 className="w-5 h-5 text-brand-primary" />
             Datos del Cliente y Proyecto
@@ -887,7 +887,7 @@ function SimulatorContent() {
           <div className="flex items-center gap-3 w-full md:w-auto">
             <button 
               onClick={() => setIsCustomerSelectOpen(true)}
-              className="flex-1 md:flex-none inline-flex items-center justify-center gap-2 px-4 py-2 border border-border-subtle bg-white text-text-primary text-sm font-medium rounded-xl hover:bg-slate-50 hover:border-brand-primary/30 transition-all shadow-sm"
+              className="flex-1 md:flex-none inline-flex items-center justify-center gap-2 px-4 py-2 border border-border-subtle bg-surface-card text-text-primary text-sm font-medium rounded-xl hover:bg-surface-hover hover:border-brand-primary/30 transition-all shadow-sm"
             >
               <Search className="w-4 h-4" /> Buscar Cliente
             </button>
@@ -901,7 +901,7 @@ function SimulatorContent() {
               <button
                 onClick={handleConfirmar}
                 disabled={!(editId || autosavedDraftId) || !customer || productos.length === 0 || !validFrom || !validTo || isSaving}
-                className="flex-1 md:flex-none inline-flex items-center justify-center gap-2 px-4 py-2 bg-emerald-600 text-white text-sm font-medium rounded-xl hover:bg-emerald-500 shadow-sm transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                className="flex-1 md:flex-none inline-flex items-center justify-center gap-2 px-4 py-2 btn-primary text-sm font-medium rounded-xl"
                 title={(!(editId || autosavedDraftId) || !customer || productos.length === 0 || !validFrom || !validTo) ? "Completa cliente, productos y fechas para activar" : ""}
               >
                 Confirmar / Activar
@@ -912,7 +912,7 @@ function SimulatorContent() {
         
         <div className="p-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
           {/* Fila 1 - Cliente */}
-          <div className="col-span-1 md:col-span-2 lg:col-span-2 xl:col-span-2 bg-slate-50/50 rounded-xl p-4 border border-border-subtle">
+          <div className="col-span-1 md:col-span-2 lg:col-span-2 xl:col-span-2 bg-surface-hover/50 rounded-xl p-4 border border-border-subtle">
             <span className="block text-xs font-semibold tracking-wider text-text-muted uppercase mb-3">Cliente Seleccionado</span>
             {customer ? (
               <div className="flex flex-col gap-1.5">
@@ -947,7 +947,7 @@ function SimulatorContent() {
             <select 
               value={simulationType}
               onChange={e => { setSimulationType(e.target.value); setIsDirty(true); }}
-              className="w-full border border-border-subtle bg-white rounded-xl px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary text-sm transition-all"
+              className="w-full border border-border-subtle bg-surface-card rounded-xl px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary text-sm transition-all"
             >
               <option value="PRICE_LIST">Lista de precios</option>
               <option value="PROJECT_PROMO">Proyecto / Promoción</option>
@@ -962,7 +962,7 @@ function SimulatorContent() {
             <select 
               value={currency}
               onChange={e => { setCurrency(e.target.value); setIsDirty(true); }}
-              className="w-full border border-border-subtle bg-white rounded-xl px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary text-sm transition-all"
+              className="w-full border border-border-subtle bg-surface-card rounded-xl px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary text-sm transition-all"
             >
               <option value="COP">COP (Pesos)</option>
               <option value="USD">USD (Dólares)</option>
@@ -1014,13 +1014,13 @@ function SimulatorContent() {
       <div className="mt-10 flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div className="flex flex-col sm:flex-row sm:items-center gap-4">
           <h2 className="text-lg font-semibold text-text-primary">Detalle de Simulación</h2>
-          <div className="flex items-center gap-2 bg-slate-50 border border-border-subtle rounded-xl px-3 py-1.5 shadow-sm">
+          <div className="flex items-center gap-2 bg-surface-hover border border-border-subtle rounded-xl px-3 py-1.5 shadow-sm">
             <span className="text-sm font-medium text-text-muted">Margen Objetivo (%):</span>
             <input 
               type="number"
               value={margenObjetivo}
               onChange={(e) => { setMargenObjetivo(Number(e.target.value)); setIsDirty(true); }}
-              className="w-16 bg-white border border-border-subtle rounded-md px-2 py-1 text-sm font-semibold text-brand-primary focus:outline-none focus:ring-1 focus:ring-brand-primary text-center"
+              className="w-16 bg-surface-card border border-border-subtle rounded-md px-2 py-1 text-sm font-semibold text-brand-primary focus:outline-none focus:ring-1 focus:ring-brand-primary text-center"
             />
           </div>
         </div>
@@ -1036,7 +1036,7 @@ function SimulatorContent() {
           ) : (
             <button
               onClick={() => setIsProductModalOpen(true)}
-              className="inline-flex items-center justify-center gap-2 px-5 py-2.5 border border-border-subtle bg-white text-text-primary text-sm font-medium rounded-xl hover:bg-slate-50 transition-all shadow-sm flex-1 md:flex-none"
+              className="inline-flex items-center justify-center gap-2 px-5 py-2.5 border border-border-subtle bg-surface-card text-text-primary text-sm font-medium rounded-xl hover:bg-surface-hover transition-all shadow-sm flex-1 md:flex-none"
             >
               <Plus className="w-4 h-4" />
               Agregar Producto
@@ -1057,7 +1057,7 @@ function SimulatorContent() {
                <button
                  onClick={() => handleSaveSimulation(true)}
                  disabled={isSaving}
-                 className="inline-flex items-center justify-center gap-2 px-6 py-2.5 bg-brand-primary text-white text-sm font-medium rounded-xl hover:bg-brand-accent transition-all shadow-sm hover:shadow-brand-primary/20 hover:-translate-y-0.5 disabled:opacity-50 flex-1 md:flex-none"
+                 className="inline-flex items-center justify-center gap-2 px-6 py-2.5 btn-primary text-sm font-medium rounded-xl flex-1 md:flex-none"
                >
                  {isSaving ? <span className="w-4 h-4 border-2 border-white/50 border-t-white rounded-full animate-spin" /> : <Save className="w-4 h-4" />}
                  Sobreescribir
@@ -1074,7 +1074,7 @@ function SimulatorContent() {
             <button
               onClick={() => handleSaveSimulation(false)}
               disabled={isSaving}
-              className="inline-flex items-center justify-center gap-2 px-6 py-2.5 bg-brand-primary text-white text-sm font-medium rounded-xl hover:bg-brand-accent transition-all shadow-sm hover:shadow-brand-primary/20 hover:-translate-y-0.5 disabled:opacity-50 flex-1 md:flex-none"
+              className="inline-flex items-center justify-center gap-2 px-6 py-2.5 btn-primary text-sm font-medium rounded-xl flex-1 md:flex-none"
             >
               {isSaving ? (
                 <span className="w-4 h-4 border-2 border-white/50 border-t-white rounded-full animate-spin" />
@@ -1088,8 +1088,8 @@ function SimulatorContent() {
       </div>
 
       {productos.length === 0 && (
-        <div className="mt-6 border-2 border-dashed border-border-subtle rounded-2xl p-12 text-center bg-slate-50/50">
-          <div className="w-16 h-16 bg-white border border-border-subtle rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-sm">
+        <div className="mt-6 border-2 border-dashed border-border-subtle rounded-2xl p-12 text-center bg-surface-hover/50">
+          <div className="w-16 h-16 bg-surface-card border border-border-subtle rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-sm">
             <Plus className="w-8 h-8 text-text-muted/50" />
           </div>
           <h3 className="text-base font-medium text-text-primary mb-1">Simulación Vacía</h3>
@@ -1107,7 +1107,7 @@ function SimulatorContent() {
           ) : (
             <button
               onClick={() => setIsProductModalOpen(true)}
-              className="mt-6 inline-flex items-center gap-2 px-4 py-2 border border-border-subtle bg-white text-text-primary text-sm font-medium rounded-xl hover:bg-slate-50 transition-colors shadow-sm"
+              className="mt-6 inline-flex items-center gap-2 px-4 py-2 border border-border-subtle bg-surface-card text-text-primary text-sm font-medium rounded-xl hover:bg-surface-hover transition-colors shadow-sm"
             >
               Agregar mi primer producto
             </button>
@@ -1122,7 +1122,7 @@ function SimulatorContent() {
          * Table: table-fixed + colgroup pin every column width so the table
          *        fits within ~1040 px on desktop and scrolls internally on laptops.
          */
-        <div className="mt-6 rounded-2xl border border-border-subtle shadow-sm bg-white flex flex-col relative" style={{ maxHeight: 'min(75vh, 800px)' }}>
+        <div className="mt-6 rounded-2xl border border-border-subtle shadow-sm bg-surface-card flex flex-col relative" style={{ maxHeight: 'min(75vh, 800px)' }}>
           <div 
             className="overflow-auto w-full scrollbar-thin scrollbar-thumb-slate-200 scrollbar-track-transparent flex-1" 
             id="simulator-table-container"
@@ -1147,7 +1147,7 @@ function SimulatorContent() {
                 <col style={{ width: "76px" }} />{/* Margen & Δ */}
                 <col style={{ width: "36px" }} />{/* Delete */}
               </colgroup>
-              <thead className="bg-slate-50 border-b border-border-subtle sticky top-0 z-20 shadow-sm after:absolute after:bottom-[-1px] after:left-0 after:right-0 after:h-[1px] after:bg-border-subtle">
+              <thead className="bg-surface-hover border-b border-border-subtle sticky top-0 z-20 shadow-sm after:absolute after:bottom-[-1px] after:left-0 after:right-0 after:h-[1px] after:bg-border-subtle">
                 <tr>
                   <th className="px-2.5 py-3 text-left text-xs font-semibold text-text-primary whitespace-nowrap">Código SAP</th>
                   <th className="px-2.5 py-3 text-left text-xs font-semibold text-text-primary">Descripción</th>
@@ -1181,11 +1181,11 @@ function SimulatorContent() {
                   const r = calcularLinea(p);
 
                   return (
-                    <tr key={p.row_id} className="group hover:bg-slate-50/40 transition-colors">
+                    <tr key={p.row_id} className="group hover:bg-surface-hover/40 transition-colors">
 
                       {/* Código SAP */}
                       <td className="px-2.5 py-3 align-middle">
-                        <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[11px] font-semibold bg-slate-100 text-slate-700 tracking-tight max-w-full break-all">
+                        <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[11px] font-semibold bg-surface-hover text-text-primary tracking-tight max-w-full break-all">
                           {p.Codigo}
                         </span>
                       </td>
@@ -1230,7 +1230,7 @@ function SimulatorContent() {
                           type="number"
                           min="0"
                           max="100"
-                          className="w-full border border-border-subtle rounded-md px-1.5 py-1 text-right focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary transition-all text-xs bg-white shadow-sm"
+                          className="w-full border border-border-subtle rounded-md px-1.5 py-1 text-right focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary transition-all text-xs bg-surface-card shadow-sm"
                           value={inputs[p.row_id]?.descuento ?? ""}
                           onChange={(e) => updateInput(p.row_id, "descuento", Number(e.target.value))}
                           placeholder="0"
@@ -1249,7 +1249,7 @@ function SimulatorContent() {
                         <input
                           type="number"
                           min="0"
-                          className="w-full border border-border-subtle rounded-md px-1.5 py-1 text-right focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary transition-all text-xs bg-white shadow-sm"
+                          className="w-full border border-border-subtle rounded-md px-1.5 py-1 text-right focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary transition-all text-xs bg-surface-card shadow-sm"
                           value={inputs[p.row_id]?.cantidad ?? ""}
                           onChange={(e) => updateInput(p.row_id, "cantidad", Number(e.target.value))}
                           placeholder="0"
@@ -1298,7 +1298,7 @@ function SimulatorContent() {
                       <td className="py-3 text-center align-middle">
                         <button
                           onClick={() => handleRemoveProduct(p.row_id)}
-                          className="p-1 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-md transition-colors opacity-0 group-hover:opacity-100"
+                          className="p-1 text-text-muted hover:text-red-500 hover:bg-red-50 rounded-md transition-colors opacity-0 group-hover:opacity-100"
                           title="Eliminar fila"
                         >
                           <Trash2 className="w-3.5 h-3.5" />
@@ -1376,7 +1376,7 @@ function SimulatorContent() {
       {isDraftResumeModalOpen && foundDraftId && (
         <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4">
           <div className="absolute inset-0 bg-slate-900/50 backdrop-blur-sm" />
-          <div className="relative w-full max-w-md bg-white rounded-2xl shadow-2xl border border-border-subtle overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+          <div className="relative w-full max-w-md bg-surface-card rounded-2xl shadow-2xl border border-border-subtle overflow-hidden animate-in fade-in zoom-in-95 duration-200">
             <div className="px-6 pt-6 pb-4 border-b border-border-subtle">
               <h2 className="text-base font-semibold text-text-primary leading-tight">
                 Borrador encontrado
@@ -1393,7 +1393,7 @@ function SimulatorContent() {
                   setIsDraftResumeModalOpen(false);
                   setFoundDraftId(null);
                 }}
-                className="px-4 py-2.5 rounded-xl text-sm font-medium text-slate-600 bg-white border border-border-subtle hover:bg-slate-50 transition-all"
+                className="px-4 py-2.5 rounded-xl text-sm font-medium text-text-muted bg-surface-card border border-border-subtle hover:bg-surface-hover transition-all"
               >
                 Empezar nueva simulación
               </button>
@@ -1402,7 +1402,7 @@ function SimulatorContent() {
                   setIsDraftResumeModalOpen(false);
                   router.push(`/simulator?id=${foundDraftId}`);
                 }}
-                className="px-5 py-2.5 rounded-xl text-sm font-semibold text-white bg-brand-primary hover:bg-brand-accent transition-all shadow-sm"
+                className="px-5 py-2.5 rounded-xl text-sm font-semibold btn-primary shadow-sm"
               >
                 Continuar borrador
               </button>

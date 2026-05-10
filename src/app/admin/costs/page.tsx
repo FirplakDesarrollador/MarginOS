@@ -226,14 +226,14 @@ export default function RealCostsPage() {
 
             <button
               onClick={handleDownloadTemplate}
-              className="inline-flex items-center gap-2 px-4 py-2 border border-border-subtle bg-white text-text-primary text-sm font-medium rounded-xl hover:bg-slate-50 transition-colors shadow-sm"
+              className="inline-flex items-center gap-2 px-4 py-2 border border-border-subtle bg-surface-card text-text-primary text-sm font-medium rounded-xl hover:bg-surface-hover transition-colors shadow-sm"
             >
               <Download className="w-4 h-4 text-text-muted" />
               Plantilla
             </button>
             <button
               onClick={() => setIsUploadModalOpen(true)}
-              className="inline-flex items-center gap-2 px-4 py-2 border border-border-subtle bg-white text-text-primary text-sm font-medium rounded-xl hover:bg-slate-50 transition-colors shadow-sm"
+              className="inline-flex items-center gap-2 px-4 py-2 border border-border-subtle bg-surface-card text-text-primary text-sm font-medium rounded-xl hover:bg-surface-hover transition-colors shadow-sm"
             >
               <Upload className="w-4 h-4 text-text-muted" />
               Cargar Masivo
@@ -243,7 +243,7 @@ export default function RealCostsPage() {
                 setEditingCost(null);
                 setIsCreateModalOpen(true);
               }}
-              className="inline-flex items-center gap-2 px-5 py-2 bg-brand-primary text-white text-sm font-medium rounded-xl hover:bg-brand-accent transition-all shadow-sm shadow-brand-primary/20 hover:-translate-y-0.5"
+              className="inline-flex items-center gap-2 px-5 py-2 btn-primary text-sm font-medium rounded-xl hover:-translate-y-0.5"
             >
               <Plus className="w-4 h-4" />
               Crear Manual
@@ -252,7 +252,7 @@ export default function RealCostsPage() {
         </div>
 
         {/* Filters */}
-        <div className="mt-8 flex flex-col sm:flex-row items-center gap-4 bg-white p-4 border border-border-subtle rounded-2xl shadow-sm">
+        <div className="mt-8 flex flex-col sm:flex-row items-center gap-4 bg-surface-card p-4 border border-border-subtle rounded-2xl shadow-sm">
           <div className="relative w-full sm:max-w-md">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-text-muted" />
             <input
@@ -260,7 +260,7 @@ export default function RealCostsPage() {
               placeholder="Buscar por código o descripción..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-9 pr-4 py-2 border border-border-subtle rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary transition-all bg-slate-50/50"
+              className="w-full pl-9 pr-4 py-2 border border-border-subtle rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary transition-all bg-surface-hover/50"
             />
           </div>
           <div className="w-full sm:w-auto text-sm text-[color:var(--muted)]">
@@ -270,13 +270,13 @@ export default function RealCostsPage() {
 
         {/* Table Area */}
         {loading ? (
-          <div className="mt-6 py-24 flex flex-col items-center justify-center border border-border-subtle rounded-2xl bg-white shadow-sm">
+          <div className="mt-6 py-24 flex flex-col items-center justify-center border border-border-subtle rounded-2xl bg-surface-card shadow-sm">
              <div className="w-8 h-8 border-2 border-brand-primary border-t-transparent rounded-full animate-spin mb-4" />
              <p className="text-sm font-medium text-text-muted">Cargando maestro de costos...</p>
           </div>
         ) : filteredCosts.length === 0 ? (
-          <div className="mt-6 border-2 border-dashed border-border-subtle rounded-3xl py-24 px-6 text-center bg-slate-50/50 shadow-sm flex flex-col items-center justify-center">
-            <div className="w-16 h-16 bg-white border border-border-subtle rounded-2xl flex items-center justify-center mb-6 shadow-sm">
+          <div className="mt-6 border-2 border-dashed border-border-subtle rounded-3xl py-24 px-6 text-center bg-surface-hover/50 shadow-sm flex flex-col items-center justify-center">
+            <div className="w-16 h-16 bg-surface-card border border-border-subtle rounded-2xl flex items-center justify-center mb-6 shadow-sm">
               <Settings className="w-8 h-8 text-text-muted/50" />
             </div>
             <h3 className="text-xl font-semibold text-text-primary mb-2 tracking-tight">
@@ -289,9 +289,9 @@ export default function RealCostsPage() {
             </p>
           </div>
         ) : (
-          <div className="mt-6 overflow-x-auto rounded-[var(--radius-lg)] border border-[color:var(--border)] bg-white shadow-sm">
+          <div className="mt-6 overflow-x-auto rounded-[var(--radius-lg)] border border-[color:var(--border)] bg-surface-card shadow-sm">
             <table className="w-full text-sm">
-              <thead className="bg-slate-50/80 border-b border-border-subtle">
+              <thead className="bg-surface-hover/80 border-b border-border-subtle">
                 <tr>
                   <th className="px-6 py-4 text-left font-semibold text-text-primary w-48">Código Componente</th>
                   <th className="px-6 py-4 text-left font-semibold text-text-primary">Descripción</th>
@@ -301,7 +301,7 @@ export default function RealCostsPage() {
               </thead>
               <tbody className="divide-y divide-border-subtle">
                 {filteredCosts.map((c) => (
-                  <tr key={c.id} className="hover:bg-slate-50/50 transition-colors group">
+                  <tr key={c.id} className="hover:bg-surface-hover/50 transition-colors group">
                     <td className="px-6 py-4 font-semibold text-text-primary align-middle font-mono">
                       {c.codigo}
                     </td>
@@ -313,7 +313,7 @@ export default function RealCostsPage() {
                         <span className="font-semibold text-text-primary">
                           {formatMoney(c.costo_unitario, c.moneda)}
                         </span>
-                        <span className="text-[10px] text-text-muted font-medium bg-slate-100 px-1.5 py-0.5 rounded border border-slate-200 mt-1">
+                        <span className="text-[10px] text-text-muted font-medium bg-surface-hover px-1.5 py-0.5 rounded border border-border-subtle mt-1">
                           {c.moneda}
                         </span>
                       </div>
@@ -324,7 +324,7 @@ export default function RealCostsPage() {
                           setEditingCost(c);
                           setIsCreateModalOpen(true);
                         }}
-                        className="p-2 text-brand-primary hover:text-white hover:bg-brand-primary rounded-lg transition-colors border border-brand-primary/20 hover:border-transparent opacity-0 group-hover:opacity-100 shadow-sm"
+                        className="btn-table-action px-3 py-1.5 opacity-0 group-hover:opacity-100"
                         title="Editar Costo"
                       >
                          Editar

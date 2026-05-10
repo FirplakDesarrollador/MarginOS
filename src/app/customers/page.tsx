@@ -190,15 +190,15 @@ export default function CustomersPage() {
           <span className="w-1.5 h-1.5 rounded-full bg-blue-500" /> Renovada
         </span>;
       case "RECHAZADA":
-        return <span className={`${base} bg-slate-100 text-slate-700 border border-slate-300`}>
-          <span className="w-1.5 h-1.5 rounded-full bg-slate-500" /> Rechazada
+        return <span className={`${base} bg-surface-hover text-text-primary border border-border-subtle`}>
+          <span className="w-1.5 h-1.5 rounded-full bg-surface-hover0" /> Rechazada
         </span>;
       case "DRAFT":
         return <span className={`${base} bg-amber-50 text-amber-700 border border-amber-200`}>
           <span className="w-1.5 h-1.5 rounded-full bg-amber-500" /> Borrador
         </span>;
       default:
-        return <span className={`${base} bg-slate-50 text-slate-500 border border-slate-200`}>Sin simulaciones</span>;
+        return <span className={`${base} bg-surface-hover text-text-muted border border-border-subtle`}>Sin simulaciones</span>;
     }
   }
 
@@ -367,7 +367,7 @@ export default function CustomersPage() {
             </p>
           </div>
           <button onClick={openCreate}
-            className="inline-flex items-center gap-2 px-6 py-2.5 bg-brand-primary text-white text-sm font-medium rounded-xl hover:bg-brand-accent transition-all shadow-sm hover:-translate-y-0.5">
+            className="inline-flex items-center gap-2 px-6 py-2.5 btn-primary text-sm font-medium rounded-xl hover:-translate-y-0.5">
             <Plus className="w-4 h-4" /> Nuevo Cliente
           </button>
         </div>
@@ -381,12 +381,12 @@ export default function CustomersPage() {
               className="w-full pl-10 pr-4 py-2.5 border border-border-subtle rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary transition-all" />
           </div>
           <select value={filterChannel} onChange={(e) => setFilterChannel(e.target.value)}
-            className="border border-border-subtle rounded-xl px-3 py-2.5 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary transition-all min-w-[180px]">
+            className="border border-border-subtle rounded-xl px-3 py-2.5 text-sm bg-surface-card focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary transition-all min-w-[180px]">
             <option value="">Todos los canales</option>
             {channels.map(ch => <option key={ch.id} value={ch.id}>{ch.name}</option>)}
           </select>
           <select value={filterStatus} onChange={(e) => setFilterStatus(e.target.value)}
-            className="border border-border-subtle rounded-xl px-3 py-2.5 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary transition-all min-w-[180px]">
+            className="border border-border-subtle rounded-xl px-3 py-2.5 text-sm bg-surface-card focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary transition-all min-w-[180px]">
             <option value="">Todos los estados</option>
             <option value="VIGENTE">Vigente</option>
             <option value="VENCIDO">Vencido</option>
@@ -398,13 +398,13 @@ export default function CustomersPage() {
 
         {/* TABLE */}
         {loading ? (
-          <div className="mt-12 py-24 flex flex-col items-center justify-center border border-border-subtle rounded-2xl bg-white shadow-sm">
+          <div className="mt-12 py-24 flex flex-col items-center justify-center border border-border-subtle rounded-2xl bg-surface-card shadow-sm">
             <div className="w-8 h-8 border-2 border-brand-primary border-t-transparent rounded-full animate-spin mb-4" />
             <p className="text-sm font-medium text-text-muted">Cargando clientes...</p>
           </div>
         ) : filtered.length === 0 ? (
-          <div className="mt-12 border-2 border-dashed border-border-subtle rounded-3xl py-24 px-6 text-center bg-slate-50/50 shadow-sm flex flex-col items-center justify-center">
-            <div className="w-16 h-16 bg-white border border-border-subtle rounded-2xl flex items-center justify-center mb-6 shadow-sm">
+          <div className="mt-12 border-2 border-dashed border-border-subtle rounded-3xl py-24 px-6 text-center bg-surface-hover/50 shadow-sm flex flex-col items-center justify-center">
+            <div className="w-16 h-16 bg-surface-card border border-border-subtle rounded-2xl flex items-center justify-center mb-6 shadow-sm">
               <Users className="w-8 h-8 text-text-muted/50" />
             </div>
             <h3 className="text-xl font-semibold text-text-primary mb-2">
@@ -417,9 +417,9 @@ export default function CustomersPage() {
             </p>
           </div>
         ) : (
-          <div className="mt-6 overflow-x-auto rounded-[var(--radius-lg)] border border-[color:var(--border)] bg-white shadow-sm">
+          <div className="mt-6 overflow-x-auto rounded-[var(--radius-lg)] border border-[color:var(--border)] bg-surface-card shadow-sm">
             <table className="w-full text-sm">
-              <thead className="bg-slate-50/80 border-b border-border-subtle">
+              <thead className="bg-surface-hover/80 border-b border-border-subtle">
                 <tr>
                   <th className="px-5 py-4 text-left font-semibold text-text-primary">Cliente</th>
                   <th className="px-5 py-4 text-left font-semibold text-text-primary">NIT</th>
@@ -433,7 +433,7 @@ export default function CustomersPage() {
               </thead>
               <tbody className="divide-y divide-border-subtle">
                 {filtered.map((c) => (
-                  <tr key={c.id} className="hover:bg-slate-50/50 transition-colors cursor-pointer group"
+                  <tr key={c.id} className="hover:bg-surface-hover/50 transition-colors cursor-pointer group"
                     onClick={() => setSelectedCustomer(c)}>
                     {/* NAME */}
                     <td className="px-5 py-5 align-middle">
@@ -462,7 +462,7 @@ export default function CustomersPage() {
                     {/* CHANNEL */}
                     <td className="px-5 py-5 align-middle">
                       {c.sales_channels?.name ? (
-                        <span className="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-semibold bg-slate-100 text-slate-700 border border-slate-200">
+                        <span className="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-semibold bg-surface-hover text-text-primary border border-border-subtle">
                           {c.sales_channels.name}
                         </span>
                       ) : (
@@ -474,7 +474,7 @@ export default function CustomersPage() {
                       {c.simCount > 0 ? (
                         <button
                           onClick={(e) => { e.stopPropagation(); setSelectedCustomer(c); }}
-                          className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-bold bg-slate-100 text-slate-700 border border-slate-200 hover:bg-brand-primary/10 hover:text-brand-primary hover:border-brand-primary/30 transition-all">
+                          className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-bold bg-surface-hover text-text-primary border border-border-subtle hover:bg-brand-primary/10 hover:text-brand-primary hover:border-brand-primary/30 transition-all">
                           {c.simCount} {c.simCount === 1 ? "sim." : "sim."}
                         </button>
                       ) : (
@@ -498,7 +498,7 @@ export default function CustomersPage() {
                     <td className="px-5 py-5 text-center align-middle">
                       <button
                         onClick={(e) => { e.stopPropagation(); setSelectedCustomer(c); }}
-                        className="inline-flex items-center gap-1 px-3 py-2 text-xs font-semibold text-brand-primary hover:text-white hover:bg-brand-primary rounded-lg transition-all border border-brand-primary/20 hover:border-transparent shadow-sm">
+                        className="btn-table-action px-3 py-2">
                         Ver <ChevronRight className="w-3.5 h-3.5" />
                       </button>
                     </td>
@@ -516,10 +516,10 @@ export default function CustomersPage() {
       {selectedCustomer && !isModalOpen && (
         <div className="fixed inset-0 z-[60] flex items-center justify-center px-6 py-6 lg:px-12">
           <div className="absolute inset-0 bg-slate-900/50 backdrop-blur-sm" onClick={() => setSelectedCustomer(null)} />
-          <div className="relative w-full max-w-[1280px] max-h-[85vh] bg-white rounded-2xl shadow-2xl border border-border-subtle flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+          <div className="relative w-full max-w-[1280px] max-h-[85vh] bg-surface-card rounded-2xl shadow-2xl border border-border-subtle flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200">
 
             {/* HEADER */}
-            <div className="px-6 py-5 border-b border-border-subtle bg-slate-50/50 flex items-start justify-between flex-shrink-0">
+            <div className="px-6 py-5 border-b border-border-subtle bg-surface-hover/50 flex items-start justify-between flex-shrink-0">
               <div className="flex items-start gap-4 min-w-0 flex-1">
                 <div className="w-12 h-12 rounded-xl bg-brand-primary/10 flex items-center justify-center flex-shrink-0 mt-0.5">
                   <Building2 className="w-6 h-6 text-brand-primary" />
@@ -547,7 +547,7 @@ export default function CustomersPage() {
                     )}
                   </div>
                   {selectedCustomer.notes && (
-                    <p className="mt-2 text-xs text-text-muted italic bg-slate-100 rounded-lg px-3 py-1.5 max-w-xl">
+                    <p className="mt-2 text-xs text-text-muted italic bg-surface-hover rounded-lg px-3 py-1.5 max-w-xl">
                       {selectedCustomer.notes}
                     </p>
                   )}
@@ -555,7 +555,7 @@ export default function CustomersPage() {
 
                 {/* KPI PILLS */}
                 <div className="flex items-center gap-3 flex-shrink-0">
-                  <div className="text-center px-4 py-2 bg-white border border-border-subtle rounded-xl shadow-sm">
+                  <div className="text-center px-4 py-2 bg-surface-card border border-border-subtle rounded-xl shadow-sm">
                     <div className="text-lg font-bold text-text-primary">{selectedCustomer.simCount}</div>
                     <div className="text-[10px] text-text-muted font-medium uppercase tracking-wider">Simulaciones</div>
                   </div>
@@ -564,7 +564,7 @@ export default function CustomersPage() {
                   </div>
                 </div>
               </div>
-              <button onClick={() => setSelectedCustomer(null)} className="p-2 text-text-muted hover:text-text-primary hover:bg-slate-100 rounded-xl transition-colors ml-3">
+              <button onClick={() => setSelectedCustomer(null)} className="p-2 text-text-muted hover:text-text-primary hover:bg-surface-hover rounded-xl transition-colors ml-3">
                 <X className="w-5 h-5" />
               </button>
             </div>
@@ -588,7 +588,7 @@ export default function CustomersPage() {
                     <col className="w-[12%]" />
                     <col className="w-[10%]" />
                   </colgroup>
-                  <thead className="bg-slate-50/60 border-b border-border-subtle sticky top-0 z-10">
+                  <thead className="bg-surface-hover/60 border-b border-border-subtle sticky top-0 z-10">
                     <tr>
                       <th className="px-5 py-3 text-left font-semibold text-text-primary text-xs uppercase tracking-wider">Fecha</th>
                       <th className="px-5 py-3 text-left font-semibold text-text-primary text-xs uppercase tracking-wider">Proyecto / Oportunidad</th>
@@ -603,7 +603,7 @@ export default function CustomersPage() {
                     {selectedCustomer.simulations.map((sim) => {
                       const displayStatus = getDisplayStatus(sim);
                       return (
-                        <tr key={sim.id} className="hover:bg-slate-50/50 transition-colors">
+                        <tr key={sim.id} className="hover:bg-surface-hover/50 transition-colors">
                           <td className="px-5 py-4 text-text-muted align-middle">{formatDateTime(sim.created_at)}</td>
                           <td className="px-5 py-4 align-middle">
                             <div className="flex flex-col gap-0.5">
@@ -625,7 +625,7 @@ export default function CustomersPage() {
                             <span className="text-text-muted text-xs font-medium">{getTypeLabel(sim.simulation_type)}</span>
                           </td>
                           <td className="px-5 py-4 text-center align-middle">
-                            <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-semibold bg-slate-100 text-slate-700 border border-slate-200">{sim.currency}</span>
+                            <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-semibold bg-surface-hover text-text-primary border border-border-subtle">{sim.currency}</span>
                           </td>
                           <td className="px-5 py-4 align-middle">
                             {sim.valid_from && sim.valid_to ? (
@@ -638,7 +638,7 @@ export default function CustomersPage() {
                           <td className="px-5 py-4 text-center align-middle">
                             <button
                               onClick={() => setActionSim(sim)}
-                              className="inline-flex items-center gap-1 px-3 py-1.5 text-xs font-semibold text-brand-primary hover:text-white hover:bg-brand-primary rounded-lg transition-all border border-brand-primary/20 hover:border-transparent shadow-sm">
+                              className="btn-table-action px-3 py-1.5">
                               Acciones
                             </button>
                           </td>
@@ -651,14 +651,14 @@ export default function CustomersPage() {
             </div>
 
             {/* FOOTER */}
-            <div className="px-6 py-4 border-t border-border-subtle bg-slate-50/50 flex items-center justify-between flex-shrink-0">
+            <div className="px-6 py-4 border-t border-border-subtle bg-surface-hover/50 flex items-center justify-between flex-shrink-0">
               <div className="flex items-center gap-3">
                 <button onClick={() => { setSelectedCustomer(null); openEdit(selectedCustomer); }}
-                  className="inline-flex items-center gap-2 px-4 py-2 bg-white text-text-primary border border-border-subtle text-xs font-semibold rounded-xl hover:bg-slate-50 transition-all shadow-sm">
+                  className="inline-flex items-center gap-2 px-4 py-2 bg-surface-card text-text-primary border border-border-subtle text-xs font-semibold rounded-xl hover:bg-surface-hover transition-all shadow-sm">
                   <Pencil className="w-3.5 h-3.5" /> Editar Cliente
                 </button>
                 <Link href="/simulator"
-                  className="inline-flex items-center gap-2 px-4 py-2 bg-brand-primary text-white text-xs font-semibold rounded-xl hover:bg-brand-accent transition-all shadow-sm">
+                  className="inline-flex items-center gap-2 px-4 py-2 btn-primary text-xs font-semibold rounded-xl">
                   <Calculator className="w-3.5 h-3.5" /> Nueva Simulación
                 </Link>
               </div>
@@ -679,8 +679,8 @@ export default function CustomersPage() {
             className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm transition-opacity"
             onClick={() => !exporting && setActionSim(null)}
           />
-          <div className="relative w-full max-w-sm bg-white rounded-2xl shadow-xl border border-border-subtle flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200">
-            <div className="px-5 py-4 border-b border-border-subtle bg-slate-50/50">
+          <div className="relative w-full max-w-sm bg-surface-card rounded-2xl shadow-xl border border-border-subtle flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+            <div className="px-5 py-4 border-b border-border-subtle bg-surface-hover/50">
               <h3 className="text-base font-semibold text-text-primary">
                 Acciones del escenario
               </h3>
@@ -692,7 +692,7 @@ export default function CustomersPage() {
               <button
                 onClick={() => router.push(`/simulator?id=${actionSim.id}`)}
                 disabled={exporting}
-                className="w-full flex items-center gap-3 px-4 py-3 bg-white border border-border-subtle rounded-xl hover:border-brand-primary/40 hover:bg-brand-primary/5 text-sm font-medium text-text-primary transition-all disabled:opacity-50"
+                className="w-full flex items-center gap-3 px-4 py-3 bg-surface-card border border-border-subtle rounded-xl hover:border-brand-primary/40 hover:bg-brand-primary/5 text-sm font-medium text-text-primary transition-all disabled:opacity-50"
               >
                 <Pencil className="w-4 h-4 text-text-muted" />
                 Editar / Ver simulación
@@ -701,7 +701,7 @@ export default function CustomersPage() {
               <button
                 onClick={() => handleExport(actionSim)}
                 disabled={exporting}
-                className="w-full flex items-center gap-3 px-4 py-3 bg-white border border-border-subtle rounded-xl hover:border-brand-primary/40 hover:bg-brand-primary/5 text-sm font-medium text-text-primary transition-all disabled:opacity-50"
+                className="w-full flex items-center gap-3 px-4 py-3 bg-surface-card border border-border-subtle rounded-xl hover:border-brand-primary/40 hover:bg-brand-primary/5 text-sm font-medium text-text-primary transition-all disabled:opacity-50"
               >
                 <FileDown className="w-4 h-4 text-text-muted" />
                 <span className="flex-1 text-left">Descargar Excel</span>
@@ -714,7 +714,7 @@ export default function CustomersPage() {
                 <button
                   onClick={() => handleStatusChange(actionSim, "VIGENTE")}
                   disabled={exporting}
-                  className="w-full flex items-center gap-3 px-4 py-3 bg-white border border-border-subtle rounded-xl hover:border-emerald-400 hover:bg-emerald-50 text-sm font-medium text-emerald-700 transition-all disabled:opacity-50 mt-1"
+                  className="w-full flex items-center gap-3 px-4 py-3 bg-surface-card border border-border-subtle rounded-xl hover:border-emerald-400 hover:bg-emerald-50 text-sm font-medium text-emerald-700 transition-all disabled:opacity-50 mt-1"
                 >
                   <CheckCircle className="w-4 h-4" />
                   Activar / Confirmar
@@ -725,14 +725,14 @@ export default function CustomersPage() {
                 <button
                   onClick={() => handleStatusChange(actionSim, "RECHAZADA")}
                   disabled={exporting}
-                  className="w-full flex items-center gap-3 px-4 py-3 bg-white border border-red-200 rounded-xl hover:border-red-400 hover:bg-red-50 text-sm font-medium text-red-600 transition-all disabled:opacity-50 mt-1"
+                  className="w-full flex items-center gap-3 px-4 py-3 bg-surface-card border border-red-200 rounded-xl hover:border-red-400 hover:bg-red-50 text-sm font-medium text-red-600 transition-all disabled:opacity-50 mt-1"
                 >
                   <X className="w-4 h-4" />
                   Rechazar Simulación
                 </button>
               )}
             </div>
-            <div className="px-5 py-3 border-t border-border-subtle bg-slate-50/50">
+            <div className="px-5 py-3 border-t border-border-subtle bg-surface-hover/50">
               <button
                 onClick={() => setActionSim(null)}
                 disabled={exporting}
@@ -751,8 +751,8 @@ export default function CustomersPage() {
       {isModalOpen && (
         <div className="fixed inset-0 z-[70] flex items-center justify-center p-4 sm:p-6">
           <div className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm" onClick={() => setIsModalOpen(false)} />
-          <div className="relative w-full max-w-lg bg-white rounded-2xl shadow-xl border border-border-subtle flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200">
-            <div className="flex items-center justify-between px-6 py-4 border-b border-border-subtle bg-slate-50/50">
+          <div className="relative w-full max-w-lg bg-surface-card rounded-2xl shadow-xl border border-border-subtle flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+            <div className="flex items-center justify-between px-6 py-4 border-b border-border-subtle bg-surface-hover/50">
               <div className="flex items-center gap-3">
                 <div className="p-2 bg-brand-primary/10 text-brand-primary rounded-xl">
                   <UserPlus className="w-5 h-5" />
@@ -761,7 +761,7 @@ export default function CustomersPage() {
                   {editingCustomer ? "Editar Cliente" : "Crear Cliente"}
                 </h2>
               </div>
-              <button onClick={() => setIsModalOpen(false)} className="p-2 text-text-muted hover:text-text-primary hover:bg-slate-100 rounded-xl transition-colors">
+              <button onClick={() => setIsModalOpen(false)} className="p-2 text-text-muted hover:text-text-primary hover:bg-surface-hover rounded-xl transition-colors">
                 <X className="w-5 h-5" />
               </button>
             </div>
@@ -798,7 +798,7 @@ export default function CustomersPage() {
                 <div>
                   <label className="block text-sm font-medium text-text-primary mb-1">Canal de Venta</label>
                   <select value={formData.default_channel_id} onChange={(e) => setFormData({...formData, default_channel_id: e.target.value})}
-                    className="w-full border border-border-subtle rounded-xl px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary transition-all">
+                    className="w-full border border-border-subtle rounded-xl px-3 py-2 text-sm bg-surface-card focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary transition-all">
                     <option value="">-- Seleccionar canal --</option>
                     {channels.map(ch => <option key={ch.id} value={ch.id}>{ch.name}</option>)}
                   </select>
@@ -812,13 +812,13 @@ export default function CustomersPage() {
               </form>
             </div>
 
-            <div className="p-4 border-t border-border-subtle bg-slate-50/50 flex justify-end gap-3 text-sm">
+            <div className="p-4 border-t border-border-subtle bg-surface-hover/50 flex justify-end gap-3 text-sm">
               <button type="button" onClick={() => setIsModalOpen(false)}
-                className="px-4 py-2 border border-border-subtle text-text-primary bg-white rounded-xl hover:bg-slate-50 transition-colors">
+                className="px-4 py-2 border border-border-subtle text-text-primary bg-surface-card rounded-xl hover:bg-surface-hover transition-colors">
                 Cancelar
               </button>
               <button type="submit" form="customer-form" disabled={formLoading}
-                className="px-6 py-2 bg-brand-primary text-white font-medium rounded-xl hover:bg-brand-accent transition-colors disabled:opacity-50">
+                className="px-6 py-2 btn-primary font-medium rounded-xl">
                 {formLoading ? "Guardando..." : editingCustomer ? "Guardar Cambios" : "Crear Cliente"}
               </button>
             </div>

@@ -114,10 +114,10 @@ export function CostModal({ isOpen, onClose, onSuccess, editCost }: Props) {
         className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm transition-opacity" 
         onClick={() => !isSaving && onClose()}
       />
-      <div className="relative w-full max-w-lg bg-white rounded-2xl shadow-xl border border-border-subtle flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+      <div className="relative w-full max-w-lg bg-surface-card rounded-2xl shadow-xl border border-border-subtle flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200">
         
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-border-subtle bg-slate-50/50">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-border-subtle bg-surface-hover/50">
           <h2 className="text-lg font-semibold text-text-primary">
             {editCost ? "Editar Costo" : "Nuevo Costo"}
           </h2>
@@ -209,19 +209,19 @@ export function CostModal({ isOpen, onClose, onSuccess, editCost }: Props) {
           </div>
 
           {/* Footer */}
-          <div className="px-6 py-4 flex justify-end gap-3 border-t border-border-subtle bg-slate-50/50">
+          <div className="px-6 py-4 flex justify-end gap-3 border-t border-border-subtle bg-surface-hover/50">
             <button
               type="button"
               onClick={onClose}
               disabled={isSaving}
-              className="px-5 py-2 bg-white border border-border-subtle text-text-primary text-sm font-medium rounded-xl hover:bg-slate-50 transition-colors disabled:opacity-50"
+              className="px-5 py-2 bg-surface-card border border-border-subtle text-text-primary text-sm font-medium rounded-xl hover:bg-surface-hover transition-colors disabled:opacity-50"
             >
               Cancelar
             </button>
             <button
               type="submit"
               disabled={isSaving}
-              className="inline-flex items-center gap-2 px-5 py-2 bg-brand-primary text-white text-sm font-medium rounded-xl hover:bg-brand-accent transition-all shadow-sm shadow-brand-primary/20 hover:-translate-y-0.5 disabled:opacity-50"
+              className="inline-flex items-center gap-2 px-5 py-2 btn-primary rounded-xl hover:-translate-y-0.5"
             >
               {isSaving ? (
                 <span className="w-4 h-4 border-2 border-white/50 border-t-white rounded-full animate-spin" />

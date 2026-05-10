@@ -121,13 +121,13 @@ export default function ProductsPage() {
           <div className="flex items-center gap-3 w-full xl:w-auto">
              <button
               onClick={downloadTemplate}
-              className="inline-flex flex-1 md:flex-none items-center justify-center gap-2 px-4 py-2 bg-white text-text-primary border border-border-subtle text-sm font-medium rounded-xl hover:bg-slate-50 transition-all shadow-sm"
+              className="inline-flex flex-1 md:flex-none items-center justify-center gap-2 px-4 py-2 bg-surface-card text-text-primary border border-border-subtle text-sm font-medium rounded-xl hover:bg-surface-hover transition-all shadow-sm"
             >
               <Download className="w-4 h-4" /> Descargar Plantilla
             </button>
             <button
               onClick={() => setIsUploadModalOpen(true)}
-              className="inline-flex flex-1 md:flex-none items-center justify-center gap-2 px-4 py-2 bg-white text-brand-primary border border-brand-primary/20 text-sm font-medium rounded-xl hover:bg-brand-primary/5 hover:border-brand-primary/40 transition-all shadow-sm"
+              className="inline-flex flex-1 md:flex-none items-center justify-center gap-2 px-4 py-2 bg-surface-card text-brand-primary border border-brand-primary/20 text-sm font-medium rounded-xl hover:bg-brand-primary/5 hover:border-brand-primary/40 transition-all shadow-sm"
             >
               <UploadCloud className="w-4 h-4" /> Cargar Productos
             </button>
@@ -136,7 +136,7 @@ export default function ProductsPage() {
                 setSelectedProduct(null);
                 setIsModalOpen(true);
               }}
-              className="inline-flex flex-1 md:flex-none items-center justify-center gap-2 px-6 py-2 bg-brand-primary text-white text-sm font-medium rounded-xl hover:bg-brand-accent transition-all shadow-sm shadow-brand-primary/20 hover:-translate-y-0.5"
+              className="inline-flex flex-1 md:flex-none items-center justify-center gap-2 px-6 py-2 btn-primary text-sm font-medium rounded-xl hover:-translate-y-0.5"
             >
               <Plus className="w-4 h-4" /> Nuevo Producto
             </button>
@@ -144,7 +144,7 @@ export default function ProductsPage() {
         </div>
 
         {/* Buscador y Filtros */}
-        <div className="mt-8 bg-white border border-border-subtle rounded-2xl p-4 shadow-sm flex flex-col md:flex-row gap-4">
+        <div className="mt-8 bg-surface-card border border-border-subtle rounded-2xl p-4 shadow-sm flex flex-col md:flex-row gap-4">
            <div className="relative flex-1">
              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-text-muted" />
              <input 
@@ -152,7 +152,7 @@ export default function ProductsPage() {
                 placeholder="Buscar por Código SAP o Descripción..."
                 value={searchQuery}
                 onChange={e => setSearchQuery(e.target.value)}
-                className="w-full pl-9 pr-4 py-2 bg-slate-50 border border-border-subtle rounded-xl text-sm focus:outline-none focus:border-brand-primary focus:ring-1 focus:ring-brand-primary/20 transition-all"
+                className="w-full pl-9 pr-4 py-2 bg-surface-hover border border-border-subtle rounded-xl text-sm focus:outline-none focus:border-brand-primary focus:ring-1 focus:ring-brand-primary/20 transition-all"
              />
            </div>
            
@@ -160,7 +160,7 @@ export default function ProductsPage() {
              <select 
                value={statusFilter}
                onChange={e => setStatusFilter(e.target.value as any)}
-               className="w-full px-3 py-2 bg-slate-50 border border-border-subtle rounded-xl text-sm focus:outline-none focus:border-brand-primary transition-all"
+               className="w-full px-3 py-2 bg-surface-hover border border-border-subtle rounded-xl text-sm focus:outline-none focus:border-brand-primary transition-all"
              >
                <option value="ALL">Mostrar Todos (Activos e Inactivos)</option>
                <option value="ACTIVE">Solo Activos</option>
@@ -170,13 +170,13 @@ export default function ProductsPage() {
         </div>
 
         {loading ? (
-          <div className="mt-8 py-24 flex flex-col items-center justify-center border border-border-subtle rounded-3xl bg-white shadow-sm">
+          <div className="mt-8 py-24 flex flex-col items-center justify-center border border-border-subtle rounded-3xl bg-surface-card shadow-sm">
             <div className="w-8 h-8 border-2 border-brand-primary border-t-transparent rounded-full animate-spin mb-4" />
             <p className="text-sm font-medium text-text-muted">Cargando catálogo maestro...</p>
           </div>
         ) : filteredData.length === 0 ? (
-          <div className="mt-8 border-2 border-dashed border-border-subtle rounded-3xl py-24 px-6 text-center bg-slate-50/50 shadow-sm flex flex-col items-center justify-center">
-            <div className="w-16 h-16 bg-white border border-border-subtle rounded-2xl flex items-center justify-center mb-6 shadow-sm">
+          <div className="mt-8 border-2 border-dashed border-border-subtle rounded-3xl py-24 px-6 text-center bg-surface-hover/50 shadow-sm flex flex-col items-center justify-center">
+            <div className="w-16 h-16 bg-surface-card border border-border-subtle rounded-2xl flex items-center justify-center mb-6 shadow-sm">
               <FolderOpen className="w-8 h-8 text-text-muted/50" />
             </div>
             <h3 className="text-xl font-semibold text-text-primary mb-2 tracking-tight">
@@ -187,9 +187,9 @@ export default function ProductsPage() {
             </p>
           </div>
         ) : (
-          <div className="mt-8 overflow-x-auto rounded-[var(--radius-lg)] border border-[color:var(--border)] bg-white shadow-sm">
+          <div className="mt-8 overflow-x-auto rounded-[var(--radius-lg)] border border-[color:var(--border)] bg-surface-card shadow-sm">
             <table className="w-full text-sm">
-              <thead className="bg-slate-50/80 border-b border-border-subtle">
+              <thead className="bg-surface-hover/80 border-b border-border-subtle">
                 <tr>
                   <th className="px-6 py-4 text-left font-semibold text-text-primary">Código SAP</th>
                   <th className="px-6 py-4 text-left font-semibold text-text-primary">Descripción</th>
@@ -202,9 +202,9 @@ export default function ProductsPage() {
               </thead>
               <tbody className="divide-y divide-border-subtle">
                 {filteredData.map((row) => (
-                  <tr key={row.id} className="hover:bg-slate-50/50 transition-colors group">
+                  <tr key={row.id} className="hover:bg-surface-hover/50 transition-colors group">
                     <td className="px-6 py-4 align-middle whitespace-nowrap">
-                      <span className="inline-flex items-center px-2 py-1 rounded-md text-xs font-semibold bg-slate-100 text-slate-800 tracking-tight">
+                      <span className="inline-flex items-center px-2 py-1 rounded-md text-xs font-semibold bg-surface-hover text-text-primary tracking-tight">
                         {row.sap_code}
                       </span>
                     </td>
@@ -233,7 +233,7 @@ export default function ProductsPage() {
                            Activo
                          </span>
                        ) : (
-                         <span className="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-semibold bg-slate-100 text-slate-500 border border-slate-200">
+                         <span className="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-semibold bg-surface-hover text-text-muted border border-border-subtle">
                            Inactivo
                          </span>
                        )}

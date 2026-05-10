@@ -94,10 +94,10 @@ export function ProductPickerModal({ isOpen, onClose, onSelect, existingSapCodes
       />
       
       {/* Modal / Dialog */}
-      <div className="relative w-full max-w-4xl max-h-[85vh] bg-white rounded-2xl shadow-xl border border-border-subtle flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+      <div className="relative w-full max-w-4xl max-h-[85vh] bg-surface-card rounded-2xl shadow-xl border border-border-subtle flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200">
         
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-border-subtle bg-slate-50/50">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-border-subtle bg-surface-hover/50">
           <div className="flex items-center gap-3">
             <div className="p-2 bg-brand-primary/10 text-brand-primary rounded-xl">
               <PackagePlus className="w-5 h-5" />
@@ -109,7 +109,7 @@ export function ProductPickerModal({ isOpen, onClose, onSelect, existingSapCodes
           </div>
           <button 
             onClick={onClose}
-            className="p-2 text-text-muted hover:text-text-primary hover:bg-slate-100 rounded-xl transition-colors"
+            className="p-2 text-text-muted hover:text-text-primary hover:bg-surface-hover rounded-xl transition-colors"
           >
             <X className="w-5 h-5" />
           </button>
@@ -130,7 +130,7 @@ export function ProductPickerModal({ isOpen, onClose, onSelect, existingSapCodes
         </div>
 
         {/* List */}
-        <div className="flex-1 overflow-y-auto p-4 bg-slate-50/30">
+        <div className="flex-1 overflow-y-auto p-4 bg-surface-hover/30">
           {loading ? (
             <div className="py-12 flex flex-col items-center justify-center text-text-muted">
               <div className="w-8 h-8 border-2 border-brand-primary border-t-transparent rounded-full animate-spin mb-4" />
@@ -148,15 +148,15 @@ export function ProductPickerModal({ isOpen, onClose, onSelect, existingSapCodes
                 return (
                   <div 
                     key={p.id}
-                    className="flex flex-col sm:flex-row sm:items-center justify-between p-3 rounded-xl border border-border-subtle bg-white hover:border-brand-primary/30 hover:shadow-sm transition-all gap-4"
+                    className="flex flex-col sm:flex-row sm:items-center justify-between p-3 rounded-xl border border-border-subtle bg-surface-card hover:border-brand-primary/30 hover:shadow-sm transition-all gap-4"
                   >
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 mb-1">
-                        <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-slate-100 text-slate-800">
+                        <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-surface-hover text-text-primary">
                           SAP: {p.sap_code}
                         </span>
                         {p.category && (
-                          <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium border border-border-subtle text-slate-600">
+                          <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium border border-border-subtle text-text-muted">
                             {p.category}
                           </span>
                         )}
@@ -172,7 +172,7 @@ export function ProductPickerModal({ isOpen, onClose, onSelect, existingSapCodes
                     <div className="flex items-center justify-between sm:justify-end gap-4 w-full sm:w-auto">
                       <button
                         onClick={() => onSelect(p)}
-                        className="shrink-0 px-4 py-2 rounded-xl text-sm font-medium transition-all bg-white border border-border-subtle text-text-primary hover:bg-slate-50 hover:border-brand-primary"
+                        className="shrink-0 px-4 py-2 rounded-xl text-sm font-medium transition-all bg-surface-card border border-border-subtle text-text-primary hover:bg-surface-hover hover:border-brand-primary"
                       >
                         Agregar Línea
                       </button>

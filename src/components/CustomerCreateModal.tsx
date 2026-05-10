@@ -100,9 +100,9 @@ export function CustomerCreateModal({ isOpen, onClose, onSuccess }: CustomerCrea
         onClick={onClose}
       />
       
-      <div className="relative w-full max-w-lg bg-white rounded-2xl shadow-xl border border-border-subtle flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+      <div className="relative w-full max-w-lg bg-surface-card rounded-2xl shadow-xl border border-border-subtle flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200">
         
-        <div className="flex items-center justify-between px-6 py-4 border-b border-border-subtle bg-slate-50/50">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-border-subtle bg-surface-hover/50">
           <div className="flex items-center gap-3">
             <div className="p-2 bg-brand-primary/10 text-brand-primary rounded-xl">
               <UserPlus className="w-5 h-5" />
@@ -113,7 +113,7 @@ export function CustomerCreateModal({ isOpen, onClose, onSuccess }: CustomerCrea
           </div>
           <button 
             onClick={onClose}
-            className="p-2 text-text-muted hover:text-text-primary hover:bg-slate-100 rounded-xl transition-colors"
+            className="p-2 text-text-muted hover:text-text-primary hover:bg-surface-hover rounded-xl transition-colors"
           >
             <X className="w-5 h-5" />
           </button>
@@ -177,7 +177,7 @@ export function CustomerCreateModal({ isOpen, onClose, onSuccess }: CustomerCrea
                 <select 
                   value={formData.default_channel_id}
                   onChange={(e) => setFormData({...formData, default_channel_id: e.target.value})}
-                  className="w-full border border-border-subtle rounded-xl px-3 py-2 focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary text-sm transition-all bg-white"
+                  className="w-full border border-border-subtle rounded-xl px-3 py-2 focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary text-sm transition-all bg-surface-card"
                   disabled={loadingChannels}
                 >
                   <option value="">-- Seleccionar canal --</option>
@@ -201,11 +201,11 @@ export function CustomerCreateModal({ isOpen, onClose, onSuccess }: CustomerCrea
           </form>
         </div>
         
-        <div className="p-4 border-t border-border-subtle bg-slate-50/50 flex justify-end gap-3 text-sm">
+        <div className="p-4 border-t border-border-subtle bg-surface-hover/50 flex justify-end gap-3 text-sm">
           <button
             type="button"
             onClick={onClose}
-            className="px-4 py-2 border border-border-subtle text-text-primary bg-white rounded-xl hover:bg-slate-50 transition-colors"
+            className="px-4 py-2 border border-border-subtle text-text-primary bg-surface-card rounded-xl hover:bg-surface-hover transition-colors"
           >
             Cancelar
           </button>
@@ -213,7 +213,7 @@ export function CustomerCreateModal({ isOpen, onClose, onSuccess }: CustomerCrea
             type="submit"
             form="create-customer-form"
             disabled={loading}
-            className="px-6 py-2 bg-brand-primary text-white font-medium rounded-xl hover:bg-brand-accent transition-colors disabled:opacity-50 inline-flex justify-center items-center"
+            className="px-6 py-2 btn-primary font-medium rounded-xl inline-flex justify-center items-center"
           >
             {loading ? "Creando..." : "Crear Cliente"}
           </button>

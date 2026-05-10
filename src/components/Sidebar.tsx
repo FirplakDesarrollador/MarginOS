@@ -58,7 +58,7 @@ export function Sidebar() {
       className={[
         // base
         "hidden md:flex flex-col h-screen sticky top-0 z-40",
-        "bg-[#f8fafc] border-r border-border-subtle",
+        "bg-surface-bg border-r border-border-subtle",
         "overflow-hidden transition-[width,min-width] duration-200 ease-in-out",
         "shadow-[1px_0_6px_-2px_rgba(0,0,0,0.07)]",
       ].join(" ")}
@@ -77,7 +77,7 @@ export function Sidebar() {
             alt="FIRPLAK"
             width={110}
             height={28}
-            className="h-7 w-auto mix-blend-multiply shrink-0"
+            className="h-7 w-auto mix-blend-multiply dark:mix-blend-normal dark:invert shrink-0"
             priority
           />
         </div>
@@ -90,7 +90,7 @@ export function Sidebar() {
               alt="FIRPLAK"
               width={28}
               height={28}
-              className="h-7 w-7 object-contain mix-blend-multiply"
+              className="h-7 w-7 object-contain mix-blend-multiply dark:mix-blend-normal dark:invert"
               priority
             />
           </div>
@@ -100,7 +100,7 @@ export function Sidebar() {
         {isExpanded && (
           <button
             onClick={() => setIsCollapsed(!isCollapsed)}
-            className="shrink-0 p-1.5 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors"
+            className="shrink-0 p-1.5 rounded-lg text-text-muted hover:text-text-primary hover:bg-surface-hover transition-colors"
             title={isCollapsed ? "Expandir menú" : "Colapsar menú"}
           >
             {isCollapsed ? (
@@ -153,13 +153,13 @@ export function Sidebar() {
                       isExpanded ? "" : "justify-center",
                       isActive
                         ? "bg-brand-primary/[0.08] text-brand-primary"
-                        : "text-text-muted hover:bg-slate-100 hover:text-text-primary",
+                        : "text-text-muted hover:bg-surface-hover hover:text-text-primary",
                     ].join(" ")}
                   >
                     <item.icon
                       className={[
                         "shrink-0",
-                        isActive ? "text-brand-primary" : "text-slate-400",
+                        isActive ? "text-brand-primary" : "text-text-muted",
                         isExpanded ? "h-[18px] w-[18px]" : "h-5 w-5",
                       ].join(" ")}
                     />
@@ -206,7 +206,7 @@ export function MobileSidebar() {
       <aside
         className={[
           "md:hidden fixed inset-y-0 left-0 z-50 w-64 flex flex-col",
-          "bg-[#f8fafc] border-r border-border-subtle shadow-xl",
+          "bg-surface-bg border-r border-border-subtle shadow-xl",
           "transition-transform duration-200 ease-in-out",
           isMobileOpen ? "translate-x-0" : "-translate-x-full",
         ].join(" ")}
@@ -217,12 +217,12 @@ export function MobileSidebar() {
             alt="FIRPLAK"
             width={110}
             height={28}
-            className="h-7 w-auto mix-blend-multiply"
+            className="h-7 w-auto mix-blend-multiply dark:mix-blend-normal dark:invert"
             priority
           />
           <button
             onClick={closeMobile}
-            className="p-1.5 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors"
+            className="p-1.5 rounded-lg text-text-muted hover:text-text-primary hover:bg-surface-hover transition-colors"
           >
             <X className="h-4 w-4" />
           </button>
@@ -248,11 +248,11 @@ export function MobileSidebar() {
                         "flex items-center gap-3 px-3 py-2.5 text-sm font-medium rounded-xl transition-all duration-150",
                         isActive
                           ? "bg-brand-primary/[0.08] text-brand-primary"
-                          : "text-text-muted hover:bg-slate-100 hover:text-text-primary",
+                          : "text-text-muted hover:bg-surface-hover hover:text-text-primary",
                       ].join(" ")}
                     >
                       <item.icon
-                        className={`h-[18px] w-[18px] shrink-0 ${isActive ? "text-brand-primary" : "text-slate-400"}`}
+                        className={`h-[18px] w-[18px] shrink-0 ${isActive ? "text-brand-primary" : "text-text-muted"}`}
                       />
                       {item.title}
                     </Link>
