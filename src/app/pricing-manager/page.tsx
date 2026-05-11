@@ -312,11 +312,11 @@ export default function PricingManagerPage() {
     setIsSaving(true);
 
     try {
-      const upsertPayload = Object.values(pricingState).map(row => {
-        if (!row.applies) {
-           // Payload for NO APLICA
-           return {
-             ...(row.existing_id ? { id: row.existing_id } : {}),
+      const inserts: any[] = [];
+      const updates: any[] = [];
+
+      Object.values(pricingState).forEach(row => {
+        const basePayload = !row.applies ? {
              channel_id: row.channel_id,
              product_id: selectedProduct.id,
              currency: row.currency,
@@ -329,11 +329,7 @@ export default function PricingManagerPage() {
              is_active: false,
              applies: false,
              not_applicable_reason: row.not_applicable_reason || null,
-           };
-        } else {
-           // Payload for STANDARD PRICING
-           return {
-             ...(row.existing_id ? { id: row.existing_id } : {}),
+        } : {
              channel_id: row.channel_id,
              product_id: selectedProduct.id,
              currency: row.currency,
@@ -346,15 +342,24 @@ export default function PricingManagerPage() {
              is_active: row.is_active,
              applies: true,
              not_applicable_reason: null,
-           };
+        };
+
+        if (row.existing_id) {
+          updates.push({ ...basePayload, id: row.existing_id });
+        } else {
+          inserts.push(basePayload);
         }
       });
 
-      const { error } = await supabase
-        .from("price_lists")
-        .upsert(upsertPayload, { onConflict: "id" });
+      if (inserts.length > 0) {
+        const { error: insertError } = await supabase.from("price_lists").insert(inserts);
+        if (insertError) throw insertError;
+      }
 
-      if (error) throw error;
+      if (updates.length > 0) {
+        const { error: updateError } = await supabase.from("price_lists").upsert(updates, { onConflict: "id" });
+        if (updateError) throw updateError;
+      }
       
       // Refresh to grab new existing_ids and update dashboard status
       await fetchDashboardData();
