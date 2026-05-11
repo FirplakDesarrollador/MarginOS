@@ -344,6 +344,28 @@ export default function ExecutiveDashboard() {
     return `$${val.toFixed(0)}`;
   };
 
+  const formatTooltipCOP = (value: unknown) => {
+    const numericValue =
+      typeof value === "number"
+        ? value
+        : typeof value === "string"
+          ? Number(value)
+          : 0;
+  
+    return formatCOP(Number.isFinite(numericValue) ? numericValue : 0);
+  };
+
+  const formatTooltipPct = (value: unknown) => {
+    const numericValue =
+      typeof value === "number"
+        ? value
+        : typeof value === "string"
+          ? Number(value)
+          : 0;
+  
+    return formatPct(Number.isFinite(numericValue) ? numericValue : 0);
+  };
+
   // EXPORTS
   const handlePrint = () => {
     window.print();
@@ -485,7 +507,7 @@ export default function ExecutiveDashboard() {
                                 <CartesianGrid stroke="#e2e8f0" strokeDasharray="5 5" vertical={false} />
                                 <XAxis dataKey="name" tick={{ fontSize: 12, fill: '#64748b' }} axisLine={false} tickLine={false} />
                                 <YAxis tickFormatter={formatShortCOP} tick={{ fontSize: 12, fill: '#64748b' }} axisLine={false} tickLine={false} width={60} />
-                                <RechartsTooltip formatter={(val: number) => formatCOP(val)} contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }} />
+                                <RechartsTooltip formatter={(value) => formatTooltipCOP(value)} contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }} />
                               </LineChart>
                             </ResponsiveContainer>
                           </div>
@@ -522,7 +544,7 @@ export default function ExecutiveDashboard() {
                                 <CartesianGrid strokeDasharray="3 3" horizontal={true} vertical={false} stroke="#e2e8f0" />
                                 <XAxis type="number" hide />
                                 <YAxis dataKey="name" type="category" axisLine={false} tickLine={false} tick={{ fontSize: 11, fill: '#64748b' }} width={90} />
-                                <RechartsTooltip formatter={(val: number) => formatPct(val)} cursor={{ fill: 'rgba(0,0,0,0.05)' }} contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }} />
+                                <RechartsTooltip formatter={(value) => formatTooltipPct(value)} cursor={{ fill: 'rgba(0,0,0,0.05)' }} contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }} />
                                 <Bar dataKey="margen" radius={[0, 4, 4, 0]}>
                                   {chartsData.marginChannel.map((entry, index) => (
                                     <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
