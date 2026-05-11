@@ -11,7 +11,7 @@ import {
   Tag,
   Package,
   Store,
-  LayoutDashboard,
+  BarChart3,
   Users,
   ChevronLeft,
   ChevronRight,
@@ -24,7 +24,7 @@ const navGroups = [
   {
     title: "Operación Comercial",
     items: [
-      { icon: LayoutDashboard, title: "Inicio", href: "/" },
+      { icon: BarChart3, title: "Executive KPI Dashboard", href: "/" },
       { icon: Calculator, title: "Simular Negocio", href: "/simulator" },
       { icon: PieChart, title: "Escenarios", href: "/scenarios" },
       { icon: Users, title: "Clientes", href: "/customers" },

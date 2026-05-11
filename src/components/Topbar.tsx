@@ -46,7 +46,7 @@ export function Topbar({ title }: { title?: string }) {
   };
 
   return (
-    <header className="sticky top-0 z-30 w-full bg-surface-bg/80 backdrop-blur-md border-b border-border-subtle h-16 flex items-center px-4 md:px-6 shadow-sm gap-3 transition-colors duration-200">
+    <header className="sticky top-0 z-50 w-full bg-surface-bg/80 backdrop-blur-md border-b border-border-subtle h-16 flex items-center px-4 md:px-6 shadow-sm gap-3 transition-colors duration-200">
       {/* Mobile hamburger */}
       <button
         onClick={toggleMobile}
@@ -94,7 +94,7 @@ export function Topbar({ title }: { title?: string }) {
           {themeMenuOpen && (
             <>
               <div className="fixed inset-0 z-40" onClick={() => setThemeMenuOpen(false)}></div>
-              <div className="absolute right-0 mt-2 w-36 bg-surface-card border border-border-subtle rounded-xl shadow-md py-1 z-50 overflow-hidden animate-in fade-in zoom-in-95 duration-100">
+              <div className="absolute right-0 mt-2 w-36 bg-surface-card border border-border-subtle rounded-xl shadow-md py-1 z-[9999] overflow-hidden animate-in fade-in zoom-in-95 duration-100">
                 <button
                   onClick={() => { setTheme("light"); setThemeMenuOpen(false); }}
                   className={`w-full text-left px-3 py-2 text-sm flex items-center gap-2 transition-colors ${theme === "light" ? "bg-surface-hover text-brand-primary font-medium" : "text-text-primary hover:bg-surface-hover"}`}
