@@ -67,7 +67,7 @@ export function Topbar({ title }: { title?: string }) {
             alt="FIRPLAK"
             width={100}
             height={25}
-            className="h-6 w-auto mix-blend-multiply"
+            className="h-6 w-auto"
             priority
           />
         </Link>
