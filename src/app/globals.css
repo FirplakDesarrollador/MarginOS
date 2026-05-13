@@ -73,3 +73,24 @@ body {
     @apply inline-flex items-center justify-center gap-1 bg-surface-card border border-border-subtle text-text-primary hover:bg-surface-hover hover:border-brand-primary/30 hover:text-brand-primary shadow-sm transition-all disabled:opacity-50 text-xs font-semibold rounded-lg;
   }
 }
+
+/* Global Text Selection */
+::selection {
+  background-color: rgba(37, 99, 235, 0.22);
+  color: inherit;
+}
+
+::-moz-selection {
+  background-color: rgba(37, 99, 235, 0.22);
+  color: inherit;
+}
+
+.dark ::selection {
+  background-color: rgba(59, 130, 246, 0.65);
+  color: #ffffff;
+}
+
+.dark ::-moz-selection {
+  background-color: rgba(59, 130, 246, 0.65);
+  color: #ffffff;
+}

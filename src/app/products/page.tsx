@@ -8,6 +8,7 @@ import { AppShell } from "@/components/AppShell";
 import { createClient } from "@/lib/supabase/client";
 import { ProductModal } from "@/components/ProductModal";
 import { ProductUploadModal } from "@/components/ProductUploadModal";
+import { useTableDensity } from "@/contexts/TableDensityContext";
 
 export type ProductRow = {
   id: string;
@@ -26,6 +27,8 @@ export default function ProductsPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<ProductRow | null>(null);
+  const { getTableClasses } = useTableDensity();
+  const tableStyles = getTableClasses();
 
   // Filters & Search
   const [searchQuery, setSearchQuery] = useState("");
@@ -188,64 +191,64 @@ export default function ProductsPage() {
           </div>
         ) : (
           <div className="mt-8 overflow-x-auto rounded-[var(--radius-lg)] border border-[color:var(--border)] bg-surface-card shadow-sm">
-            <table className="w-full text-sm">
+            <table className={`w-full ${tableStyles.tableWrapper}`}>
               <thead className="bg-surface-hover/80 border-b border-border-subtle">
                 <tr>
-                  <th className="px-6 py-4 text-left font-semibold text-text-primary">Código SAP</th>
-                  <th className="px-6 py-4 text-left font-semibold text-text-primary">Descripción</th>
-                  <th className="px-6 py-4 text-left font-semibold text-text-primary">Categoría</th>
-                  <th className="px-6 py-4 text-center font-semibold text-text-primary">Unidad</th>
-                  <th className="px-6 py-4 text-center font-semibold text-text-primary">Margen Obj.</th>
-                  <th className="px-6 py-4 text-center font-semibold text-text-primary w-24">Estado</th>
-                  <th className="px-6 py-4 text-center font-semibold text-text-primary w-24">Acción</th>
+                  <th className={`text-left font-semibold text-text-primary ${tableStyles.th}`}>Código SAP</th>
+                  <th className={`text-left font-semibold text-text-primary ${tableStyles.th}`}>Descripción</th>
+                  <th className={`text-left font-semibold text-text-primary ${tableStyles.th}`}>Categoría</th>
+                  <th className={`text-center font-semibold text-text-primary ${tableStyles.th}`}>Unidad</th>
+                  <th className={`text-center font-semibold text-text-primary ${tableStyles.th}`}>Margen Obj.</th>
+                  <th className={`text-center font-semibold text-text-primary w-24 ${tableStyles.th}`}>Estado</th>
+                  <th className={`text-center font-semibold text-text-primary w-24 ${tableStyles.th}`}>Acción</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-border-subtle">
                 {filteredData.map((row) => (
                   <tr key={row.id} className="hover:bg-surface-hover/50 transition-colors group">
-                    <td className="px-6 py-4 align-middle whitespace-nowrap">
-                      <span className="inline-flex items-center px-2 py-1 rounded-md text-xs font-semibold bg-surface-hover text-text-primary tracking-tight">
+                    <td className={`align-middle whitespace-nowrap ${tableStyles.td}`}>
+                      <span className={`inline-flex items-center rounded-md font-semibold bg-surface-hover text-text-primary tracking-tight ${tableStyles.badge}`}>
                         {row.sap_code}
                       </span>
                     </td>
                     
-                    <td className="px-6 py-4 align-middle">
+                    <td className={`align-middle ${tableStyles.td}`}>
                       <div className="text-text-primary font-medium min-w-[200px]">
                         {row.description}
                       </div>
                     </td>
 
-                    <td className="px-6 py-4 align-middle text-text-muted">
+                    <td className={`align-middle text-text-muted ${tableStyles.td}`}>
                         {row.category || "—"}
                     </td>
 
-                    <td className="px-6 py-4 align-middle text-center text-text-muted">
+                    <td className={`align-middle text-center text-text-muted ${tableStyles.td}`}>
                         {row.uom || "—"}
                     </td>
 
-                    <td className="px-6 py-4 align-middle text-center font-medium text-text-primary">
+                    <td className={`align-middle text-center font-medium text-text-primary ${tableStyles.td}`}>
                         {row.target_margin_pct != null ? `${row.target_margin_pct}%` : "—"}
                     </td>
 
-                    <td className="px-6 py-4 text-center align-middle whitespace-nowrap">
+                    <td className={`text-center align-middle whitespace-nowrap ${tableStyles.td}`}>
                        {row.is_active ? (
-                         <span className="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-100">
+                         <span className={`inline-flex items-center rounded-lg font-semibold bg-emerald-50 text-emerald-700 border border-emerald-100 ${tableStyles.badge}`}>
                            Activo
                          </span>
                        ) : (
-                         <span className="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-semibold bg-surface-hover text-text-muted border border-border-subtle">
+                         <span className={`inline-flex items-center rounded-lg font-semibold bg-surface-hover text-text-muted border border-border-subtle ${tableStyles.badge}`}>
                            Inactivo
                          </span>
                        )}
                     </td>
 
-                    <td className="px-6 py-4 text-center align-middle">
+                    <td className={`text-center align-middle ${tableStyles.td}`}>
                       <button 
                         onClick={() => {
                           setSelectedProduct(row);
                           setIsModalOpen(true);
                         }}
-                        className="text-brand-primary hover:text-brand-accent font-medium text-xs border border-transparent hover:border-brand-primary/20 hover:bg-brand-primary/5 px-2 py-1 rounded transition-colors"
+                        className={`text-brand-primary hover:text-brand-accent font-medium border border-transparent hover:border-brand-primary/20 hover:bg-brand-primary/5 rounded transition-colors ${tableStyles.button}`}
                       >
                          Editar
                       </button>

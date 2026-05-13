@@ -8,7 +8,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { useSidebar } from "@/contexts/SidebarContext";
 import { useTheme } from "@/contexts/ThemeContext";
-import { Sun, Moon, Monitor } from "lucide-react";
+import { useTableDensity } from "@/contexts/TableDensityContext";
+import { Sun, Moon, Monitor, Columns2, LayoutList, AlignJustify } from "lucide-react";
 
 export function Topbar({ title }: { title?: string }) {
   const [userName, setUserName] = useState<string | null>(null);
@@ -16,7 +17,9 @@ export function Topbar({ title }: { title?: string }) {
   const supabase = createClient();
   const { toggleMobile } = useSidebar();
   const { theme, setTheme } = useTheme();
+  const { density, setDensity } = useTableDensity();
   const [themeMenuOpen, setThemeMenuOpen] = useState(false);
+  const [densityMenuOpen, setDensityMenuOpen] = useState(false);
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -81,6 +84,43 @@ export function Topbar({ title }: { title?: string }) {
 
       {/* Right actions */}
       <div className="flex items-center gap-3">
+        {/* Density Switcher */}
+        <div className="relative">
+          <button
+            onClick={() => setDensityMenuOpen(!densityMenuOpen)}
+            className="inline-flex items-center justify-center p-2 rounded-full border border-border-subtle bg-surface-card text-text-muted hover:text-text-primary hover:bg-surface-hover transition duration-200 shadow-sm"
+            title="Densidad de Tablas"
+          >
+            {density === "compact" ? <AlignJustify className="h-[14px] w-[14px]" /> : density === "normal" ? <LayoutList className="h-[14px] w-[14px]" /> : <Columns2 className="h-[14px] w-[14px]" />}
+          </button>
+          
+          {densityMenuOpen && (
+            <>
+              <div className="fixed inset-0 z-40" onClick={() => setDensityMenuOpen(false)}></div>
+              <div className="absolute right-0 mt-2 w-36 bg-surface-card border border-border-subtle rounded-xl shadow-md py-1 z-[9999] overflow-hidden animate-in fade-in zoom-in-95 duration-100">
+                <button
+                  onClick={() => { setDensity("compact"); setDensityMenuOpen(false); }}
+                  className={`w-full text-left px-3 py-2 text-sm flex items-center gap-2 transition-colors ${density === "compact" ? "bg-surface-hover text-brand-primary font-medium" : "text-text-primary hover:bg-surface-hover"}`}
+                >
+                  <AlignJustify className="h-4 w-4" /> Compacto
+                </button>
+                <button
+                  onClick={() => { setDensity("normal"); setDensityMenuOpen(false); }}
+                  className={`w-full text-left px-3 py-2 text-sm flex items-center gap-2 transition-colors ${density === "normal" ? "bg-surface-hover text-brand-primary font-medium" : "text-text-primary hover:bg-surface-hover"}`}
+                >
+                  <LayoutList className="h-4 w-4" /> Normal
+                </button>
+                <button
+                  onClick={() => { setDensity("comodo"); setDensityMenuOpen(false); }}
+                  className={`w-full text-left px-3 py-2 text-sm flex items-center gap-2 transition-colors ${density === "comodo" ? "bg-surface-hover text-brand-primary font-medium" : "text-text-primary hover:bg-surface-hover"}`}
+                >
+                  <Columns2 className="h-4 w-4" /> Cómodo
+                </button>
+              </div>
+            </>
+          )}
+        </div>
+
         {/* Theme Switcher */}
         <div className="relative">
           <button
