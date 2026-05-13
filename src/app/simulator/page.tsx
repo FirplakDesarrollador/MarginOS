@@ -10,6 +10,7 @@ import { VersionModal, type VersionOption } from "@/components/VersionModal";
 import { createClient } from "@/lib/supabase/client";
 import { AppShell } from "@/components/AppShell";
 import { useNavigationBlocker } from "@/contexts/NavigationBlockerContext";
+import { useTableDensity } from "@/contexts/TableDensityContext";
 
 type Producto = {
   row_id: string;
@@ -37,6 +38,8 @@ function SimulatorContent() {
   const [originalSimulation, setOriginalSimulation] = useState<any>(null);
   const [versionTypeDisplay, setVersionTypeDisplay] = useState<{type: string, originalId: string} | null>(null);
   const [isLoadingEdit, setIsLoadingEdit] = useState(false);
+  const { getTableClasses } = useTableDensity();
+  const tableStyles = getTableClasses();
   
   // ==========================================
   // ESTADOS DE SIMULADOR
@@ -1131,16 +1134,16 @@ function SimulatorContent() {
               setShowBackToTop(target.scrollTop > 300);
             }}
           >
-            <table className="w-full text-sm table-fixed" style={{ minWidth: "960px" }}>
+            <table className={`w-full table-fixed ${tableStyles.tableWrapper}`} style={{ minWidth: "960px" }}>
               {/* colgroup pins each column to a fixed width so the table fits ~1000px */}
               <colgroup>
                 <col style={{ width: "130px" }} />{/* Código SAP */}
                 <col />{/* Descripción — takes remaining flex space */}
                 <col style={{ width: "88px" }} />{/* Costo Unit. */}
                 <col style={{ width: "88px" }} />{/* Precio Lista */}
-                <col style={{ width: "70px" }} />{/* % Desc input */}
+                <col style={{ width: tableStyles.colDescWidth || "72px" }} />{/* % Desc input */}
                 <col style={{ width: "88px" }} />{/* P. Neto */}
-                <col style={{ width: "68px" }} />{/* Cant. input */}
+                <col style={{ width: tableStyles.colCantWidth || "80px" }} />{/* Cant. input */}
                 <col style={{ width: "88px" }} />{/* Ing. Neto */}
                 <col style={{ width: "88px" }} />{/* Costo Total */}
                 <col style={{ width: "90px" }} />{/* Contribución */}
@@ -1149,30 +1152,30 @@ function SimulatorContent() {
               </colgroup>
               <thead className="bg-surface-hover border-b border-border-subtle sticky top-0 z-20 shadow-sm after:absolute after:bottom-[-1px] after:left-0 after:right-0 after:h-[1px] after:bg-border-subtle">
                 <tr>
-                  <th className="px-2.5 py-3 text-left text-xs font-semibold text-text-primary whitespace-nowrap">Código SAP</th>
-                  <th className="px-2.5 py-3 text-left text-xs font-semibold text-text-primary">Descripción</th>
-                  <th className="px-2.5 py-3 text-right text-xs font-semibold text-text-primary whitespace-nowrap">
+                  <th className={`text-left font-semibold text-text-primary whitespace-nowrap ${tableStyles.th}`}>Código SAP</th>
+                  <th className={`text-left font-semibold text-text-primary ${tableStyles.th}`}>Descripción</th>
+                  <th className={`text-right font-semibold text-text-primary whitespace-nowrap ${tableStyles.th}`}>
                     Costo Unit.<br /><span className="text-[10px] text-text-muted font-normal">(COP)</span>
                   </th>
-                  <th className="px-2.5 py-3 text-right text-xs font-semibold text-text-primary whitespace-nowrap">
+                  <th className={`text-right font-semibold text-text-primary whitespace-nowrap ${tableStyles.th}`}>
                     Precio Lista<br /><span className="text-[10px] text-text-muted font-normal">({currency})</span>
                   </th>
-                  <th className="px-2.5 py-3 text-right text-xs font-semibold text-text-primary">% Desc</th>
-                  <th className="px-2.5 py-3 text-right text-xs font-semibold text-text-primary whitespace-nowrap">
+                  <th className={`text-right font-semibold text-text-primary ${tableStyles.th}`}>% Desc</th>
+                  <th className={`text-right font-semibold text-text-primary whitespace-nowrap ${tableStyles.th}`}>
                     P. Neto<br /><span className="text-[10px] text-text-muted font-normal">({currency})</span>
                   </th>
-                  <th className="px-2.5 py-3 text-right text-xs font-semibold text-text-primary">Cant.</th>
-                  <th className="px-2.5 py-3 text-right text-xs font-semibold text-text-primary whitespace-nowrap">
+                  <th className={`text-right font-semibold text-text-primary ${tableStyles.th}`}>Cant.</th>
+                  <th className={`text-right font-semibold text-text-primary whitespace-nowrap ${tableStyles.th}`}>
                     Ing. Neto<br /><span className="text-[10px] text-text-muted font-normal">({currency})</span>
                   </th>
-                  <th className="px-2.5 py-3 text-right text-xs font-semibold text-text-primary whitespace-nowrap">
+                  <th className={`text-right font-semibold text-text-primary whitespace-nowrap ${tableStyles.th}`}>
                     Costo Total<br /><span className="text-[10px] text-text-muted font-normal">(COP)</span>
                   </th>
-                  <th className="px-2.5 py-3 text-right text-xs font-semibold text-text-primary whitespace-nowrap">
+                  <th className={`text-right font-semibold text-text-primary whitespace-nowrap ${tableStyles.th}`}>
                     Contribución<br /><span className="text-[10px] text-text-muted font-normal">(COP)</span>
                   </th>
-                  <th className="px-2.5 py-3 text-center text-xs font-semibold text-text-primary">Margen</th>
-                  <th className="py-3"></th>
+                  <th className={`text-center font-semibold text-text-primary ${tableStyles.th}`}>Margen</th>
+                  <th className={tableStyles.th}></th>
                 </tr>
               </thead>
 
@@ -1184,16 +1187,16 @@ function SimulatorContent() {
                     <tr key={p.row_id} className="group hover:bg-surface-hover/40 transition-colors">
 
                       {/* Código SAP */}
-                      <td className="px-2.5 py-3 align-middle">
-                        <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[11px] font-semibold bg-surface-hover text-text-primary tracking-tight max-w-full break-all">
+                      <td className={`align-middle ${tableStyles.td}`}>
+                        <span className={`inline-flex items-center rounded font-semibold bg-surface-hover text-text-primary tracking-tight max-w-full break-all ${tableStyles.badge}`}>
                           {p.Codigo}
                         </span>
                       </td>
 
                       {/* Descripción — truncate with tooltip */}
-                      <td className="px-2.5 py-3 align-middle">
+                      <td className={`align-middle ${tableStyles.td}`}>
                         <div
-                          className="w-full font-medium text-text-primary text-xs leading-snug"
+                          className="w-full font-medium text-text-primary leading-snug"
                           title={p.Descripcion}
                         >
                           {p.Descripcion}
@@ -1201,12 +1204,12 @@ function SimulatorContent() {
                       </td>
 
                       {/* Costo Unit. */}
-                      <td className="px-2.5 py-3 text-right align-middle">
+                      <td className={`text-right align-middle ${tableStyles.td}`}>
                         {p.Costo_Mp > 0 ? (
-                          <span className="text-text-muted font-medium text-xs">{formatMoney(p.Costo_Mp)}</span>
+                          <span className="text-text-muted font-medium">{formatMoney(p.Costo_Mp)}</span>
                         ) : (
                           <span
-                            className="inline-flex items-center px-1.5 py-0.5 rounded bg-orange-50 text-orange-600 border border-orange-100 text-[10px] font-semibold"
+                            className={`inline-flex items-center rounded bg-orange-50 text-orange-600 border border-orange-100 font-semibold ${tableStyles.badge}`}
                             title="Sin costo de BOM reportado"
                           >
                             $0
@@ -1215,22 +1218,22 @@ function SimulatorContent() {
                       </td>
 
                       {/* Precio Lista */}
-                      <td className="px-2.5 py-3 text-right align-middle">
-                        <div className="font-semibold text-text-primary text-xs">{formatMoney(r.precioDisplay, currency === "USD")}</div>
+                      <td className={`text-right align-middle ${tableStyles.td}`}>
+                        <div className="font-semibold text-text-primary">{formatMoney(r.precioDisplay, currency === "USD")}</div>
                         {p._hasPriceList === false && (
-                          <div className="mt-0.5 text-[9px] font-semibold text-amber-600 bg-amber-50 inline-block px-1 py-0.5 rounded border border-amber-100 leading-none">
+                          <div className={`mt-0.5 font-semibold text-amber-600 bg-amber-50 inline-block rounded border border-amber-100 leading-none ${tableStyles.badge}`}>
                             Sin precio
                           </div>
                         )}
                       </td>
 
                       {/* % Desc — editable */}
-                      <td className="px-1.5 py-3 text-right align-middle">
+                      <td className={`text-center align-middle overflow-visible ${tableStyles.td}`}>
                         <input
                           type="number"
                           min="0"
                           max="100"
-                          className="w-full border border-border-subtle rounded-md px-1.5 py-1 text-right focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary transition-all text-xs bg-surface-card shadow-sm"
+                          className={`border border-border-subtle rounded-md focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary transition-all bg-surface-card shadow-sm ${tableStyles.inputDesc}`}
                           value={inputs[p.row_id]?.descuento ?? ""}
                           onChange={(e) => updateInput(p.row_id, "descuento", Number(e.target.value))}
                           placeholder="0"
@@ -1238,18 +1241,18 @@ function SimulatorContent() {
                       </td>
 
                       {/* P. Neto */}
-                      <td className="px-2.5 py-3 text-right align-middle">
-                        <div className="font-semibold text-text-primary text-xs">
+                      <td className={`text-right align-middle ${tableStyles.td}`}>
+                        <div className="font-semibold text-text-primary">
                           {formatMoney(r.precioDisplay * (1 - r.descuento / 100), currency === "USD")}
                         </div>
                       </td>
 
                       {/* Cant. — editable */}
-                      <td className="px-1.5 py-3 text-right align-middle">
+                      <td className={`text-center align-middle overflow-visible ${tableStyles.td}`}>
                         <input
                           type="number"
                           min="0"
-                          className="w-full border border-border-subtle rounded-md px-1.5 py-1 text-right focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary transition-all text-xs bg-surface-card shadow-sm"
+                          className={`border border-border-subtle rounded-md focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary transition-all bg-surface-card shadow-sm ${tableStyles.inputCant}`}
                           value={inputs[p.row_id]?.cantidad ?? ""}
                           onChange={(e) => updateInput(p.row_id, "cantidad", Number(e.target.value))}
                           placeholder="0"
@@ -1257,18 +1260,18 @@ function SimulatorContent() {
                       </td>
 
                       {/* Ing. Neto */}
-                      <td className="px-2.5 py-3 text-right font-semibold text-text-primary text-xs align-middle">
+                      <td className={`text-right font-semibold text-text-primary align-middle ${tableStyles.td}`}>
                         {formatMoney(r.ingresoNetoDisplay, currency === "USD")}
                       </td>
 
                       {/* Costo Total */}
-                      <td className="px-2.5 py-3 text-right text-text-muted text-xs align-middle">
+                      <td className={`text-right text-text-muted align-middle ${tableStyles.td}`}>
                         {formatMoney(r.costoTotalCop)}
                       </td>
 
                       {/* Contribución */}
                       <td
-                        className={`px-2.5 py-3 text-right font-semibold text-xs align-middle ${
+                        className={`text-right font-semibold align-middle ${tableStyles.td} ${
                           r.contribucionCop < 0 ? "text-red-600" : "text-emerald-600"
                         }`}
                       >
@@ -1276,7 +1279,7 @@ function SimulatorContent() {
                       </td>
 
                       {/* Margen & Δ */}
-                      <td className="px-1.5 py-3 align-middle">
+                      <td className={`align-middle ${tableStyles.td}`}>
                         {(() => {
                           const m = Number.isFinite(r.margen) ? r.margen : 0;
                           const d = m - r.margenObjetivoLinea;
@@ -1285,8 +1288,8 @@ function SimulatorContent() {
                           else if (d < 0) badgeBg = "bg-amber-50 text-amber-700 border-amber-200";
                           return (
                             <div className="flex flex-col items-center gap-0.5" title={`Margen objetivo: ${r.margenObjetivoLinea}%`}>
-                              <span className="font-bold text-text-primary text-xs whitespace-nowrap">{m.toFixed(1)}%</span>
-                              <span className={`text-[10px] font-semibold px-1.5 py-0.5 rounded border whitespace-nowrap ${badgeBg}`}>
+                              <span className="font-bold text-text-primary whitespace-nowrap">{m.toFixed(1)}%</span>
+                              <span className={`font-semibold rounded border whitespace-nowrap ${badgeBg} ${tableStyles.badge}`}>
                                 {d > 0 ? "+" : ""}{d.toFixed(1)}%
                               </span>
                             </div>
@@ -1295,7 +1298,7 @@ function SimulatorContent() {
                       </td>
 
                       {/* Delete */}
-                      <td className="py-3 text-center align-middle">
+                      <td className={`text-center align-middle ${tableStyles.td}`}>
                         <button
                           onClick={() => handleRemoveProduct(p.row_id)}
                           className="p-1 text-text-muted hover:text-red-500 hover:bg-red-50 rounded-md transition-colors opacity-0 group-hover:opacity-100"

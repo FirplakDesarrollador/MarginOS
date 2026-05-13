@@ -19,6 +19,7 @@ import {
 import { AppShell } from "@/components/AppShell";
 import { createClient } from "@/lib/supabase/client";
 import { DBProduct } from "@/components/ProductPickerModal";
+import { useTableDensity } from "@/contexts/TableDensityContext";
 
 type SalesChannel = {
   id: string;
@@ -54,6 +55,8 @@ type ProductDashboardStatus = {
 
 export default function PricingManagerPage() {
   const supabase = createClient();
+  const { getTableClasses } = useTableDensity();
+  const tableStyles = getTableClasses();
 
   // Dashboard state
   const [products, setProducts] = useState<DBProduct[]>([]);
@@ -71,6 +74,57 @@ export default function PricingManagerPage() {
   const [bomDate, setBomDate] = useState<string | null>(null);
 
   const [pricingState, setPricingState] = useState<Record<string, PricingRowState>>({});
+  const [trm, setTrm] = useState<number | null>(null);
+  
+  const hasAnyUSDChannel = useMemo(() => {
+    return channels.some(ch => ch.default_currency === "USD");
+  }, [channels]);
+
+  function calculateRowPrices(row: PricingRowState, currentBomCost: number | null, currentTrm: number | null) {
+    if (!currentBomCost || !row.applies) {
+      return { net_price: 0, list_price: 0 };
+    }
+    const margin = row.target_margin_pct;
+    const discount = row.max_discount_pct;
+    let netCop = 0;
+    let listCop = 0;
+    
+    if (margin >= 0 && margin < 100) {
+      netCop = currentBomCost / (1 - margin / 100);
+    }
+    if (discount >= 0 && discount < 100) {
+      listCop = netCop / (1 - discount / 100);
+    }
+
+    if (row.currency === "USD") {
+      if (currentTrm && currentTrm > 0) {
+        return { net_price: netCop / currentTrm, list_price: listCop / currentTrm };
+      } else {
+        return { net_price: 0, list_price: 0 };
+      }
+    }
+    
+    return { net_price: netCop, list_price: listCop };
+  }
+
+  function handleTrmChange(newTrm: number | null) {
+    setTrm(newTrm);
+    setPricingState(prev => {
+      const next = { ...prev };
+      let changed = false;
+      Object.keys(next).forEach(channelId => {
+        const row = next[channelId];
+        if (row.applies && row.currency === "USD") {
+          const prices = calculateRowPrices(row, bomCost, newTrm);
+          if (row.net_price !== prices.net_price || row.list_price !== prices.list_price) {
+            next[channelId] = { ...row, ...prices };
+            changed = true;
+          }
+        }
+      });
+      return changed ? next : prev;
+    });
+  }
   
   const [isLoadingProduct, setIsLoadingProduct] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
@@ -174,8 +228,17 @@ export default function PricingManagerPage() {
       // 2. Fetch existing price lists for this product
       const { data: existingPrices } = await supabase
         .from("price_lists")
-        .select("id, channel_id, target_margin_pct, max_discount_pct, net_price, list_price, valid_from, valid_to, is_active, applies, not_applicable_reason")
+        .select("id, channel_id, target_margin_pct, max_discount_pct, net_price, list_price, valid_from, valid_to, is_active, applies, not_applicable_reason, conversion_trm")
         .eq("product_id", product.id);
+
+      let loadedTrm: number | null = null;
+      if (existingPrices) {
+        const usdPrice = existingPrices.find(p => p.conversion_trm);
+        if (usdPrice && usdPrice.conversion_trm) {
+           loadedTrm = usdPrice.conversion_trm;
+        }
+      }
+      setTrm(loadedTrm);
 
       // 3. Initialize pricing state for all channels
       const newPricingState: Record<string, PricingRowState> = {};
@@ -215,13 +278,9 @@ export default function PricingManagerPage() {
 
         // Recalculate immediately if cost exists but prices don't and it applies
         if (cost && !existing) {
-           const margin = newPricingState[channel.id].target_margin_pct;
-           const discount = newPricingState[channel.id].max_discount_pct;
-           if (margin > 0 && margin < 100) {
-              const net = cost / (1 - margin / 100);
-              newPricingState[channel.id].net_price = net;
-              newPricingState[channel.id].list_price = discount < 100 ? net / (1 - discount / 100) : 0;
-           }
+           const prices = calculateRowPrices(newPricingState[channel.id], cost, loadedTrm);
+           newPricingState[channel.id].net_price = prices.net_price;
+           newPricingState[channel.id].list_price = prices.list_price;
         }
       });
 
@@ -247,21 +306,10 @@ export default function PricingManagerPage() {
          row.is_active = false;
       } else if (field === "applies" && value) {
          // Re-calculate if turning 'applies' back on
-         if (bomCost) {
-           const margin = row.target_margin_pct;
-           const discount = row.max_discount_pct;
-           if (margin >= 0 && margin < 100) {
-              row.net_price = bomCost / (1 - margin / 100);
-           } else {
-              row.net_price = 0;
-           }
-           if (discount >= 0 && discount < 100) {
-              row.list_price = row.net_price / (1 - discount / 100);
-           } else {
-              row.list_price = 0;
-           }
-         }
          row.not_applicable_reason = "";
+         const prices = calculateRowPrices(row, bomCost, trm);
+         row.net_price = prices.net_price;
+         row.list_price = prices.list_price;
       }
 
       // Handle annual validity toggle
@@ -283,21 +331,9 @@ export default function PricingManagerPage() {
 
       // Recalculate prices if margin or discount changes (and it applies)
       if ((field === "target_margin_pct" || field === "max_discount_pct") && row.applies) {
-        if (bomCost) {
-           const margin = row.target_margin_pct;
-           const discount = row.max_discount_pct;
-           if (margin >= 0 && margin < 100) {
-              row.net_price = bomCost / (1 - margin / 100);
-           } else {
-              row.net_price = 0;
-           }
-           
-           if (discount >= 0 && discount < 100) {
-              row.list_price = row.net_price / (1 - discount / 100);
-           } else {
-              row.list_price = 0;
-           }
-        }
+         const prices = calculateRowPrices(row, bomCost, trm);
+         row.net_price = prices.net_price;
+         row.list_price = prices.list_price;
       }
 
       return { ...prev, [channelId]: row };
@@ -312,10 +348,18 @@ export default function PricingManagerPage() {
     setIsSaving(true);
 
     try {
+      const hasActiveUSDChannel = Object.values(pricingState).some(row => row.applies && row.currency === "USD");
+      if (hasActiveUSDChannel && (!trm || trm <= 0)) {
+         setSaveError("Debes ingresar una TRM para calcular precios en USD.");
+         setIsSaving(false);
+         return;
+      }
+
       const inserts: any[] = [];
       const updates: any[] = [];
 
       Object.values(pricingState).forEach(row => {
+        const isUSD = row.currency === "USD";
         const basePayload = !row.applies ? {
              channel_id: row.channel_id,
              product_id: selectedProduct.id,
@@ -329,6 +373,7 @@ export default function PricingManagerPage() {
              is_active: false,
              applies: false,
              not_applicable_reason: row.not_applicable_reason || null,
+             conversion_trm: null,
         } : {
              channel_id: row.channel_id,
              product_id: selectedProduct.id,
@@ -342,6 +387,7 @@ export default function PricingManagerPage() {
              is_active: row.is_active,
              applies: true,
              not_applicable_reason: null,
+             conversion_trm: isUSD ? trm : null,
         };
 
         if (row.existing_id) {
@@ -488,21 +534,36 @@ export default function PricingManagerPage() {
                       </div>
                     </div>
 
-                    <div className="flex flex-col lg:items-end justify-center min-w-[200px] p-4 lg:p-0 bg-surface-hover/50 lg:bg-transparent rounded-xl border border-border-subtle lg:border-transparent">
-                      <span className="text-xs font-medium text-text-muted uppercase tracking-wider mb-1">Costo MP (BOM)</span>
-                      {bomCost !== null ? (
-                        <>
-                           <span className="text-2xl font-bold text-text-primary">
-                              ${formatMoney(bomCost, "COP")}
-                           </span>
-                           <span className="text-xs text-text-muted flex items-center gap-1 mt-1">
-                              <Clock className="w-3 h-3" /> Actualizado: {formatDate(bomDate)}
-                           </span>
-                        </>
-                      ) : (
-                        <div className="flex items-center gap-2 text-amber-600 bg-amber-50 px-3 py-1.5 rounded-lg border border-amber-200 mt-1">
-                           <AlertCircle className="w-4 h-4" />
-                           <span className="text-xs font-semibold">Costo BOM no disponible</span>
+                    <div className="flex flex-col lg:items-end justify-center min-w-[200px] p-4 lg:p-0 bg-surface-hover/50 lg:bg-transparent rounded-xl border border-border-subtle lg:border-transparent gap-4">
+                      <div className="text-right">
+                        <span className="text-xs font-medium text-text-muted uppercase tracking-wider mb-1 block">Costo MP (BOM)</span>
+                        {bomCost !== null ? (
+                          <>
+                             <span className="text-2xl font-bold text-text-primary">
+                                ${formatMoney(bomCost, "COP")}
+                             </span>
+                             <span className="text-xs text-text-muted flex items-center gap-1 mt-1 justify-end">
+                                <Clock className="w-3 h-3" /> Actualizado: {formatDate(bomDate)}
+                             </span>
+                          </>
+                        ) : (
+                          <div className="flex items-center gap-2 text-amber-600 bg-amber-50 px-3 py-1.5 rounded-lg border border-amber-200 mt-1">
+                             <AlertCircle className="w-4 h-4" />
+                             <span className="text-xs font-semibold">Costo BOM no disponible</span>
+                          </div>
+                        )}
+                      </div>
+
+                      {hasAnyUSDChannel && (
+                        <div className="text-right flex flex-col items-end border-t border-border-subtle lg:border-t-0 pt-3 lg:pt-0">
+                          <label className="text-xs font-medium text-text-muted uppercase tracking-wider mb-1 block">TRM de conversión</label>
+                          <input 
+                            type="number"
+                            value={trm || ""}
+                            onChange={(e) => handleTrmChange(e.target.value ? Number(e.target.value) : null)}
+                            placeholder="Ej. 3600"
+                            className="w-32 px-3 py-1.5 border border-border-subtle rounded-lg text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary transition-all bg-surface-card text-right"
+                          />
                         </div>
                       )}
                     </div>
@@ -514,73 +575,86 @@ export default function PricingManagerPage() {
                       <h3 className="text-sm font-semibold text-text-primary uppercase tracking-wider">Tarifas por Canal de Venta</h3>
                     </div>
                     <div className="overflow-x-auto">
-                      <table className="w-full text-sm">
+                      <table className={`w-full ${tableStyles.tableWrapper}`}>
                         <thead className="bg-surface-hover/80 border-b border-border-subtle">
                           <tr>
-                            <th className="px-6 py-4 text-left font-semibold text-text-primary">Canal de Venta</th>
-                            <th className="px-4 py-4 text-center font-semibold text-text-primary">Moneda</th>
-                            <th className="px-4 py-4 text-center font-semibold text-text-primary w-32">Margen Obj. %</th>
-                            <th className="px-4 py-4 text-right font-semibold text-text-primary min-w-[140px]">Precio Neto</th>
-                            <th className="px-4 py-4 text-center font-semibold text-text-primary w-32">Desc. Máx. %</th>
-                            <th className="px-4 py-4 text-right font-semibold text-text-primary min-w-[140px]">Precio Lista</th>
-                            <th className="px-4 py-4 text-left font-semibold text-text-primary min-w-[180px]">Vigencia</th>
-                            <th className="px-4 py-4 text-center font-semibold text-text-primary">Activo</th>
-                            <th className="px-6 py-4 text-center font-semibold text-text-primary w-28">Acción</th>
+                            <th className={`text-left font-semibold text-text-primary ${tableStyles.th}`}>Canal de Venta</th>
+                            <th className={`text-center font-semibold text-text-primary ${tableStyles.th}`}>Moneda</th>
+                            <th className={`text-center font-semibold text-text-primary w-32 ${tableStyles.th}`}>Margen Obj. %</th>
+                            <th className={`text-right font-semibold text-text-primary min-w-[140px] ${tableStyles.th}`}>Precio Neto</th>
+                            <th className={`text-center font-semibold text-text-primary w-32 ${tableStyles.th}`}>Desc. Máx. %</th>
+                            <th className={`text-right font-semibold text-text-primary min-w-[140px] ${tableStyles.th}`}>Precio Lista</th>
+                            <th className={`text-left font-semibold text-text-primary min-w-[180px] ${tableStyles.th}`}>Vigencia</th>
+                            <th className={`text-center font-semibold text-text-primary ${tableStyles.th}`}>Activo</th>
+                            <th className={`text-center font-semibold text-text-primary w-28 ${tableStyles.th}`}>Acción</th>
                           </tr>
                         </thead>
                         <tbody className="divide-y divide-border-subtle">
                           {Object.values(pricingState).map((row) => (
                             <tr key={row.channel_id} className={`hover:bg-surface-hover/30 transition-colors ${!row.applies ? "bg-slate-50/50 dark:bg-slate-900/20" : ""}`}>
-                              <td className="px-6 py-4 align-middle">
+                              <td className={`align-middle ${tableStyles.td}`}>
                                 <span className={`font-semibold block mb-0.5 ${!row.applies ? "text-text-muted" : "text-text-primary"}`}>{row.channel_name}</span>
                                 <div className="flex gap-2 items-center mt-1">
                                   {row.existing_id && row.applies && (
-                                     <span className="text-[10px] font-medium text-emerald-600 bg-emerald-50 border border-emerald-100 px-1.5 py-0.5 rounded">Precio existente</span>
+                                     <span className={`font-medium text-emerald-600 bg-emerald-50 border border-emerald-100 rounded ${tableStyles.badge}`}>Precio existente</span>
                                   )}
                                   {!row.applies && (
-                                     <span className="text-[10px] font-bold text-slate-500 bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 px-1.5 py-0.5 rounded flex items-center gap-1">
+                                     <span className={`font-bold text-slate-500 bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded flex items-center gap-1 ${tableStyles.badge}`}>
                                        <Ban className="w-2.5 h-2.5" /> No Aplica
                                      </span>
                                   )}
                                 </div>
                               </td>
-                              <td className="px-4 py-4 text-center align-middle">
-                                <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-semibold bg-surface-hover border border-border-subtle ${!row.applies ? "text-text-muted opacity-50" : "text-text-primary"}`}>
+                              <td className={`text-center align-middle ${tableStyles.td}`}>
+                                <span className={`inline-flex items-center rounded font-semibold bg-surface-hover border border-border-subtle ${!row.applies ? "text-text-muted opacity-50" : "text-text-primary"} ${tableStyles.badge}`}>
                                   {row.currency}
                                 </span>
                               </td>
-                              <td className="px-4 py-4 text-center align-middle">
+                              <td className={`text-center align-middle ${tableStyles.td}`}>
                                 <input 
                                   type="number" 
                                   step="0.01"
                                   value={row.target_margin_pct || ""}
                                   onChange={e => updatePricingRow(row.channel_id, "target_margin_pct", Number(e.target.value))}
                                   disabled={!row.applies}
-                                  className="w-full text-center px-3 py-1.5 border border-border-subtle rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary transition-all bg-surface-card disabled:opacity-50 disabled:bg-surface-hover"
+                                  className={`w-full text-center border border-border-subtle rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary transition-all bg-surface-card disabled:opacity-50 disabled:bg-surface-hover ${tableStyles.input}`}
                                 />
                               </td>
-                              <td className={`px-4 py-4 text-right align-middle font-medium ${!row.applies ? "text-text-muted opacity-50" : "text-text-primary"}`}>
-                                {bomCost && row.applies ? `$${formatMoney(row.net_price, row.currency)}` : "—"}
+                              <td className={`text-right align-middle font-medium ${!row.applies ? "text-text-muted opacity-50" : "text-text-primary"} ${tableStyles.td}`}>
+                                {bomCost && row.applies ? (
+                                  <div className="flex flex-col items-end">
+                                    {row.currency === "USD" && <span className="text-[10px] font-semibold text-text-muted mb-0.5 uppercase">Precio Neto USD</span>}
+                                    <span className="whitespace-nowrap">{row.currency === "USD" ? "USD " : "$"}{formatMoney(row.net_price, row.currency)}</span>
+                                  </div>
+                                ) : "—"}
                               </td>
-                              <td className="px-4 py-4 text-center align-middle">
+                              <td className={`text-center align-middle ${tableStyles.td}`}>
                                 <input 
                                   type="number" 
                                   step="0.01"
                                   value={row.max_discount_pct || ""}
                                   onChange={e => updatePricingRow(row.channel_id, "max_discount_pct", Number(e.target.value))}
                                   disabled={!row.applies}
-                                  className="w-full text-center px-3 py-1.5 border border-border-subtle rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary transition-all bg-surface-card disabled:opacity-50 disabled:bg-surface-hover"
+                                  className={`w-full text-center border border-border-subtle rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary transition-all bg-surface-card disabled:opacity-50 disabled:bg-surface-hover ${tableStyles.input}`}
                                 />
                               </td>
-                              <td className={`px-4 py-4 text-right align-middle font-bold ${!row.applies ? "text-text-muted opacity-50" : "text-text-primary"}`}>
-                                 {bomCost && row.applies ? `$${formatMoney(row.list_price, row.currency)}` : "—"}
+                              <td className={`text-right align-middle font-bold ${!row.applies ? "text-text-muted opacity-50" : "text-text-primary"} ${tableStyles.td}`}>
+                                 {bomCost && row.applies ? (
+                                   <div className="flex flex-col items-end">
+                                     {row.currency === "USD" && <span className="text-[10px] font-semibold text-text-muted mb-0.5 uppercase">Precio Lista USD</span>}
+                                     <span className="whitespace-nowrap">{row.currency === "USD" ? "USD " : "$"}{formatMoney(row.list_price, row.currency)}</span>
+                                     {row.currency === "USD" && trm && (
+                                       <span className="text-[9px] text-text-muted mt-1 whitespace-nowrap">Costo calculado desde COP con TRM: {formatMoney(trm, "COP")}</span>
+                                     )}
+                                   </div>
+                                 ) : "—"}
                               </td>
-                              <td className="px-4 py-4 align-middle">
+                              <td className={`px-4 align-middle ${tableStyles.td}`}>
                                 {!row.applies ? (
                                    <select
                                      value={row.not_applicable_reason || ""}
                                      onChange={(e) => updatePricingRow(row.channel_id, "not_applicable_reason", e.target.value)}
-                                     className="w-full px-2 py-1.5 text-xs border border-border-subtle rounded-md bg-surface-card text-text-primary focus:outline-none focus:ring-1 focus:ring-brand-primary/30"
+                                     className={`w-full border border-border-subtle rounded-md bg-surface-card text-text-primary focus:outline-none focus:ring-1 focus:ring-brand-primary/30 ${tableStyles.input}`}
                                    >
                                      <option value="">Razón (Opcional)</option>
                                      <option value="Producto exclusivo de cliente">Producto exclusivo de cliente</option>
@@ -605,20 +679,20 @@ export default function PricingManagerPage() {
                                          type="date"
                                          value={row.valid_from}
                                          onChange={e => updatePricingRow(row.channel_id, "valid_from", e.target.value)}
-                                         className="w-full max-w-[120px] px-2 py-1 text-xs border border-border-subtle rounded-md focus:outline-none focus:ring-1 focus:ring-brand-primary/30"
+                                         className={`w-full max-w-[120px] border border-border-subtle rounded-md focus:outline-none focus:ring-1 focus:ring-brand-primary/30 ${tableStyles.input}`}
                                        />
                                        <span className="text-text-muted text-xs">→</span>
                                        <input 
                                          type="date"
                                          value={row.valid_to}
                                          onChange={e => updatePricingRow(row.channel_id, "valid_to", e.target.value)}
-                                         className="w-full max-w-[120px] px-2 py-1 text-xs border border-border-subtle rounded-md focus:outline-none focus:ring-1 focus:ring-brand-primary/30"
+                                         className={`w-full max-w-[120px] border border-border-subtle rounded-md focus:outline-none focus:ring-1 focus:ring-brand-primary/30 ${tableStyles.input}`}
                                        />
                                      </div>
                                    </div>
                                 )}
                               </td>
-                              <td className="px-4 py-4 text-center align-middle">
+                              <td className={`px-4 text-center align-middle ${tableStyles.td}`}>
                                 {row.applies ? (
                                   <label className="relative inline-flex items-center cursor-pointer">
                                     <input 
@@ -627,17 +701,25 @@ export default function PricingManagerPage() {
                                       checked={row.is_active}
                                       onChange={e => updatePricingRow(row.channel_id, "is_active", e.target.checked)}
                                     />
-                                    <div className="w-9 h-5 bg-surface-hover peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-border-subtle after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-brand-primary shadow-inner"></div>
+                                    <div className="w-9 h-5 bg-slate-300 dark:bg-slate-600 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 dark:after:border-slate-500 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-emerald-500 dark:peer-checked:bg-emerald-500 shadow-inner"></div>
                                   </label>
                                 ) : (
-                                  <span className="text-text-muted opacity-50">—</span>
+                                  <label className="relative inline-flex items-center cursor-not-allowed opacity-50">
+                                    <input 
+                                      type="checkbox" 
+                                      className="sr-only" 
+                                      disabled
+                                      checked={false}
+                                    />
+                                    <div className="w-9 h-5 bg-slate-200 dark:bg-slate-800 rounded-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-slate-100 dark:after:bg-slate-700 after:border-slate-300 dark:after:border-slate-600 after:border after:rounded-full after:h-4 after:w-4 shadow-inner"></div>
+                                  </label>
                                 )}
                               </td>
-                              <td className="px-6 py-4 text-center align-middle">
+                              <td className={`text-center align-middle ${tableStyles.td}`}>
                                 {row.applies ? (
                                    <button 
                                      onClick={() => updatePricingRow(row.channel_id, "applies", false)}
-                                     className="inline-flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-surface-card border border-border-subtle text-text-muted hover:text-red-600 hover:bg-red-50 hover:border-red-200 transition-colors"
+                                     className={`inline-flex items-center justify-center gap-1.5 rounded-lg font-semibold bg-surface-card border border-border-subtle text-text-muted hover:text-red-600 hover:bg-red-50 hover:border-red-200 transition-colors ${tableStyles.button}`}
                                      title="Marcar como No Aplica"
                                    >
                                      <XCircle className="w-3.5 h-3.5" /> No aplica
@@ -645,7 +727,7 @@ export default function PricingManagerPage() {
                                 ) : (
                                    <button 
                                      onClick={() => updatePricingRow(row.channel_id, "applies", true)}
-                                     className="inline-flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-brand-primary/10 border border-brand-primary/20 text-brand-primary hover:bg-brand-primary/20 transition-colors"
+                                     className={`inline-flex items-center justify-center gap-1.5 rounded-lg font-semibold bg-brand-primary/10 border border-brand-primary/20 text-brand-primary hover:bg-brand-primary/20 transition-colors ${tableStyles.button}`}
                                      title="Reactivar y Aplicar Precio"
                                    >
                                      <Undo2 className="w-3.5 h-3.5" /> Aplicar
@@ -719,15 +801,15 @@ export default function PricingManagerPage() {
                </div>
              ) : (
                <div className="mt-6 overflow-x-auto rounded-[var(--radius-lg)] border border-[color:var(--border)] bg-surface-card shadow-sm">
-                 <table className="w-full text-sm">
+                 <table className={`w-full ${tableStyles.tableWrapper}`}>
                    <thead className="bg-surface-hover/80 border-b border-border-subtle">
                      <tr>
-                       <th className="px-6 py-4 text-left font-semibold text-text-primary">Código SAP</th>
-                       <th className="px-6 py-4 text-left font-semibold text-text-primary">Descripción</th>
-                       <th className="px-6 py-4 text-center font-semibold text-text-primary">Estado Pricing</th>
-                       <th className="px-6 py-4 text-center font-semibold text-text-primary">Canales Pendientes</th>
-                       <th className="px-6 py-4 text-center font-semibold text-text-primary">Canales Config.</th>
-                       <th className="px-6 py-4 text-center font-semibold text-text-primary w-24">Acción</th>
+                       <th className={`text-left font-semibold text-text-primary ${tableStyles.th}`}>Código SAP</th>
+                       <th className={`text-left font-semibold text-text-primary ${tableStyles.th}`}>Descripción</th>
+                       <th className={`text-center font-semibold text-text-primary ${tableStyles.th}`}>Estado Pricing</th>
+                       <th className={`text-center font-semibold text-text-primary ${tableStyles.th}`}>Canales Pendientes</th>
+                       <th className={`text-center font-semibold text-text-primary ${tableStyles.th}`}>Canales Config.</th>
+                       <th className={`text-center font-semibold text-text-primary w-24 ${tableStyles.th}`}>Acción</th>
                      </tr>
                    </thead>
                    <tbody className="divide-y divide-border-subtle">
@@ -744,44 +826,44 @@ export default function PricingManagerPage() {
                            onClick={() => handleSelectProduct(row.product)}
                            className="hover:bg-surface-hover/50 transition-colors cursor-pointer group"
                          >
-                           <td className="px-6 py-4 align-middle whitespace-nowrap">
-                             <span className="inline-flex items-center px-2 py-1 rounded-md text-xs font-semibold bg-surface-hover text-text-primary tracking-tight">
+                           <td className={`align-middle whitespace-nowrap ${tableStyles.td}`}>
+                             <span className={`inline-flex items-center rounded-md font-semibold bg-surface-hover text-text-primary tracking-tight ${tableStyles.badge}`}>
                                {row.product.sap_code}
                              </span>
                            </td>
-                           <td className="px-6 py-4 align-middle">
+                           <td className={`align-middle ${tableStyles.td}`}>
                              <div className="text-text-primary font-medium">
                                {row.product.description}
                              </div>
                            </td>
-                           <td className="px-6 py-4 align-middle text-center">
+                           <td className={`align-middle text-center ${tableStyles.td}`}>
                              <div className="flex items-center justify-center gap-1.5 flex-wrap">
                                {row.status === "CONFIGURADO" ? (
-                                  <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-[11px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                                  <span className={`inline-flex items-center gap-1 rounded-lg font-bold bg-emerald-50 text-emerald-700 border border-emerald-200 ${tableStyles.badge}`}>
                                     <CheckCircle2 className="w-3 h-3" /> Configurado
                                   </span>
                                ) : (
-                                  <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-[11px] font-bold bg-amber-50 text-amber-700 border border-amber-200">
+                                  <span className={`inline-flex items-center gap-1 rounded-lg font-bold bg-amber-50 text-amber-700 border border-amber-200 ${tableStyles.badge}`}>
                                     <AlertCircle className="w-3 h-3" /> Pendiente
                                   </span>
                                )}
                                {row.hasNoAplica && (
-                                  <span className="inline-flex items-center gap-1 px-2 py-1 rounded-lg text-[10px] font-bold bg-slate-100 text-slate-600 border border-slate-200 dark:bg-slate-800 dark:text-slate-400 dark:border-slate-700">
+                                  <span className={`inline-flex items-center gap-1 rounded-lg font-bold bg-slate-100 text-slate-600 border border-slate-200 dark:bg-slate-800 dark:text-slate-400 dark:border-slate-700 ${tableStyles.badge}`}>
                                     <Ban className="w-3 h-3" /> C/ Excepciones
                                   </span>
                                )}
                              </div>
                            </td>
-                           <td className="px-6 py-4 align-middle text-center font-semibold text-amber-600">
+                           <td className={`align-middle text-center font-semibold text-amber-600 ${tableStyles.td}`}>
                              {row.pendingCount > 0 ? row.pendingCount : "—"}
                            </td>
-                           <td className="px-6 py-4 align-middle text-center text-text-muted">
+                           <td className={`align-middle text-center text-text-muted ${tableStyles.td}`}>
                              {row.configuredCount + row.noAplicaCount} / {channels.length}
                            </td>
-                           <td className="px-6 py-4 text-center align-middle">
+                           <td className={`text-center align-middle ${tableStyles.td}`}>
                              <button 
                                onClick={(e) => { e.stopPropagation(); handleSelectProduct(row.product); }}
-                               className="btn-table-action px-3 py-1.5 opacity-0 group-hover:opacity-100 transition-opacity"
+                               className={`btn-table-action opacity-0 group-hover:opacity-100 transition-opacity ${tableStyles.button}`}
                              >
                                 Preciar
                              </button>

@@ -8,6 +8,7 @@ import { createClient } from "@/lib/supabase/client";
 import { SalesChannelModal, type DBChannel } from "@/components/SalesChannelModal";
 import { SalesChannelUploadModal } from "@/components/SalesChannelUploadModal";
 import * as XLSX from "xlsx";
+import { useTableDensity } from "@/contexts/TableDensityContext";
 
 export default function SalesChannelsPage() {
   const [channels, setChannels] = useState<DBChannel[]>([]);
@@ -19,6 +20,8 @@ export default function SalesChannelsPage() {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
   const [editingChannel, setEditingChannel] = useState<DBChannel | null>(null);
+  const { getTableClasses } = useTableDensity();
+  const tableStyles = getTableClasses();
 
   const supabase = createClient();
 
@@ -178,54 +181,54 @@ export default function SalesChannelsPage() {
           </div>
         ) : (
           <div className="mt-6 overflow-x-auto rounded-[var(--radius-lg)] border border-[color:var(--border)] bg-surface-card shadow-sm">
-            <table className="w-full text-sm">
+            <table className={`w-full ${tableStyles.tableWrapper}`}>
               <thead className="bg-surface-hover/80 border-b border-border-subtle">
                 <tr>
-                  <th className="px-6 py-4 text-left font-semibold text-text-primary">Nombre del canal</th>
-                  <th className="px-6 py-4 text-left font-semibold text-text-primary">Moneda por defecto</th>
-                  <th className="px-6 py-4 text-right font-semibold text-text-primary">Margen mínimo %</th>
-                  <th className="px-6 py-4 text-center font-semibold text-text-primary">Estado</th>
-                  <th className="px-6 py-4 text-center font-semibold text-text-primary w-24">Acción</th>
+                  <th className={`text-left font-semibold text-text-primary ${tableStyles.th}`}>Nombre del canal</th>
+                  <th className={`text-left font-semibold text-text-primary ${tableStyles.th}`}>Moneda por defecto</th>
+                  <th className={`text-right font-semibold text-text-primary ${tableStyles.th}`}>Margen mínimo %</th>
+                  <th className={`text-center font-semibold text-text-primary ${tableStyles.th}`}>Estado</th>
+                  <th className={`text-center font-semibold text-text-primary w-24 ${tableStyles.th}`}>Acción</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-border-subtle">
                 {filteredChannels.map((c) => (
                   <tr key={c.id} className="hover:bg-surface-hover/50 transition-colors group">
-                    <td className="px-6 py-5 font-medium text-text-primary align-middle">
+                    <td className={`font-medium text-text-primary align-middle ${tableStyles.td}`}>
                       {c.name}
                     </td>
-                    <td className="px-6 py-5 align-middle">
-                      <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-semibold bg-surface-hover text-text-primary border border-border-subtle">
+                    <td className={`align-middle ${tableStyles.td}`}>
+                      <span className={`inline-flex items-center rounded font-semibold bg-surface-hover text-text-primary border border-border-subtle ${tableStyles.badge}`}>
                         {c.default_currency}
                       </span>
                     </td>
-                    <td className="px-6 py-5 text-right font-medium align-middle">
+                    <td className={`text-right font-medium align-middle ${tableStyles.td}`}>
                       {c.min_margin_pct !== null && c.min_margin_pct !== undefined ? (
                          <span className="text-text-primary">{c.min_margin_pct}%</span>
                       ) : (
                          <span className="text-text-muted italic text-xs">No definido</span>
                       )}
                     </td>
-                    <td className="px-6 py-5 text-center align-middle">
+                    <td className={`text-center align-middle ${tableStyles.td}`}>
                       {c.is_active ? (
-                        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-100">
+                        <span className={`inline-flex items-center gap-1.5 rounded-lg font-semibold bg-emerald-50 text-emerald-700 border border-emerald-100 ${tableStyles.badge}`}>
                            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
                            Activo
                         </span>
                       ) : (
-                        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-semibold bg-surface-hover text-text-primary border border-border-subtle">
+                        <span className={`inline-flex items-center gap-1.5 rounded-lg font-semibold bg-surface-hover text-text-primary border border-border-subtle ${tableStyles.badge}`}>
                            <span className="w-1.5 h-1.5 rounded-full bg-slate-400"></span>
                            Inactivo
                         </span>
                       )}
                     </td>
-                    <td className="px-6 py-5 text-center align-middle">
+                    <td className={`text-center align-middle ${tableStyles.td}`}>
                       <button
                         onClick={() => {
                           setEditingChannel(c);
                           setIsCreateModalOpen(true);
                         }}
-                        className="btn-table-action px-3 py-1.5 opacity-0 group-hover:opacity-100"
+                        className={`btn-table-action opacity-0 group-hover:opacity-100 ${tableStyles.button}`}
                         title="Editar Canal"
                       >
                          Editar
