@@ -18,6 +18,7 @@ import { AppShell } from "@/components/AppShell";
 import { createClient } from "@/lib/supabase/client";
 import { exportSimulationToExcel } from "@/lib/excelExport";
 import { useRouter } from "next/navigation";
+import { useTableDensity } from "@/contexts/TableDensityContext";
 
 // =============================================
 // TYPES
@@ -72,6 +73,8 @@ export default function ScenariosPage() {
 
   const router = useRouter();
   const supabase = createClient();
+  const { getTableClasses } = useTableDensity();
+  const tableStyles = getTableClasses();
 
   // =============================================
   // DATA FETCH
@@ -378,31 +381,31 @@ export default function ScenariosPage() {
           /* MAIN TABLE: ONE ROW PER CUSTOMER              */
           /* ============================================= */
           <div className="mt-10 overflow-x-auto rounded-[var(--radius-lg)] border border-[color:var(--border)] bg-surface-card shadow-sm">
-            <table className="w-full text-sm">
+            <table className={`w-full ${tableStyles.tableWrapper}`}>
               <thead className="bg-surface-hover/80 border-b border-border-subtle">
                 <tr>
-                  <th className="px-6 py-4 text-left font-semibold text-text-primary whitespace-nowrap">
+                  <th className={`text-left font-semibold text-text-primary whitespace-nowrap ${tableStyles.th}`}>
                     Cliente
                   </th>
-                  <th className="px-6 py-4 text-left font-semibold text-text-primary whitespace-nowrap">
+                  <th className={`text-left font-semibold text-text-primary whitespace-nowrap ${tableStyles.th}`}>
                     Canal
                   </th>
-                  <th className="px-6 py-4 text-left font-semibold text-text-primary min-w-[180px]">
+                  <th className={`text-left font-semibold text-text-primary min-w-[180px] ${tableStyles.th}`}>
                     Último Proyecto
                   </th>
-                  <th className="px-6 py-4 text-left font-semibold text-text-primary whitespace-nowrap">
+                  <th className={`text-left font-semibold text-text-primary whitespace-nowrap ${tableStyles.th}`}>
                     Última Actividad
                   </th>
-                  <th className="px-6 py-4 text-center font-semibold text-text-primary whitespace-nowrap">
+                  <th className={`text-center font-semibold text-text-primary whitespace-nowrap ${tableStyles.th}`}>
                     Simulaciones
                   </th>
-                  <th className="px-6 py-4 text-center font-semibold text-text-primary whitespace-nowrap">
+                  <th className={`text-center font-semibold text-text-primary whitespace-nowrap ${tableStyles.th}`}>
                     Vigentes
                   </th>
-                  <th className="px-6 py-4 text-center font-semibold text-text-primary whitespace-nowrap">
+                  <th className={`text-center font-semibold text-text-primary whitespace-nowrap ${tableStyles.th}`}>
                     Vencidas
                   </th>
-                  <th className="px-6 py-4 text-center font-semibold text-text-primary w-24">
+                  <th className={`text-center font-semibold text-text-primary w-24 ${tableStyles.th}`}>
                     Acción
                   </th>
                 </tr>
@@ -415,7 +418,7 @@ export default function ScenariosPage() {
                     onClick={() => setSelectedGroup(group)}
                   >
                     {/* CUSTOMER */}
-                    <td className="px-6 py-5 align-middle">
+                    <td className={`align-middle ${tableStyles.td}`}>
                       <div className="flex items-center gap-3">
                         <div className="w-9 h-9 rounded-xl bg-brand-primary/10 flex items-center justify-center flex-shrink-0">
                           <Building2 className="w-4.5 h-4.5 text-brand-primary" />
@@ -434,14 +437,14 @@ export default function ScenariosPage() {
                     </td>
 
                     {/* CHANNEL */}
-                    <td className="px-6 py-5 align-middle">
+                    <td className={`align-middle ${tableStyles.td}`}>
                       <span className="text-text-muted font-medium">
                         {group.channelName}
                       </span>
                     </td>
 
                     {/* LAST PROJECT */}
-                    <td className="px-6 py-5 align-middle">
+                    <td className={`align-middle ${tableStyles.td}`}>
                       {group.lastProject ? (
                         <span className="font-medium text-text-primary">
                           {group.lastProject}
@@ -455,18 +458,18 @@ export default function ScenariosPage() {
                     </td>
 
                     {/* LAST ACTIVITY */}
-                    <td className="px-6 py-5 text-text-muted whitespace-nowrap align-middle">
+                    <td className={`text-text-muted whitespace-nowrap align-middle ${tableStyles.td}`}>
                       {formatDateTime(group.lastUpdated)}
                     </td>
 
                     {/* SIMULATION COUNT */}
-                    <td className="px-6 py-5 text-center align-middle">
+                    <td className={`text-center align-middle ${tableStyles.td}`}>
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
                           setSelectedGroup(group);
                         }}
-                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold bg-surface-hover text-text-primary border border-border-subtle hover:bg-brand-primary/10 hover:text-brand-primary hover:border-brand-primary/30 transition-all"
+                        className={`inline-flex items-center gap-1.5 rounded-lg font-bold bg-surface-hover text-text-primary border border-border-subtle hover:bg-brand-primary/10 hover:text-brand-primary hover:border-brand-primary/30 transition-all ${tableStyles.badge}`}
                       >
                         {group.countTotal}{" "}
                         {group.countTotal === 1
@@ -476,9 +479,9 @@ export default function ScenariosPage() {
                     </td>
 
                     {/* VIGENTES */}
-                    <td className="px-6 py-5 text-center align-middle">
+                    <td className={`text-center align-middle ${tableStyles.td}`}>
                       {group.countVigente > 0 ? (
-                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                        <span className={`inline-flex items-center gap-1 rounded font-bold bg-emerald-50 text-emerald-700 border border-emerald-200 ${tableStyles.badge}`}>
                           <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
                           {group.countVigente}
                         </span>
@@ -488,9 +491,9 @@ export default function ScenariosPage() {
                     </td>
 
                     {/* VENCIDAS */}
-                    <td className="px-6 py-5 text-center align-middle">
+                    <td className={`text-center align-middle ${tableStyles.td}`}>
                       {group.countVencido > 0 ? (
-                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-bold bg-red-50 text-red-700 border border-red-200">
+                        <span className={`inline-flex items-center gap-1 rounded font-bold bg-red-50 text-red-700 border border-red-200 ${tableStyles.badge}`}>
                           <span className="w-1.5 h-1.5 rounded-full bg-red-500" />
                           {group.countVencido}
                         </span>
@@ -500,13 +503,13 @@ export default function ScenariosPage() {
                     </td>
 
                     {/* ACTION */}
-                    <td className="px-6 py-5 text-center align-middle">
+                    <td className={`text-center align-middle ${tableStyles.td}`}>
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
                           setSelectedGroup(group);
                         }}
-                        className="btn-table-action px-3 py-2"
+                        className={`btn-table-action ${tableStyles.button}`}
                       >
                         Ver
                         <ChevronRight className="w-3.5 h-3.5" />
@@ -560,7 +563,7 @@ export default function ScenariosPage() {
 
             {/* MODAL TABLE */}
             <div className="overflow-y-auto flex-1">
-              <table className="w-full text-sm table-fixed">
+              <table className={`w-full table-fixed ${tableStyles.tableWrapper}`}>
                 <colgroup>
                   <col className="w-[14%]" />{/* Fecha */}
                   <col className="w-[24%]" />{/* Proyecto */}
@@ -572,25 +575,25 @@ export default function ScenariosPage() {
                 </colgroup>
                 <thead className="bg-surface-hover/60 border-b border-border-subtle sticky top-0 z-10">
                   <tr>
-                    <th className="px-5 py-3 text-left font-semibold text-text-primary text-xs uppercase tracking-wider">
+                    <th className={`text-left font-semibold text-text-primary uppercase tracking-wider ${tableStyles.th}`}>
                       Fecha
                     </th>
-                    <th className="px-5 py-3 text-left font-semibold text-text-primary text-xs uppercase tracking-wider">
+                    <th className={`text-left font-semibold text-text-primary uppercase tracking-wider ${tableStyles.th}`}>
                       Proyecto / Oportunidad
                     </th>
-                    <th className="px-5 py-3 text-left font-semibold text-text-primary text-xs uppercase tracking-wider">
+                    <th className={`text-left font-semibold text-text-primary uppercase tracking-wider ${tableStyles.th}`}>
                       Tipo
                     </th>
-                    <th className="px-5 py-3 text-center font-semibold text-text-primary text-xs uppercase tracking-wider">
+                    <th className={`text-center font-semibold text-text-primary uppercase tracking-wider ${tableStyles.th}`}>
                       Moneda
                     </th>
-                    <th className="px-5 py-3 text-left font-semibold text-text-primary text-xs uppercase tracking-wider">
+                    <th className={`text-left font-semibold text-text-primary uppercase tracking-wider ${tableStyles.th}`}>
                       Vigencia
                     </th>
-                    <th className="px-5 py-3 text-center font-semibold text-text-primary text-xs uppercase tracking-wider">
+                    <th className={`text-center font-semibold text-text-primary uppercase tracking-wider ${tableStyles.th}`}>
                       Estado
                     </th>
-                    <th className="px-5 py-3 text-center font-semibold text-text-primary text-xs uppercase tracking-wider">
+                    <th className={`text-center font-semibold text-text-primary uppercase tracking-wider ${tableStyles.th}`}>
                       Acción
                     </th>
                   </tr>
@@ -603,11 +606,11 @@ export default function ScenariosPage() {
                         key={sim.id}
                         className="hover:bg-surface-hover/50 transition-colors"
                       >
-                        <td className="px-5 py-4 text-text-muted align-middle">
+                        <td className={`text-text-muted align-middle ${tableStyles.td}`}>
                           {formatDateTime(sim.created_at)}
                         </td>
 
-                        <td className="px-5 py-4 align-middle">
+                        <td className={`align-middle ${tableStyles.td}`}>
                           <div className="flex flex-col gap-0.5">
                             {sim.simulation_number && (
                               <span className="text-[10px] font-semibold text-text-muted">
@@ -627,19 +630,19 @@ export default function ScenariosPage() {
                           </div>
                         </td>
 
-                        <td className="px-5 py-4 align-middle">
-                          <span className="text-text-muted text-xs font-medium">
+                        <td className={`align-middle ${tableStyles.td}`}>
+                          <span className="text-text-muted font-medium">
                             {getTypeLabel(sim.simulation_type)}
                           </span>
                         </td>
 
-                        <td className="px-5 py-4 text-center align-middle">
-                          <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-semibold bg-surface-hover text-text-primary border border-border-subtle">
+                        <td className={`text-center align-middle ${tableStyles.td}`}>
+                          <span className={`inline-flex items-center rounded font-semibold bg-surface-hover text-text-primary border border-border-subtle ${tableStyles.badge}`}>
                             {sim.currency}
                           </span>
                         </td>
 
-                        <td className="px-5 py-4 text-text-muted align-middle">
+                        <td className={`text-text-muted align-middle ${tableStyles.td}`}>
                           {sim.valid_from && sim.valid_to ? (
                             <span className="font-medium text-text-primary text-xs">
                               {formatDate(sim.valid_from)}{" "}
@@ -651,14 +654,14 @@ export default function ScenariosPage() {
                           )}
                         </td>
 
-                        <td className="px-5 py-4 text-center align-middle">
+                        <td className={`text-center align-middle ${tableStyles.td}`}>
                           {getStatusPill(displayStatus)}
                         </td>
 
-                        <td className="px-5 py-4 text-center align-middle">
+                        <td className={`text-center align-middle ${tableStyles.td}`}>
                           <button
                             onClick={() => setActionSim(sim)}
-                            className="btn-table-action px-3 py-1.5"
+                            className={`btn-table-action ${tableStyles.button}`}
                           >
                             Acciones
                           </button>

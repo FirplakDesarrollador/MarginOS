@@ -9,6 +9,7 @@ import {
 } from "lucide-react";
 import { AppShell } from "@/components/AppShell";
 import { createClient } from "@/lib/supabase/client";
+import { useTableDensity } from "@/contexts/TableDensityContext";
 
 // =============================================
 // TYPES
@@ -123,6 +124,9 @@ export default function ImportBOMPage() {
   const [bomImports, setBomImports] = useState<BOMImport[]>([]);
   const [bomProducts, setBomProducts] = useState<BOMProduct[]>([]);
   const [loadingHistory, setLoadingHistory] = useState(true);
+
+  const { getTableClasses } = useTableDensity();
+  const tableStyles = getTableClasses();
 
   const canSave = productos.length > 0 && !loading;
 
@@ -590,28 +594,28 @@ export default function ImportBOMPage() {
                 </p>
               </div>
               <div className="mt-4 overflow-x-auto rounded-[var(--radius-lg)] border border-[color:var(--border)] bg-[color:var(--surface)] shadow-[var(--shadow-sm)]">
-                <table className="w-full text-sm">
+                <table className={`w-full ${tableStyles.tableWrapper}`}>
                   <thead className="bg-surface-card/60">
                     <tr className="border-b border-[color:var(--border)]">
-                      <th className="px-4 py-3 text-left font-semibold">Código</th>
-                      <th className="px-4 py-3 text-left font-semibold">Descripción</th>
-                      <th className="px-4 py-3 text-right font-semibold">Costo MP</th>
-                      <th className="px-4 py-3 text-right font-semibold">Componentes</th>
-                      <th className="px-4 py-3 text-right font-semibold">Excl. PZ</th>
-                      <th className="px-4 py-3 text-right font-semibold">C. Real</th>
-                      <th className="px-4 py-3 text-right font-semibold">C. Excel</th>
+                      <th className={`text-left font-semibold ${tableStyles.th}`}>Código</th>
+                      <th className={`text-left font-semibold ${tableStyles.th}`}>Descripción</th>
+                      <th className={`text-right font-semibold ${tableStyles.th}`}>Costo MP</th>
+                      <th className={`text-right font-semibold ${tableStyles.th}`}>Componentes</th>
+                      <th className={`text-right font-semibold ${tableStyles.th}`}>Excl. PZ</th>
+                      <th className={`text-right font-semibold ${tableStyles.th}`}>C. Real</th>
+                      <th className={`text-right font-semibold ${tableStyles.th}`}>C. Excel</th>
                     </tr>
                   </thead>
                   <tbody>
                     {productos.slice(0, 50).map((p, i) => (
                       <tr key={i} className="border-t border-[color:var(--border)]">
-                        <td className="px-4 py-3 font-medium">{p.Codigo}</td>
-                        <td className="px-4 py-3 text-[color:var(--muted)]">{p.Descripcion}</td>
-                        <td className="px-4 py-3 text-right font-semibold">{formatMoney(p.Costo_Mp)}</td>
-                        <td className="px-4 py-3 text-right text-[color:var(--muted)]">{p.componentes_count || "—"}</td>
-                        <td className="px-4 py-3 text-right text-[color:var(--muted)]">{p.excluidos_PZ_count || "—"}</td>
-                        <td className="px-4 py-3 text-right text-emerald-600 font-medium">{p.usaron_costo_real || 0}</td>
-                        <td className="px-4 py-3 text-right text-text-muted font-medium">{p.usaron_costo_excel || 0}</td>
+                        <td className={`font-medium ${tableStyles.td}`}>{p.Codigo}</td>
+                        <td className={`text-[color:var(--muted)] ${tableStyles.td}`}>{p.Descripcion}</td>
+                        <td className={`text-right font-semibold ${tableStyles.td}`}>{formatMoney(p.Costo_Mp)}</td>
+                        <td className={`text-right text-[color:var(--muted)] ${tableStyles.td}`}>{p.componentes_count || "—"}</td>
+                        <td className={`text-right text-[color:var(--muted)] ${tableStyles.td}`}>{p.excluidos_PZ_count || "—"}</td>
+                        <td className={`text-right text-emerald-600 font-medium ${tableStyles.td}`}>{p.usaron_costo_real || 0}</td>
+                        <td className={`text-right text-text-muted font-medium ${tableStyles.td}`}>{p.usaron_costo_excel || 0}</td>
                       </tr>
                     ))}
                   </tbody>
@@ -647,36 +651,36 @@ export default function ImportBOMPage() {
               </div>
             ) : (
               <div className="overflow-x-auto rounded-[var(--radius-lg)] border border-[color:var(--border)] bg-surface-card shadow-sm">
-                <table className="w-full text-sm">
+                <table className={`w-full ${tableStyles.tableWrapper}`}>
                   <thead className="bg-surface-hover/80 border-b border-border-subtle">
                     <tr>
-                      <th className="px-6 py-4 text-left font-semibold text-text-primary">Archivo</th>
-                      <th className="px-6 py-4 text-left font-semibold text-text-primary">Fuente</th>
-                      <th className="px-6 py-4 text-left font-semibold text-text-primary">Fecha de Importación</th>
-                      <th className="px-6 py-4 text-left font-semibold text-text-primary">Notas</th>
+                      <th className={`text-left font-semibold text-text-primary ${tableStyles.th}`}>Archivo</th>
+                      <th className={`text-left font-semibold text-text-primary ${tableStyles.th}`}>Fuente</th>
+                      <th className={`text-left font-semibold text-text-primary ${tableStyles.th}`}>Fecha de Importación</th>
+                      <th className={`text-left font-semibold text-text-primary ${tableStyles.th}`}>Notas</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-border-subtle">
                     {bomImports.map((bi) => (
                       <tr key={bi.id} className="hover:bg-surface-hover/50 transition-colors">
-                        <td className="px-6 py-4 align-middle">
+                        <td className={`align-middle ${tableStyles.td}`}>
                           <div className="flex items-center gap-2.5">
                             <FileSpreadsheet className="w-4 h-4 text-emerald-500 flex-shrink-0" />
                             <span className="font-medium text-text-primary">{bi.file_name}</span>
                           </div>
                         </td>
-                        <td className="px-6 py-4 align-middle">
-                          <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-semibold bg-surface-hover text-text-primary border border-border-subtle">
+                        <td className={`align-middle ${tableStyles.td}`}>
+                          <span className={`inline-flex items-center rounded font-semibold bg-surface-hover text-text-primary border border-border-subtle ${tableStyles.badge}`}>
                             {bi.source}
                           </span>
                         </td>
-                        <td className="px-6 py-4 align-middle text-text-muted">
+                        <td className={`align-middle text-text-muted ${tableStyles.td}`}>
                           <div className="flex items-center gap-1.5">
                             <Clock className="w-3.5 h-3.5 opacity-50" />
                             {formatDateShort(bi.imported_at)}
                           </div>
                         </td>
-                        <td className="px-6 py-4 align-middle text-text-muted text-xs italic">
+                        <td className={`align-middle text-text-muted text-xs italic ${tableStyles.td}`}>
                           {bi.notes || "—"}
                         </td>
                       </tr>
@@ -713,40 +717,40 @@ export default function ImportBOMPage() {
               </div>
             ) : (
               <div className="overflow-x-auto rounded-[var(--radius-lg)] border border-[color:var(--border)] bg-surface-card shadow-sm">
-                <table className="w-full text-sm">
+                <table className={`w-full ${tableStyles.tableWrapper}`}>
                   <thead className="bg-surface-hover/80 border-b border-border-subtle">
                     <tr>
-                      <th className="px-6 py-4 text-left font-semibold text-text-primary">Código SAP</th>
-                      <th className="px-6 py-4 text-left font-semibold text-text-primary">Descripción</th>
-                      <th className="px-6 py-4 text-right font-semibold text-text-primary">Costo MP Recalculado</th>
-                      <th className="px-6 py-4 text-right font-semibold text-text-primary">Componentes</th>
-                      <th className="px-6 py-4 text-right font-semibold text-text-primary">Excl. PZ</th>
-                      <th className="px-6 py-4 text-left font-semibold text-text-primary">Última Actualización</th>
+                      <th className={`text-left font-semibold text-text-primary ${tableStyles.th}`}>Código SAP</th>
+                      <th className={`text-left font-semibold text-text-primary ${tableStyles.th}`}>Descripción</th>
+                      <th className={`text-right font-semibold text-text-primary ${tableStyles.th}`}>Costo MP Recalculado</th>
+                      <th className={`text-right font-semibold text-text-primary ${tableStyles.th}`}>Componentes</th>
+                      <th className={`text-right font-semibold text-text-primary ${tableStyles.th}`}>Excl. PZ</th>
+                      <th className={`text-left font-semibold text-text-primary ${tableStyles.th}`}>Última Actualización</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-border-subtle">
                     {bomProducts.map((bp) => (
                       <tr key={bp.id} className="hover:bg-surface-hover/50 transition-colors">
-                        <td className="px-6 py-4 align-middle">
-                          <span className="inline-flex items-center px-2 py-1 rounded-md text-xs font-semibold bg-surface-hover text-text-primary tracking-tight">
+                        <td className={`align-middle ${tableStyles.td}`}>
+                          <span className={`inline-flex items-center rounded-md font-semibold bg-surface-hover text-text-primary tracking-tight ${tableStyles.badge}`}>
                             {bp.sap_code}
                           </span>
                         </td>
-                        <td className="px-6 py-4 align-middle font-medium text-text-primary">
+                        <td className={`align-middle font-medium text-text-primary ${tableStyles.td}`}>
                           {bp.description}
                         </td>
-                        <td className="px-6 py-4 text-right align-middle">
+                        <td className={`text-right align-middle ${tableStyles.td}`}>
                           <span className="font-bold text-text-primary text-[15px]">
                             {formatMoney(Number(bp.recalculated_cost_mp))}
                           </span>
                         </td>
-                        <td className="px-6 py-4 text-right align-middle text-text-muted">
+                        <td className={`text-right align-middle text-text-muted ${tableStyles.td}`}>
                           {bp.componentes_count || "—"}
                         </td>
-                        <td className="px-6 py-4 text-right align-middle text-text-muted">
+                        <td className={`text-right align-middle text-text-muted ${tableStyles.td}`}>
                           {bp.excluidos_pz_count || "—"}
                         </td>
-                        <td className="px-6 py-4 align-middle text-text-muted text-xs">
+                        <td className={`align-middle text-text-muted text-xs ${tableStyles.td}`}>
                           <div className="flex items-center gap-1.5">
                             <Clock className="w-3.5 h-3.5 opacity-50" />
                             {formatDateShort(bp.created_at)}

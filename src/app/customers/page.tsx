@@ -11,6 +11,7 @@ import { AppShell } from "@/components/AppShell";
 import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
 import { exportSimulationToExcel } from "@/lib/excelExport";
+import { useTableDensity } from "@/contexts/TableDensityContext";
 
 // =============================================
 // TYPES
@@ -63,6 +64,8 @@ export default function CustomersPage() {
   const [simulations, setSimulations] = useState<Simulation[]>([]);
   const [channels, setChannels] = useState<SalesChannel[]>([]);
   const [loading, setLoading] = useState(true);
+  const { getTableClasses } = useTableDensity();
+  const tableStyles = getTableClasses();
 
   // Filters
   const [searchQuery, setSearchQuery] = useState("");
@@ -418,17 +421,17 @@ export default function CustomersPage() {
           </div>
         ) : (
           <div className="mt-6 overflow-x-auto rounded-[var(--radius-lg)] border border-[color:var(--border)] bg-surface-card shadow-sm">
-            <table className="w-full text-sm">
+            <table className={`w-full ${tableStyles.tableWrapper}`}>
               <thead className="bg-surface-hover/80 border-b border-border-subtle">
                 <tr>
-                  <th className="px-5 py-4 text-left font-semibold text-text-primary">Cliente</th>
-                  <th className="px-5 py-4 text-left font-semibold text-text-primary">NIT</th>
-                  <th className="px-5 py-4 text-left font-semibold text-text-primary">Contacto</th>
-                  <th className="px-5 py-4 text-left font-semibold text-text-primary">Canal</th>
-                  <th className="px-5 py-4 text-center font-semibold text-text-primary">Simulaciones</th>
-                  <th className="px-5 py-4 text-left font-semibold text-text-primary">Última Simulación</th>
-                  <th className="px-5 py-4 text-center font-semibold text-text-primary">Estado Comercial</th>
-                  <th className="px-5 py-4 text-center font-semibold text-text-primary w-24">Acción</th>
+                  <th className={`text-left font-semibold text-text-primary ${tableStyles.th}`}>Cliente</th>
+                  <th className={`text-left font-semibold text-text-primary ${tableStyles.th}`}>NIT</th>
+                  <th className={`text-left font-semibold text-text-primary ${tableStyles.th}`}>Contacto</th>
+                  <th className={`text-left font-semibold text-text-primary ${tableStyles.th}`}>Canal</th>
+                  <th className={`text-center font-semibold text-text-primary ${tableStyles.th}`}>Simulaciones</th>
+                  <th className={`text-left font-semibold text-text-primary ${tableStyles.th}`}>Última Simulación</th>
+                  <th className={`text-center font-semibold text-text-primary ${tableStyles.th}`}>Estado Comercial</th>
+                  <th className={`text-center font-semibold text-text-primary w-24 ${tableStyles.th}`}>Acción</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-border-subtle">
@@ -436,7 +439,7 @@ export default function CustomersPage() {
                   <tr key={c.id} className="hover:bg-surface-hover/50 transition-colors cursor-pointer group"
                     onClick={() => setSelectedCustomer(c)}>
                     {/* NAME */}
-                    <td className="px-5 py-5 align-middle">
+                    <td className={`align-middle ${tableStyles.td}`}>
                       <div className="flex items-center gap-3">
                         <div className="w-9 h-9 rounded-xl bg-brand-primary/10 flex items-center justify-center flex-shrink-0">
                           <Building2 className="w-4 h-4 text-brand-primary" />
@@ -452,17 +455,17 @@ export default function CustomersPage() {
                       </div>
                     </td>
                     {/* NIT */}
-                    <td className="px-5 py-5 align-middle text-text-muted font-medium whitespace-nowrap">
+                    <td className={`align-middle text-text-muted font-medium whitespace-nowrap ${tableStyles.td}`}>
                       {c.nit || "—"}
                     </td>
                     {/* CONTACT */}
-                    <td className="px-5 py-5 align-middle text-text-muted">
+                    <td className={`align-middle text-text-muted ${tableStyles.td}`}>
                       {c.contact_name || "—"}
                     </td>
                     {/* CHANNEL */}
-                    <td className="px-5 py-5 align-middle">
+                    <td className={`align-middle ${tableStyles.td}`}>
                       {c.sales_channels?.name ? (
-                        <span className="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-semibold bg-surface-hover text-text-primary border border-border-subtle">
+                        <span className={`inline-flex items-center rounded-lg font-semibold bg-surface-hover text-text-primary border border-border-subtle ${tableStyles.badge}`}>
                           {c.sales_channels.name}
                         </span>
                       ) : (
@@ -470,11 +473,11 @@ export default function CustomersPage() {
                       )}
                     </td>
                     {/* SIM COUNT */}
-                    <td className="px-5 py-5 text-center align-middle">
+                    <td className={`text-center align-middle ${tableStyles.td}`}>
                       {c.simCount > 0 ? (
                         <button
                           onClick={(e) => { e.stopPropagation(); setSelectedCustomer(c); }}
-                          className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-bold bg-surface-hover text-text-primary border border-border-subtle hover:bg-brand-primary/10 hover:text-brand-primary hover:border-brand-primary/30 transition-all">
+                          className={`inline-flex items-center gap-1 rounded-lg font-bold bg-surface-hover text-text-primary border border-border-subtle hover:bg-brand-primary/10 hover:text-brand-primary hover:border-brand-primary/30 transition-all ${tableStyles.badge}`}>
                           {c.simCount} {c.simCount === 1 ? "sim." : "sim."}
                         </button>
                       ) : (
@@ -482,7 +485,7 @@ export default function CustomersPage() {
                       )}
                     </td>
                     {/* LAST SIM DATE */}
-                    <td className="px-5 py-5 align-middle text-text-muted whitespace-nowrap">
+                    <td className={`align-middle text-text-muted whitespace-nowrap ${tableStyles.td}`}>
                       {c.lastSimDate ? (
                         <div className="flex items-center gap-1.5 text-xs">
                           <Clock className="w-3.5 h-3.5 opacity-50" />
@@ -491,14 +494,14 @@ export default function CustomersPage() {
                       ) : "—"}
                     </td>
                     {/* STATUS */}
-                    <td className="px-5 py-5 text-center align-middle">
+                    <td className={`text-center align-middle ${tableStyles.td}`}>
                       {getStatusPill(c.lastSimStatus)}
                     </td>
                     {/* ACTION */}
-                    <td className="px-5 py-5 text-center align-middle">
+                    <td className={`text-center align-middle ${tableStyles.td}`}>
                       <button
                         onClick={(e) => { e.stopPropagation(); setSelectedCustomer(c); }}
-                        className="btn-table-action px-3 py-2">
+                        className={`btn-table-action ${tableStyles.button}`}>
                         Ver <ChevronRight className="w-3.5 h-3.5" />
                       </button>
                     </td>
@@ -578,7 +581,7 @@ export default function CustomersPage() {
                   <p className="text-xs text-text-muted mt-1">Crea una nueva simulación para comenzar.</p>
                 </div>
               ) : (
-                <table className="w-full text-sm table-fixed">
+                <table className={`w-full table-fixed ${tableStyles.tableWrapper}`}>
                   <colgroup>
                     <col className="w-[14%]" />
                     <col className="w-[24%]" />
@@ -590,13 +593,13 @@ export default function CustomersPage() {
                   </colgroup>
                   <thead className="bg-surface-hover/60 border-b border-border-subtle sticky top-0 z-10">
                     <tr>
-                      <th className="px-5 py-3 text-left font-semibold text-text-primary text-xs uppercase tracking-wider">Fecha</th>
-                      <th className="px-5 py-3 text-left font-semibold text-text-primary text-xs uppercase tracking-wider">Proyecto / Oportunidad</th>
-                      <th className="px-5 py-3 text-left font-semibold text-text-primary text-xs uppercase tracking-wider">Tipo</th>
-                      <th className="px-5 py-3 text-center font-semibold text-text-primary text-xs uppercase tracking-wider">Moneda</th>
-                      <th className="px-5 py-3 text-left font-semibold text-text-primary text-xs uppercase tracking-wider">Vigencia</th>
-                      <th className="px-5 py-3 text-center font-semibold text-text-primary text-xs uppercase tracking-wider">Estado</th>
-                      <th className="px-5 py-3 text-center font-semibold text-text-primary text-xs uppercase tracking-wider">Acción</th>
+                      <th className={`text-left font-semibold text-text-primary uppercase tracking-wider ${tableStyles.th}`}>Fecha</th>
+                      <th className={`text-left font-semibold text-text-primary uppercase tracking-wider ${tableStyles.th}`}>Proyecto / Oportunidad</th>
+                      <th className={`text-left font-semibold text-text-primary uppercase tracking-wider ${tableStyles.th}`}>Tipo</th>
+                      <th className={`text-center font-semibold text-text-primary uppercase tracking-wider ${tableStyles.th}`}>Moneda</th>
+                      <th className={`text-left font-semibold text-text-primary uppercase tracking-wider ${tableStyles.th}`}>Vigencia</th>
+                      <th className={`text-center font-semibold text-text-primary uppercase tracking-wider ${tableStyles.th}`}>Estado</th>
+                      <th className={`text-center font-semibold text-text-primary uppercase tracking-wider ${tableStyles.th}`}>Acción</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-border-subtle">
@@ -604,8 +607,8 @@ export default function CustomersPage() {
                       const displayStatus = getDisplayStatus(sim);
                       return (
                         <tr key={sim.id} className="hover:bg-surface-hover/50 transition-colors">
-                          <td className="px-5 py-4 text-text-muted align-middle">{formatDateTime(sim.created_at)}</td>
-                          <td className="px-5 py-4 align-middle">
+                          <td className={`text-text-muted align-middle ${tableStyles.td}`}>{formatDateTime(sim.created_at)}</td>
+                          <td className={`align-middle ${tableStyles.td}`}>
                             <div className="flex flex-col gap-0.5">
                               {sim.simulation_number && (
                                 <span className="text-[10px] font-semibold text-text-muted">
@@ -621,24 +624,24 @@ export default function CustomersPage() {
                               )}
                             </div>
                           </td>
-                          <td className="px-5 py-4 align-middle">
-                            <span className="text-text-muted text-xs font-medium">{getTypeLabel(sim.simulation_type)}</span>
+                          <td className={`align-middle ${tableStyles.td}`}>
+                            <span className="text-text-muted font-medium">{getTypeLabel(sim.simulation_type)}</span>
                           </td>
-                          <td className="px-5 py-4 text-center align-middle">
-                            <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-semibold bg-surface-hover text-text-primary border border-border-subtle">{sim.currency}</span>
+                          <td className={`text-center align-middle ${tableStyles.td}`}>
+                            <span className={`inline-flex items-center rounded font-semibold bg-surface-hover text-text-primary border border-border-subtle ${tableStyles.badge}`}>{sim.currency}</span>
                           </td>
-                          <td className="px-5 py-4 align-middle">
+                          <td className={`align-middle ${tableStyles.td}`}>
                             {sim.valid_from && sim.valid_to ? (
                               <span className="font-medium text-text-primary text-xs">
                                 {formatDate(sim.valid_from)} <span className="text-slate-300 mx-0.5">→</span> {formatDate(sim.valid_to)}
                               </span>
                             ) : "—"}
                           </td>
-                          <td className="px-5 py-4 text-center align-middle">{getStatusPill(displayStatus)}</td>
-                          <td className="px-5 py-4 text-center align-middle">
+                          <td className={`text-center align-middle ${tableStyles.td}`}>{getStatusPill(displayStatus)}</td>
+                          <td className={`text-center align-middle ${tableStyles.td}`}>
                             <button
                               onClick={() => setActionSim(sim)}
-                              className="btn-table-action px-3 py-1.5">
+                              className={`btn-table-action ${tableStyles.button}`}>
                               Acciones
                             </button>
                           </td>

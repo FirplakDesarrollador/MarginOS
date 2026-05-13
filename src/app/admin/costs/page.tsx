@@ -10,6 +10,7 @@ import { CostUploadModal } from "@/components/CostUploadModal";
 import { RecalculateImpactModal, type ImpactResult } from "@/components/RecalculateImpactModal";
 import * as XLSX from "xlsx";
 import { RefreshCw } from "lucide-react";
+import { useTableDensity } from "@/contexts/TableDensityContext";
 
 export default function RealCostsPage() {
   const [costs, setCosts] = useState<DBCost[]>([]);
@@ -24,6 +25,8 @@ export default function RealCostsPage() {
   const [isRecalculateModalOpen, setIsRecalculateModalOpen] = useState(false);
   const [isRecalculating, setIsRecalculating] = useState(false);
   const [impacts, setImpacts] = useState<ImpactResult[]>([]);
+  const { getTableClasses } = useTableDensity();
+  const tableStyles = getTableClasses();
 
   const supabase = createClient();
 
@@ -290,41 +293,41 @@ export default function RealCostsPage() {
           </div>
         ) : (
           <div className="mt-6 overflow-x-auto rounded-[var(--radius-lg)] border border-[color:var(--border)] bg-surface-card shadow-sm">
-            <table className="w-full text-sm">
+            <table className={`w-full ${tableStyles.tableWrapper}`}>
               <thead className="bg-surface-hover/80 border-b border-border-subtle">
                 <tr>
-                  <th className="px-6 py-4 text-left font-semibold text-text-primary w-48">Código Componente</th>
-                  <th className="px-6 py-4 text-left font-semibold text-text-primary">Descripción</th>
-                  <th className="px-6 py-4 text-right font-semibold text-text-primary w-40">Costo Base</th>
-                  <th className="px-6 py-4 text-center font-semibold text-text-primary w-24">Acción</th>
+                  <th className={`text-left font-semibold text-text-primary w-48 ${tableStyles.th}`}>Código Componente</th>
+                  <th className={`text-left font-semibold text-text-primary ${tableStyles.th}`}>Descripción</th>
+                  <th className={`text-right font-semibold text-text-primary w-40 ${tableStyles.th}`}>Costo Base</th>
+                  <th className={`text-center font-semibold text-text-primary w-24 ${tableStyles.th}`}>Acción</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-border-subtle">
                 {filteredCosts.map((c) => (
                   <tr key={c.id} className="hover:bg-surface-hover/50 transition-colors group">
-                    <td className="px-6 py-4 font-semibold text-text-primary align-middle font-mono">
+                    <td className={`font-semibold text-text-primary align-middle font-mono ${tableStyles.td}`}>
                       {c.codigo}
                     </td>
-                    <td className="px-6 py-4 align-middle text-text-muted">
+                    <td className={`align-middle text-text-muted ${tableStyles.td}`}>
                       {c.description || <span className="italic opacity-60">Sin descripción</span>}
                     </td>
-                    <td className="px-6 py-4 text-right align-middle">
+                    <td className={`text-right align-middle ${tableStyles.td}`}>
                       <div className="flex flex-col items-end">
                         <span className="font-semibold text-text-primary">
                           {formatMoney(c.costo_unitario, c.moneda)}
                         </span>
-                        <span className="text-[10px] text-text-muted font-medium bg-surface-hover px-1.5 py-0.5 rounded border border-border-subtle mt-1">
+                        <span className={`font-medium bg-surface-hover rounded border border-border-subtle mt-1 ${tableStyles.badge}`}>
                           {c.moneda}
                         </span>
                       </div>
                     </td>
-                    <td className="px-6 py-4 text-center align-middle">
+                    <td className={`text-center align-middle ${tableStyles.td}`}>
                       <button
                         onClick={() => {
                           setEditingCost(c);
                           setIsCreateModalOpen(true);
                         }}
-                        className="btn-table-action px-3 py-1.5 opacity-0 group-hover:opacity-100"
+                        className={`btn-table-action opacity-0 group-hover:opacity-100 ${tableStyles.button}`}
                         title="Editar Costo"
                       >
                          Editar

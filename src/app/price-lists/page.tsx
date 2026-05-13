@@ -12,6 +12,7 @@ import { AppShell } from "@/components/AppShell";
 import { createClient } from "@/lib/supabase/client";
 import { PriceListModal } from "@/components/PriceListModal";
 import { PriceListUploadModal } from "@/components/PriceListUploadModal";
+import { useTableDensity } from "@/contexts/TableDensityContext";
 
 // =============================================
 // TYPES
@@ -50,6 +51,8 @@ export default function PriceListsPage() {
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
+  const { getTableClasses } = useTableDensity();
+  const tableStyles = getTableClasses();
 
   // Channel detail modal
   const [selectedChannel, setSelectedChannel] = useState<ChannelGroup | null>(null);
@@ -276,23 +279,23 @@ export default function PriceListsPage() {
           </div>
         ) : (
           <div className="mt-10 overflow-x-auto rounded-[var(--radius-lg)] border border-[color:var(--border)] bg-surface-card shadow-sm">
-            <table className="w-full text-sm">
+            <table className={`w-full ${tableStyles.tableWrapper}`}>
               <thead className="bg-surface-hover/80 border-b border-border-subtle">
                 <tr>
-                  <th className="px-6 py-4 text-left font-semibold text-text-primary">Canal de Venta</th>
-                  <th className="px-6 py-4 text-center font-semibold text-text-primary">Moneda</th>
-                  <th className="px-6 py-4 text-center font-semibold text-text-primary">Productos</th>
-                  <th className="px-6 py-4 text-center font-semibold text-text-primary">Activos</th>
-                  <th className="px-6 py-4 text-left font-semibold text-text-primary">Última Actualización</th>
-                  <th className="px-6 py-4 text-center font-semibold text-text-primary">Estado</th>
-                  <th className="px-6 py-4 text-center font-semibold text-text-primary w-24">Acción</th>
+                  <th className={`text-left font-semibold text-text-primary ${tableStyles.th}`}>Canal de Venta</th>
+                  <th className={`text-center font-semibold text-text-primary ${tableStyles.th}`}>Moneda</th>
+                  <th className={`text-center font-semibold text-text-primary ${tableStyles.th}`}>Productos</th>
+                  <th className={`text-center font-semibold text-text-primary ${tableStyles.th}`}>Activos</th>
+                  <th className={`text-left font-semibold text-text-primary ${tableStyles.th}`}>Última Actualización</th>
+                  <th className={`text-center font-semibold text-text-primary ${tableStyles.th}`}>Estado</th>
+                  <th className={`text-center font-semibold text-text-primary w-24 ${tableStyles.th}`}>Acción</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-border-subtle">
                 {channelGroups.map((group) => (
                   <tr key={group.channelId} className="hover:bg-surface-hover/50 transition-colors cursor-pointer group"
                     onClick={() => setSelectedChannel(group)}>
-                    <td className="px-6 py-5 align-middle">
+                    <td className={`align-middle ${tableStyles.td}`}>
                       <div className="flex items-center gap-3">
                         <div className="w-9 h-9 rounded-xl bg-brand-primary/10 flex items-center justify-center flex-shrink-0">
                           <Store className="w-4 h-4 text-brand-primary" />
@@ -300,39 +303,39 @@ export default function PriceListsPage() {
                         <span className="font-semibold text-text-primary">{group.channelName}</span>
                       </div>
                     </td>
-                    <td className="px-6 py-5 text-center align-middle">
-                      <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-semibold bg-surface-hover text-text-primary border border-border-subtle">
+                    <td className={`text-center align-middle ${tableStyles.td}`}>
+                      <span className={`inline-flex items-center rounded font-semibold bg-surface-hover text-text-primary border border-border-subtle ${tableStyles.badge}`}>
                         {group.defaultCurrency}
                       </span>
                     </td>
-                    <td className="px-6 py-5 text-center align-middle">
+                    <td className={`text-center align-middle ${tableStyles.td}`}>
                       <button onClick={(e) => { e.stopPropagation(); setSelectedChannel(group); }}
-                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold bg-surface-hover text-text-primary border border-border-subtle hover:bg-brand-primary/10 hover:text-brand-primary hover:border-brand-primary/30 transition-all">
+                        className={`inline-flex items-center gap-1.5 rounded-lg font-bold bg-surface-hover text-text-primary border border-border-subtle hover:bg-brand-primary/10 hover:text-brand-primary hover:border-brand-primary/30 transition-all ${tableStyles.badge}`}>
                         {group.productCount} {group.productCount === 1 ? "producto" : "productos"}
                       </button>
                     </td>
-                    <td className="px-6 py-5 text-center align-middle">
+                    <td className={`text-center align-middle ${tableStyles.td}`}>
                       {group.activeCount > 0 ? (
-                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                        <span className={`inline-flex items-center gap-1 rounded font-bold bg-emerald-50 text-emerald-700 border border-emerald-200 ${tableStyles.badge}`}>
                           <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" /> {group.activeCount}
                         </span>
                       ) : (
-                        <span className="text-text-muted text-xs">0</span>
+                        <span className="text-text-muted">0</span>
                       )}
                     </td>
-                    <td className="px-6 py-5 text-text-muted align-middle">
+                    <td className={`text-text-muted align-middle ${tableStyles.td}`}>
                       {formatDateTime(group.lastUpdated)}
                     </td>
-                    <td className="px-6 py-5 text-center align-middle">
+                    <td className={`text-center align-middle ${tableStyles.td}`}>
                       {group.isActive ? (
-                        <span className="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-100">Activo</span>
+                        <span className={`inline-flex items-center rounded-lg font-semibold bg-emerald-50 text-emerald-700 border border-emerald-100 ${tableStyles.badge}`}>Activo</span>
                       ) : (
-                        <span className="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-semibold bg-surface-hover text-text-muted border border-border-subtle">Inactivo</span>
+                        <span className={`inline-flex items-center rounded-lg font-semibold bg-surface-hover text-text-muted border border-border-subtle ${tableStyles.badge}`}>Inactivo</span>
                       )}
                     </td>
-                    <td className="px-6 py-5 text-center align-middle">
+                    <td className={`text-center align-middle ${tableStyles.td}`}>
                       <button onClick={(e) => { e.stopPropagation(); setSelectedChannel(group); }}
-                        className="btn-table-action px-3 py-2">
+                        className={`btn-table-action ${tableStyles.button}`}>
                         Ver <ChevronRight className="w-3.5 h-3.5" />
                       </button>
                     </td>
@@ -385,7 +388,7 @@ export default function PriceListsPage() {
 
             {/* TABLE */}
             <div className="overflow-y-auto flex-1">
-              <table className="w-full text-sm table-fixed">
+              <table className={`w-full table-fixed ${tableStyles.tableWrapper}`}>
                 <colgroup>
                   <col className="w-[28%]" />
                   <col className="w-[11%]" />
@@ -397,43 +400,43 @@ export default function PriceListsPage() {
                 </colgroup>
                 <thead className="bg-surface-hover/60 border-b border-border-subtle sticky top-0 z-10">
                   <tr>
-                    <th className="px-5 py-3 text-left font-semibold text-text-primary text-xs uppercase tracking-wider">Producto</th>
-                    <th className="px-5 py-3 text-left font-semibold text-text-primary text-xs uppercase tracking-wider">Código SAP</th>
-                    <th className="px-5 py-3 text-right font-semibold text-text-primary text-xs uppercase tracking-wider">Precio</th>
-                    <th className="px-5 py-3 text-center font-semibold text-text-primary text-xs uppercase tracking-wider">Moneda</th>
-                    <th className="px-5 py-3 text-left font-semibold text-text-primary text-xs uppercase tracking-wider">Vigencia</th>
-                    <th className="px-5 py-3 text-center font-semibold text-text-primary text-xs uppercase tracking-wider">Estado</th>
-                    <th className="px-5 py-3 text-center font-semibold text-text-primary text-xs uppercase tracking-wider">Acción</th>
+                    <th className={`text-left font-semibold text-text-primary uppercase tracking-wider ${tableStyles.th}`}>Producto</th>
+                    <th className={`text-left font-semibold text-text-primary uppercase tracking-wider ${tableStyles.th}`}>Código SAP</th>
+                    <th className={`text-right font-semibold text-text-primary uppercase tracking-wider ${tableStyles.th}`}>Precio</th>
+                    <th className={`text-center font-semibold text-text-primary uppercase tracking-wider ${tableStyles.th}`}>Moneda</th>
+                    <th className={`text-left font-semibold text-text-primary uppercase tracking-wider ${tableStyles.th}`}>Vigencia</th>
+                    <th className={`text-center font-semibold text-text-primary uppercase tracking-wider ${tableStyles.th}`}>Estado</th>
+                    <th className={`text-center font-semibold text-text-primary uppercase tracking-wider ${tableStyles.th}`}>Acción</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-border-subtle">
                   {filteredChannelPrices.length === 0 ? (
                     <tr>
-                      <td colSpan={7} className="py-12 text-center text-text-muted text-sm">
+                      <td colSpan={7} className={`text-center text-text-muted ${tableStyles.td}`}>
                         No se encontraron productos con "{channelSearch}"
                       </td>
                     </tr>
                   ) : filteredChannelPrices.map((row) => (
                     <tr key={row.id} className="hover:bg-surface-hover/50 transition-colors">
-                      <td className="px-5 py-4 align-middle">
+                      <td className={`align-middle ${tableStyles.td}`}>
                         <div className="flex items-center gap-2.5">
                           <Package className="w-4 h-4 text-text-muted/40 flex-shrink-0" />
                           <span className="font-medium text-text-primary truncate">{row.products?.description || "—"}</span>
                         </div>
                       </td>
-                      <td className="px-5 py-4 align-middle">
-                        <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-semibold bg-surface-hover text-text-primary">
+                      <td className={`align-middle ${tableStyles.td}`}>
+                        <span className={`inline-flex items-center rounded font-semibold bg-surface-hover text-text-primary ${tableStyles.badge}`}>
                           {row.products?.sap_code || "—"}
                         </span>
                       </td>
-                      <td className="px-5 py-4 text-right align-middle">
+                      <td className={`text-right align-middle ${tableStyles.td}`}>
                         <span className="font-bold text-text-primary">{formatMoney(row.list_price)}</span>
                       </td>
-                      <td className="px-5 py-4 text-center align-middle">
-                        <span className="text-xs text-text-muted font-medium">{row.currency}</span>
+                      <td className={`text-center align-middle ${tableStyles.td}`}>
+                        <span className="text-text-muted font-medium">{row.currency}</span>
                       </td>
-                      <td className="px-5 py-4 align-middle">
-                        <div className="flex items-center gap-1.5 text-text-muted text-xs">
+                      <td className={`align-middle ${tableStyles.td}`}>
+                        <div className="flex items-center gap-1.5 text-text-muted">
                           <Calendar className="w-3.5 h-3.5 opacity-60" />
                           {row.valid_from && row.valid_to ? (
                             <span className="font-medium text-text-primary">
@@ -444,18 +447,18 @@ export default function PriceListsPage() {
                           )}
                         </div>
                       </td>
-                      <td className="px-5 py-4 text-center align-middle">
+                      <td className={`text-center align-middle ${tableStyles.td}`}>
                         {row.is_active ? (
-                          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-100">
+                          <span className={`inline-flex items-center gap-1.5 rounded-lg font-semibold bg-emerald-50 text-emerald-700 border border-emerald-100 ${tableStyles.badge}`}>
                             <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" /> Activo
                           </span>
                         ) : (
-                          <span className="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-semibold bg-surface-hover text-text-muted border border-border-subtle">Inactivo</span>
+                          <span className={`inline-flex items-center rounded-lg font-semibold bg-surface-hover text-text-muted border border-border-subtle ${tableStyles.badge}`}>Inactivo</span>
                         )}
                       </td>
-                      <td className="px-5 py-4 text-center align-middle">
+                      <td className={`text-center align-middle ${tableStyles.td}`}>
                         <button onClick={() => openEditRow(row)}
-                          className="btn-table-action px-3 py-1.5">
+                          className={`btn-table-action ${tableStyles.button}`}>
                           <Pencil className="w-3 h-3" /> Editar
                         </button>
                       </td>
