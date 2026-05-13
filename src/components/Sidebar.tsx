@@ -79,7 +79,7 @@ export function Sidebar() {
             alt="FIRPLAK"
             width={110}
             height={28}
-            className="h-7 w-auto mix-blend-multiply dark:mix-blend-normal dark:invert shrink-0"
+            className="h-7 w-auto shrink-0"
             priority
           />
         </div>
@@ -92,7 +92,7 @@ export function Sidebar() {
               alt="FIRPLAK"
               width={28}
               height={28}
-              className="h-7 w-7 object-contain mix-blend-multiply dark:mix-blend-normal dark:invert"
+              className="h-7 w-7 object-contain"
               priority
             />
           </div>
@@ -219,7 +219,7 @@ export function MobileSidebar() {
             alt="FIRPLAK"
             width={110}
             height={28}
-            className="h-7 w-auto mix-blend-multiply dark:mix-blend-normal dark:invert"
+            className="h-7 w-auto"
             priority
           />
           <button
