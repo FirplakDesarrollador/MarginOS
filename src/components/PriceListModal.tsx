@@ -253,7 +253,7 @@ export function PriceListModal({ isOpen, onClose, onSuccess }: PriceListModalPro
                     />
                     
                     {isDropdownOpen && productSearch.length > 0 && (
-                      <div className="absolute z-10 mx-auto w-full mt-1 bg-surface-card border border-border-subtle rounded-xl shadow-lg max-h-60 overflow-y-auto">
+                      <div className="absolute z-50 mx-auto w-full sm:w-[110%] sm:-left-[5%] mt-1 bg-surface-card border border-border-subtle rounded-xl shadow-2xl max-h-72 overflow-y-auto">
                         {filteredProducts.length === 0 ? (
                           <div className="p-3 text-sm text-text-muted text-center">No se encontraron productos</div>
                         ) : (
@@ -266,10 +266,15 @@ export function PriceListModal({ isOpen, onClose, onSuccess }: PriceListModalPro
                                 setSelectedProductName(`[${p.sap_code}] ${p.description}`);
                                 setIsDropdownOpen(false);
                               }}
-                              className="w-full text-left px-4 py-2 text-sm hover:bg-surface-hover border-b border-border-subtle last:border-0"
+                              className="w-full text-left px-4 py-3 hover:bg-surface-hover border-b border-border-subtle last:border-0 transition-colors"
                             >
-                              <span className="font-semibold text-text-primary mr-2 block">{p.sap_code}</span>
-                              <span className="text-text-muted truncate block">{p.description}</span>
+                              <span className="font-bold text-text-primary block text-sm">{p.sap_code}</span>
+                              <span 
+                                className="text-text-muted text-xs leading-snug line-clamp-3 block mt-1" 
+                                title={p.description}
+                              >
+                                {p.description}
+                              </span>
                             </button>
                           ))
                         )}
