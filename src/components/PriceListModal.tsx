@@ -23,11 +23,11 @@ type PriceListModalProps = {
 
 export function PriceListModal({ isOpen, onClose, onSuccess }: PriceListModalProps) {
   const supabase = createClient();
-  
+
   const [channels, setChannels] = useState<SalesChannel[]>([]);
   const [products, setProducts] = useState<DBProduct[]>([]);
   const [loadingInitial, setLoadingInitial] = useState(false);
-  
+
   const [productSearch, setProductSearch] = useState("");
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
@@ -40,7 +40,7 @@ export function PriceListModal({ isOpen, onClose, onSuccess }: PriceListModalPro
     valid_to: "",
     is_active: true
   });
-  
+
   const [selectedProductName, setSelectedProductName] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -65,7 +65,7 @@ export function PriceListModal({ isOpen, onClose, onSuccess }: PriceListModalPro
 
     async function fetchInitial() {
       setLoadingInitial(true);
-      
+
       const { data: cData } = await supabase
         .from("sales_channels")
         .select("id, name")
@@ -80,10 +80,10 @@ export function PriceListModal({ isOpen, onClose, onSuccess }: PriceListModalPro
         .eq("is_active", true);
 
       if (pData && isMounted) setProducts(pData);
-      
+
       if (isMounted) setLoadingInitial(false);
     }
-    
+
     fetchInitial();
 
     return () => {
@@ -118,7 +118,7 @@ export function PriceListModal({ isOpen, onClose, onSuccess }: PriceListModalPro
     }
 
     setLoading(true);
-    
+
     try {
       // Validar duplicado por producto y canal
       const { data: duplicateCheck, error: dupErr } = await supabase
@@ -149,10 +149,10 @@ export function PriceListModal({ isOpen, onClose, onSuccess }: PriceListModalPro
       const { error: insertError } = await supabase
         .from("price_lists")
         .insert(payload);
-        
+
       if (insertError) throw insertError;
-      
-      onSuccess(); 
+
+      onSuccess();
     } catch (err: any) {
       console.error(err);
       setError("Ocurrió un error guardando el precio. Verifica la base de datos.");
@@ -168,13 +168,13 @@ export function PriceListModal({ isOpen, onClose, onSuccess }: PriceListModalPro
 
   return (
     <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 sm:p-6">
-      <div 
-        className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm transition-opacity" 
+      <div
+        className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm transition-opacity"
         onClick={onClose}
       />
-      
+
       <div className="relative w-full max-w-lg bg-surface-card rounded-2xl shadow-xl border border-border-subtle flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200">
-        
+
         <div className="flex items-center justify-between px-6 py-4 border-b border-border-subtle bg-surface-hover/50">
           <div className="flex items-center gap-3">
             <div className="p-2 bg-brand-primary/10 text-brand-primary rounded-xl">
@@ -184,7 +184,7 @@ export function PriceListModal({ isOpen, onClose, onSuccess }: PriceListModalPro
               <h2 className="text-lg font-semibold text-text-primary">Nueva Lista de Precio</h2>
             </div>
           </div>
-          <button 
+          <button
             onClick={onClose}
             className="p-2 text-text-muted hover:text-text-primary hover:bg-surface-hover rounded-xl transition-colors"
           >
@@ -199,13 +199,13 @@ export function PriceListModal({ isOpen, onClose, onSuccess }: PriceListModalPro
                 {error}
               </div>
             )}
-            
+
             <div className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-text-primary mb-1">Canal de Venta <span className="text-red-500">*</span></label>
-                <select 
+                <select
                   value={formData.channel_id}
-                  onChange={(e) => setFormData({...formData, channel_id: e.target.value})}
+                  onChange={(e) => setFormData({ ...formData, channel_id: e.target.value })}
                   className="w-full border border-border-subtle rounded-xl px-3 py-2 focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary text-sm transition-all bg-surface-card"
                   disabled={loadingInitial}
                   required
@@ -219,17 +219,17 @@ export function PriceListModal({ isOpen, onClose, onSuccess }: PriceListModalPro
 
               <div className="relative">
                 <label className="block text-sm font-medium text-text-primary mb-1">Producto <span className="text-red-500">*</span></label>
-                
+
                 {selectedProductName ? (
                   <div className="flex items-center justify-between w-full border border-brand-primary/30 bg-brand-primary/5 rounded-xl px-3 py-2">
                     <span className="text-sm font-medium text-brand-primary truncate pr-4">
                       {selectedProductName}
                     </span>
-                    <button 
+                    <button
                       type="button"
                       onClick={() => {
                         setSelectedProductName("");
-                        setFormData({...formData, product_id: ""});
+                        setFormData({ ...formData, product_id: "" });
                         setProductSearch("");
                       }}
                       className="text-text-muted hover:text-red-500 transition-colors"
@@ -240,8 +240,8 @@ export function PriceListModal({ isOpen, onClose, onSuccess }: PriceListModalPro
                 ) : (
                   <div className="relative">
                     <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-text-muted" />
-                    <input 
-                      type="text" 
+                    <input
+                      type="text"
                       value={productSearch}
                       onChange={(e) => {
                         setProductSearch(e.target.value);
@@ -251,7 +251,7 @@ export function PriceListModal({ isOpen, onClose, onSuccess }: PriceListModalPro
                       className="w-full pl-9 pr-4 py-2 border border-border-subtle rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary text-sm transition-all"
                       placeholder="Buscar por código SAP o descripción..."
                     />
-                    
+
                     {isDropdownOpen && productSearch.length > 0 && (
                       <div className="absolute z-50 mx-auto w-full sm:w-[110%] sm:-left-[5%] mt-1 bg-surface-card border border-border-subtle rounded-xl shadow-2xl max-h-72 overflow-y-auto">
                         {filteredProducts.length === 0 ? (
@@ -262,15 +262,15 @@ export function PriceListModal({ isOpen, onClose, onSuccess }: PriceListModalPro
                               key={p.id}
                               type="button"
                               onClick={() => {
-                                setFormData({...formData, product_id: p.id});
+                                setFormData({ ...formData, product_id: p.id });
                                 setSelectedProductName(`[${p.sap_code}] ${p.description}`);
                                 setIsDropdownOpen(false);
                               }}
                               className="w-full text-left px-4 py-3 hover:bg-surface-hover border-b border-border-subtle last:border-0 transition-colors"
                             >
                               <span className="font-bold text-text-primary block text-sm">{p.sap_code}</span>
-                              <span 
-                                className="text-text-muted text-xs leading-snug line-clamp-3 block mt-1" 
+                              <span
+                                className="text-text-muted text-xs leading-snug line-clamp-3 block mt-1"
                                 title={p.description}
                               >
                                 {p.description}
@@ -287,9 +287,9 @@ export function PriceListModal({ isOpen, onClose, onSuccess }: PriceListModalPro
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-text-primary mb-1">Moneda</label>
-                  <select 
+                  <select
                     value={formData.currency}
-                    onChange={(e) => setFormData({...formData, currency: e.target.value})}
+                    onChange={(e) => setFormData({ ...formData, currency: e.target.value })}
                     className="w-full border border-border-subtle bg-surface-card rounded-xl px-3 py-2 focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary text-sm transition-all"
                   >
                     <option value="COP">COP (Pesos)</option>
@@ -298,11 +298,11 @@ export function PriceListModal({ isOpen, onClose, onSuccess }: PriceListModalPro
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-text-primary mb-1">Precio Fijo <span className="text-red-500">*</span></label>
-                  <input 
-                    type="number" 
+                  <input
+                    type="number"
                     step="any"
                     value={formData.list_price}
-                    onChange={(e) => setFormData({...formData, list_price: e.target.value})}
+                    onChange={(e) => setFormData({ ...formData, list_price: e.target.value })}
                     className="w-full border border-border-subtle rounded-xl px-3 py-2 text-right focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary text-sm transition-all"
                     placeholder="0.00"
                     required
@@ -313,20 +313,20 @@ export function PriceListModal({ isOpen, onClose, onSuccess }: PriceListModalPro
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-text-primary mb-1">Fecha Inicio</label>
-                  <input 
-                    type="date" 
+                  <input
+                    type="date"
                     value={formData.valid_from}
-                    onChange={(e) => setFormData({...formData, valid_from: e.target.value})}
+                    onChange={(e) => setFormData({ ...formData, valid_from: e.target.value })}
                     disabled={useAnnualValidity}
                     className="w-full border border-border-subtle rounded-xl px-3 py-2 focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary text-sm text-text-muted transition-all disabled:bg-surface-hover disabled:opacity-70"
                   />
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-text-primary mb-1">Fecha Fin</label>
-                  <input 
-                    type="date" 
+                  <input
+                    type="date"
                     value={formData.valid_to}
-                    onChange={(e) => setFormData({...formData, valid_to: e.target.value})}
+                    onChange={(e) => setFormData({ ...formData, valid_to: e.target.value })}
                     disabled={useAnnualValidity}
                     className="w-full border border-border-subtle rounded-xl px-3 py-2 focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary text-sm text-text-muted transition-all disabled:bg-surface-hover disabled:opacity-70"
                   />
@@ -335,10 +335,10 @@ export function PriceListModal({ isOpen, onClose, onSuccess }: PriceListModalPro
 
               <div className="flex flex-col sm:flex-row sm:items-center gap-6 mt-4">
                 <label className="flex items-center gap-2 cursor-pointer shrink-0">
-                  <input 
+                  <input
                     type="checkbox"
                     checked={formData.is_active}
-                    onChange={(e) => setFormData({...formData, is_active: e.target.checked})}
+                    onChange={(e) => setFormData({ ...formData, is_active: e.target.checked })}
                     className="w-4 h-4 text-brand-primary rounded border-border-subtle focus:ring-brand-primary"
                   />
                   <span className="text-sm font-medium text-text-primary">Precio Activo (Vigente)</span>
@@ -348,7 +348,7 @@ export function PriceListModal({ isOpen, onClose, onSuccess }: PriceListModalPro
 
                 <div className="flex flex-wrap items-center gap-3">
                   <label className="flex items-center gap-2 cursor-pointer">
-                    <input 
+                    <input
                       type="checkbox"
                       checked={useAnnualValidity}
                       onChange={(e) => setUseAnnualValidity(e.target.checked)}
@@ -374,7 +374,7 @@ export function PriceListModal({ isOpen, onClose, onSuccess }: PriceListModalPro
             </div>
           </form>
         </div>
-        
+
         <div className="p-4 border-t border-border-subtle bg-surface-hover/50 flex justify-end gap-3 text-sm mt-auto">
           <button
             type="button"
