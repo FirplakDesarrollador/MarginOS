@@ -830,12 +830,12 @@ function SimulatorContent() {
       {/* ========================================== */}
       {/* ALERTAS DE GUARDADO */}
       {saveError && (
-        <div className="mb-6 p-4 rounded-xl bg-red-50 border border-red-200 text-red-700 text-sm font-medium animate-in fade-in slide-in-from-top-2">
+        <div className="mb-6 p-4 rounded-xl text-sm font-medium animate-in fade-in slide-in-from-top-2" style={{ background: "var(--danger-soft)", border: "0.5px solid rgba(178,58,58,0.30)", color: "var(--danger)" }}>
           {saveError}
         </div>
       )}
       {saveSuccess && (
-        <div className="mb-6 p-4 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-700 text-sm font-medium animate-in fade-in slide-in-from-top-2">
+        <div className="mb-6 p-4 rounded-xl text-sm font-medium animate-in fade-in slide-in-from-top-2" style={{ background: "var(--success-soft)", border: "0.5px solid rgba(46,125,91,0.30)", color: "var(--success)" }}>
           Simulación guardada exitosamente en el historial de Escenarios.
         </div>
       )}
@@ -846,86 +846,74 @@ function SimulatorContent() {
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
           <div>
             <div className="flex items-center gap-3">
-              <h1 className="text-2xl font-bold tracking-tight text-text-primary">
+              <h1>
                 Simulador de Negocio
                 {simulationNumber && (
-                  <span className="ml-3 inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-semibold bg-surface-hover text-text-primary border border-border-subtle align-middle">
+                  <span className="pill pill--brand ml-3 align-middle">
                     {simulationNumber}
                   </span>
                 )}
               </h1>
-              
+
               {/* Autosave Indicator */}
               <div className="flex items-center gap-1.5 opacity-60 text-xs font-medium">
                 {autosaveStatus === "SAVING" && (
-                  <><Loader2 className="w-3.5 h-3.5 animate-spin text-brand-primary" /><span className="text-brand-primary">Guardando...</span></>
+                  <><Loader2 className="w-3.5 h-3.5 animate-spin" style={{ color: "var(--blue-green)" }} /><span style={{ color: "var(--blue-green)" }}>Guardando...</span></>
                 )}
                 {autosaveStatus === "SAVED" && lastSavedAt && (
-                  <><Clock className="w-3.5 h-3.5 text-emerald-600" /><span className="text-emerald-700">Guardado a las {lastSavedAt.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span></>
+                  <><Clock className="w-3.5 h-3.5" style={{ color: "var(--success)" }} /><span style={{ color: "var(--success)" }}>Guardado a las {lastSavedAt.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span></>
                 )}
               </div>
             </div>
-            <p className="text-sm text-text-muted mt-1 leading-relaxed max-w-xl">
+            <p className="lead mt-2" style={{ maxWidth: 560 }}>
               Crea o edita la negociación. Ajusta el proyecto, tipo de moneda y aplica cantidades para proyectar márgenes sobre costos SAP reales.
             </p>
             {versionTypeDisplay && (
-               <div className="mt-2 text-xs font-medium px-2.5 py-1 rounded-md inline-flex items-center gap-1.5 border border-amber-200 bg-amber-50 text-amber-700 shadow-sm">
-                 <span className={`w-1.5 h-1.5 rounded-full ${versionTypeDisplay.type === 'COST_UPDATE' ? 'bg-emerald-500' : 'bg-amber-500'}`}></span>
-                 {versionTypeDisplay.type === 'COST_UPDATE' 
-                    ? "Versión trazada: Actualizada con costos vigentes" 
+               <div className="mt-2 caption inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg" style={{ background: "var(--warning-soft)", color: "var(--warning)", border: "0.5px solid rgba(182,119,42,0.30)" }}>
+                 <span className={`w-1.5 h-1.5 rounded-full`} style={{ background: versionTypeDisplay.type === 'COST_UPDATE' ? "var(--success)" : "var(--warning)" }}></span>
+                 {versionTypeDisplay.type === 'COST_UPDATE'
+                    ? "Versión trazada: Actualizada con costos vigentes"
                     : "Versión trazada: Clonada desde histórico"}
                </div>
             )}
           </div>
 
-        <div className="w-full md:w-auto rounded-2xl border border-border-subtle bg-surface-card p-4 shadow-sm">
+        <div className="surface-card p-4 w-full md:w-auto">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6 px-2">
             <div>
-              <div className="text-xs font-medium text-text-muted mb-1">Ingreso Neto Total</div>
-              <div className="text-lg font-semibold tracking-tight">
-                {formatMoney(resumen.ingresoNetoTotalCop)} <span className="text-xs font-normal text-text-muted">(COP)</span>
+              <div className="overline mb-1">Ingreso Neto Total</div>
+              <div className="mono tabular text-lg" style={{ color: "var(--fg-primary)" }}>
+                {formatMoney(resumen.ingresoNetoTotalCop)} <span className="caption">(COP)</span>
               </div>
               {simulationType === "COMMISSION" && resumen.commissionTotalCop > 0 && (
-                <div className="mt-1 text-[10px] text-amber-700 bg-amber-50 border border-amber-200 px-1.5 py-0.5 rounded font-medium inline-block">
+                <div className="pill pill--warn mt-1">
                   Incluye {formatMoney(resumen.commissionTotalCop)} comisión
                 </div>
               )}
             </div>
 
             <div>
-              <div className="text-xs font-medium text-text-muted mb-1">Costo Total</div>
-              <div className="text-lg font-semibold tracking-tight">
-                {formatMoney(resumen.costoTotalTotalCop)} <span className="text-xs font-normal text-text-muted">(COP)</span>
+              <div className="overline mb-1">Costo Total</div>
+              <div className="mono tabular text-lg" style={{ color: "var(--fg-primary)" }}>
+                {formatMoney(resumen.costoTotalTotalCop)} <span className="caption">(COP)</span>
               </div>
             </div>
 
             <div>
-              <div className="text-xs font-medium text-text-muted mb-1">Contribución</div>
-              <div
-                className={`text-lg font-semibold tracking-tight inline-flex items-center gap-1 ${
-                  resumen.contribucionTotalCop < 0 ? "text-red-600" : "text-emerald-600"
-                }`}
-              >
-                {formatMoney(resumen.contribucionTotalCop)} <span className="text-xs font-normal text-text-muted">(COP)</span>
+              <div className="overline mb-1">Contribución</div>
+              <div className="mono tabular text-lg inline-flex items-center gap-1" style={{ color: resumen.contribucionTotalCop < 0 ? "var(--danger)" : "var(--success)" }}>
+                {formatMoney(resumen.contribucionTotalCop)} <span className="caption">(COP)</span>
               </div>
             </div>
 
             <div>
-              <div className="text-xs font-medium text-text-muted mb-1">Margen %</div>
-              <div
-                className={`text-lg font-semibold tracking-tight inline-flex items-center gap-1 ${
-                  resumen.margenTotal >= margenObjetivo ? "text-emerald-600" : "text-red-600"
-                }`}
-              >
+              <div className="overline mb-1">Margen %</div>
+              <div className="mono tabular text-lg flex items-center gap-1" style={{ color: resumen.margenTotal >= margenObjetivo ? "var(--margin-strong)" : "var(--margin-weak)" }}>
                 {resumen.margenTotal.toFixed(1)}%
               </div>
               {productos.length > 0 && (
-                <div className={`mt-1 text-[10px] font-semibold px-2 py-0.5 rounded-md inline-flex items-center gap-1 border ${
-                  resumen.margenTotal >= margenObjetivo
-                    ? "bg-emerald-50 text-emerald-700 border-emerald-200"
-                    : "bg-red-50 text-red-700 border-red-200"
-                }`}>
-                  <span className={`w-1.5 h-1.5 rounded-full ${resumen.margenTotal >= margenObjetivo ? "bg-emerald-500" : "bg-red-500"}`} />
+                <div className={`pill mt-1 ${resumen.margenTotal >= margenObjetivo ? "pill--success" : "pill--danger"}`}>
+                  <span className="dot" />
                   {resumen.margenTotal >= margenObjetivo ? "Meta cumplida" : "Por debajo de meta"}
                 </div>
               )}
@@ -937,30 +925,27 @@ function SimulatorContent() {
       {/* ========================================== */}
       {/* CABECERA DE METADATOS CLlENTE / PROYECTO */}
       {/* ========================================== */}
-      <div className="mt-8 rounded-2xl border border-border-subtle bg-surface-card overflow-hidden shadow-sm">
-        <div className="flex flex-col md:flex-row items-center justify-between border-b border-border-subtle bg-surface-hover/80 px-6 py-4 gap-4">
-          <h2 className="text-lg font-semibold text-text-primary flex items-center gap-2">
-            <Building2 className="w-5 h-5 text-brand-primary" />
-            Datos del Cliente y Proyecto
-          </h2>
+      <div className="surface-card overflow-hidden mt-8">
+        <div className="flex flex-col md:flex-row items-center justify-between px-6 py-5 gap-4" style={{ borderBottom: "0.5px solid var(--border-hair)" }}>
+          <h3>Datos del Cliente y Proyecto</h3>
           <div className="flex items-center gap-3 w-full md:w-auto">
-            <button 
+            <button
               onClick={() => setIsCustomerSelectOpen(true)}
-              className="flex-1 md:flex-none inline-flex items-center justify-center gap-2 px-4 py-2 border border-border-subtle bg-surface-card text-text-primary text-sm font-medium rounded-xl hover:bg-surface-hover hover:border-brand-primary/30 transition-all shadow-sm"
+              className="btn btn--secondary flex-1 md:flex-none"
             >
-              <Search className="w-4 h-4" /> Buscar Cliente
+              <Search className="w-4 h-4" strokeWidth={1.75} /> Buscar Cliente
             </button>
-            <button 
+            <button
               onClick={() => setIsCustomerCreateOpen(true)}
-              className="flex-1 md:flex-none inline-flex items-center justify-center gap-2 px-4 py-2 bg-brand-primary/10 text-brand-primary text-sm font-medium rounded-xl hover:bg-brand-primary/20 transition-colors"
+              className="btn btn--ghost flex-1 md:flex-none"
             >
-              <UserPlus className="w-4 h-4" /> Crear Cliente
+              <UserPlus className="w-4 h-4" strokeWidth={1.75} /> Crear Cliente
             </button>
             {simulationStatus === "DRAFT" && (
               <button
                 onClick={handleConfirmar}
                 disabled={!(editId || autosavedDraftId) || !customer || productos.length === 0 || !validFrom || !validTo || isSaving}
-                className="flex-1 md:flex-none inline-flex items-center justify-center gap-2 px-4 py-2 btn-primary text-sm font-medium rounded-xl"
+                className="btn btn--primary flex-1 md:flex-none"
                 title={(!(editId || autosavedDraftId) || !customer || productos.length === 0 || !validFrom || !validTo) ? "Completa cliente, productos y fechas para activar" : ""}
               >
                 Confirmar / Activar
@@ -971,8 +956,8 @@ function SimulatorContent() {
         
         <div className="p-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
           {/* Fila 1 - Cliente */}
-          <div className="col-span-1 md:col-span-2 lg:col-span-2 xl:col-span-2 bg-surface-hover/50 rounded-xl p-4 border border-border-subtle">
-            <span className="block text-xs font-semibold tracking-wider text-text-muted uppercase mb-3">Cliente Seleccionado</span>
+          <div className="col-span-1 md:col-span-2 lg:col-span-2 xl:col-span-2 rounded-xl p-4 [border:0.5px_solid_var(--border-hair)]" style={{ background: "var(--bg-hover)" }}>
+            <span className="overline block mb-3">Cliente Seleccionado</span>
             {customer ? (
               <div className="flex flex-col gap-1.5">
                 <span className="text-lg font-semibold text-text-primary leading-tight">{customer.name}</span>
@@ -989,24 +974,24 @@ function SimulatorContent() {
           </div>
 
           <div className="col-span-1">
-            <label className="block text-sm font-medium text-text-primary mb-1.5 flex items-center gap-1.5">
-              <Briefcase className="w-4 h-4 text-text-muted"/> Proyecto / Oportunidad
+            <label className="field-label flex items-center gap-1.5">
+              <Briefcase className="w-4 h-4" strokeWidth={1.75} /> Proyecto / Oportunidad
             </label>
-            <input 
-              type="text" 
+            <input
+              type="text"
               placeholder="Ej: Licitación Hotel"
               value={projectName}
               onChange={e => { setProjectName(e.target.value); setIsDirty(true); }}
-              className="w-full border border-border-subtle rounded-xl px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary text-sm transition-all"
+              className="input"
             />
           </div>
 
           <div className="col-span-1">
-            <label className="block text-sm font-medium text-text-primary mb-1.5">Tipo de negociación</label>
-            <select 
+            <label className="field-label">Tipo de negociación</label>
+            <select
               value={simulationType}
               onChange={e => { setSimulationType(e.target.value); setIsDirty(true); }}
-              className="w-full border border-border-subtle bg-surface-card rounded-xl px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary text-sm transition-all"
+              className="select"
             >
               <option value="PRICE_LIST">Lista de precios</option>
               <option value="PROJECT_PROMO">Proyecto / Promoción</option>
@@ -1015,11 +1000,11 @@ function SimulatorContent() {
           </div>
 
           {simulationType === "COMMISSION" && (
-            <div className="col-span-1 md:col-span-2 lg:col-span-3 xl:col-span-4 rounded-xl p-3 border border-border-subtle bg-surface-hover flex flex-col md:flex-row gap-4 items-start md:items-center animate-in fade-in slide-in-from-top-2">
+            <div className="col-span-1 md:col-span-2 lg:col-span-3 xl:col-span-4 rounded-xl p-3 flex flex-col md:flex-row gap-4 items-start md:items-center animate-in fade-in slide-in-from-top-2 [border:0.5px_solid_var(--border-hair)]" style={{ background: "var(--bg-hover)" }}>
                <div className="flex-none flex items-center gap-3">
-                 <label className="text-sm font-medium text-text-primary">% Comisión</label>
+                 <label className="field-label" style={{ margin: 0 }}>% Comisión</label>
                  <div className="relative w-24">
-                   <input 
+                   <input
                      type="text"
                      value={commissionPct === 0 ? "" : commissionPct}
                      onChange={e => {
@@ -1028,12 +1013,13 @@ function SimulatorContent() {
                        setIsDirty(true);
                      }}
                      placeholder="0"
-                     className="w-full border border-border-subtle bg-surface-card rounded-md pl-3 pr-7 py-1.5 focus:outline-none focus:ring-2 focus:ring-brand-primary focus:border-brand-primary text-sm transition-all font-semibold text-text-primary"
+                     className="input"
+                     style={{ paddingRight: 28 }}
                    />
-                   <span className="absolute right-2 top-1.5 text-text-muted font-medium select-none pointer-events-none">%</span>
+                   <span className="absolute right-2 top-3 font-medium select-none pointer-events-none" style={{ color: "var(--fg-muted)" }}>%</span>
                  </div>
                </div>
-               <p className="text-xs text-text-muted">
+               <p className="caption">
                  Calcula el precio al cliente cubriendo la comisión, sin inflar el margen real FIRPLAK.
                </p>
             </div>
@@ -1041,13 +1027,13 @@ function SimulatorContent() {
 
           {/* Fila 2 - Configuración Monetaria y Fechas */}
           <div className="col-span-1">
-            <label className="block text-sm font-medium text-text-primary mb-1.5 flex items-center gap-1.5">
-              <DollarSign className="w-4 h-4 text-text-muted"/> Moneda
+            <label className="field-label flex items-center gap-1.5">
+              <DollarSign className="w-4 h-4" strokeWidth={1.75} /> Moneda
             </label>
-            <select 
+            <select
               value={currency}
               onChange={e => { setCurrency(e.target.value); setIsDirty(true); }}
-              className="w-full border border-border-subtle bg-surface-card rounded-xl px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary text-sm transition-all"
+              className="select"
             >
               <option value="COP">COP (Pesos)</option>
               <option value="USD">USD (Dólares)</option>
@@ -1056,38 +1042,38 @@ function SimulatorContent() {
 
           {currency === "USD" && (
             <div className="col-span-1 animate-in fade-in slide-in-from-left-4 duration-300">
-               <label className="block text-sm font-medium text-text-primary mb-1.5">TRM Acordada</label>
-               <input 
-                 type="number" 
+               <label className="field-label">TRM Acordada</label>
+               <input
+                 type="number"
                  placeholder="Ej: 3950.50"
                  value={trm}
                  onChange={e => { setTrm(Number(e.target.value)); setIsDirty(true); }}
-                 className="w-full border border-border-subtle rounded-xl px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary text-sm transition-all text-right"
+                 className="input text-right"
                />
             </div>
           )}
 
           <div className="col-span-1">
-            <label className="block text-sm font-medium text-text-primary mb-1.5 flex items-center gap-1.5">
-              <Calendar className="w-4 h-4 text-text-muted"/> Fecha Inicio Validez
+            <label className="field-label flex items-center gap-1.5">
+              <Calendar className="w-4 h-4" strokeWidth={1.75} /> Fecha Inicio Validez
             </label>
-            <input 
-              type="date" 
+            <input
+              type="date"
               value={validFrom}
               onChange={e => { setValidFrom(e.target.value); setIsDirty(true); }}
-              className="w-full border border-border-subtle rounded-xl px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary text-sm transition-all text-text-muted"
+              className="input"
             />
           </div>
 
           <div className="col-span-1">
-             <label className="block text-sm font-medium text-text-primary mb-1.5 flex items-center gap-1.5">
-               <Calendar className="w-4 h-4 text-text-muted"/> Fecha Vencimiento
+             <label className="field-label flex items-center gap-1.5">
+               <Calendar className="w-4 h-4" strokeWidth={1.75} /> Fecha Vencimiento
              </label>
-             <input 
-               type="date" 
+             <input
+               type="date"
                value={validTo}
                onChange={e => { setValidTo(e.target.value); setIsDirty(true); }}
-               className="w-full border border-border-subtle rounded-xl px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary text-sm transition-all text-text-muted"
+               className="input"
              />
           </div>
         </div>
@@ -1098,43 +1084,45 @@ function SimulatorContent() {
       {/* ========================================== */}
       <div className="mt-10 flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div className="flex flex-col sm:flex-row sm:items-center gap-4">
-          <h2 className="text-lg font-semibold text-text-primary">Detalle de Simulación</h2>
-          <div className="flex items-center gap-2 bg-surface-hover border border-border-subtle rounded-xl px-3 py-1.5 shadow-sm">
-            <span className="text-sm font-medium text-text-muted">Margen Objetivo (%):</span>
-            <input 
+          <h2>Detalle de Simulación</h2>
+          <div className="flex items-center gap-2 rounded-xl px-3 py-1.5 [border:0.5px_solid_var(--border-hair)]" style={{ background: "var(--bg-hover)" }}>
+            <span className="caption">Margen Objetivo (%):</span>
+            <input
               type="number"
               value={margenObjetivo}
               onChange={(e) => { setMargenObjetivo(Number(e.target.value)); setIsDirty(true); }}
-              className="w-16 bg-surface-card border border-border-subtle rounded-md px-2 py-1 text-sm font-semibold text-brand-primary focus:outline-none focus:ring-1 focus:ring-brand-primary text-center"
+              className="w-16 rounded-md px-2 py-1 text-sm font-semibold text-center focus:outline-none [border:0.5px_solid_var(--border-hair)]"
+              style={{ background: "var(--bg-elevated)", color: "var(--navy)" }}
             />
           </div>
         </div>
         <div className="flex gap-3">
           {!customer ? (
-            <div className="flex-1 md:flex-none inline-flex items-center px-4 py-2 bg-amber-50 text-amber-700 text-sm font-medium rounded-xl border border-amber-200 shadow-sm">
+            <div className="pill pill--warn flex-1 md:flex-none">
               Selecciona un cliente para ver productos disponibles
             </div>
           ) : !customer.default_channel_id ? (
-            <div className="flex-1 md:flex-none inline-flex items-center px-4 py-2 bg-amber-50 text-amber-700 text-sm font-medium rounded-xl border border-amber-200 shadow-sm">
+            <div className="pill pill--warn flex-1 md:flex-none">
               Este cliente no tiene canal asignado. Asigna un canal para ver productos disponibles.
             </div>
           ) : (
             <button
               onClick={() => setIsProductModalOpen(true)}
-              className="inline-flex items-center justify-center gap-2 px-5 py-2.5 border border-border-subtle bg-surface-card text-text-primary text-sm font-medium rounded-xl hover:bg-surface-hover transition-all shadow-sm flex-1 md:flex-none"
+              className="btn btn--secondary flex-1 md:flex-none"
             >
-              <Plus className="w-4 h-4" />
+              <Plus className="w-4 h-4" strokeWidth={1.75} />
               Agregar Producto
             </button>
           )}
-          
+
           {editId ? (
             <>
                {(simulationStatus === "DRAFT" || simulationStatus === "VIGENTE") && (
                  <button
                    onClick={handleRechazar}
                    disabled={isSaving}
-                   className="inline-flex items-center justify-center gap-2 px-6 py-2.5 bg-red-50 text-red-700 border border-red-200 text-sm font-medium rounded-xl hover:bg-red-100 transition-all shadow-sm disabled:opacity-50 flex-1 md:flex-none"
+                   className="btn btn--secondary flex-1 md:flex-none disabled:opacity-50"
+                   style={{ color: "var(--danger)", borderColor: "rgba(178,58,58,0.30)" }}
                  >
                    Rechazar
                  </button>
@@ -1142,15 +1130,15 @@ function SimulatorContent() {
                <button
                  onClick={() => handleSaveSimulation(true)}
                  disabled={isSaving}
-                 className="inline-flex items-center justify-center gap-2 px-6 py-2.5 btn-primary text-sm font-medium rounded-xl flex-1 md:flex-none"
+                 className="btn btn--primary flex-1 md:flex-none"
                >
-                 {isSaving ? <span className="w-4 h-4 border-2 border-white/50 border-t-white rounded-full animate-spin" /> : <Save className="w-4 h-4" />}
+                 {isSaving ? <span className="w-4 h-4 border-2 border-white/50 border-t-white rounded-full animate-spin" /> : <Save className="w-4 h-4" strokeWidth={1.75} />}
                  Sobreescribir
                </button>
                <button
                  onClick={() => setIsVersionModalOpen(true)}
                  disabled={isSaving}
-                 className="inline-flex items-center justify-center gap-2 px-6 py-2.5 bg-slate-800 text-white text-sm font-medium rounded-xl hover:bg-slate-700 transition-all shadow-sm disabled:opacity-50 flex-1 md:flex-none"
+                 className="btn btn--secondary flex-1 md:flex-none disabled:opacity-50"
                >
                  Guardar como Nueva
                </button>
@@ -1159,12 +1147,12 @@ function SimulatorContent() {
             <button
               onClick={() => handleSaveSimulation(false)}
               disabled={isSaving}
-              className="inline-flex items-center justify-center gap-2 px-6 py-2.5 btn-primary text-sm font-medium rounded-xl flex-1 md:flex-none"
+              className="btn btn--primary flex-1 md:flex-none"
             >
               {isSaving ? (
                 <span className="w-4 h-4 border-2 border-white/50 border-t-white rounded-full animate-spin" />
               ) : (
-                <Save className="w-4 h-4" />
+                <Save className="w-4 h-4" strokeWidth={1.75} />
               )}
               Guardar Simulación
             </button>
@@ -1173,26 +1161,26 @@ function SimulatorContent() {
       </div>
 
       {productos.length === 0 && (
-        <div className="mt-6 border-2 border-dashed border-border-subtle rounded-2xl p-12 text-center bg-surface-hover/50">
-          <div className="w-16 h-16 bg-surface-card border border-border-subtle rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-sm">
-            <Plus className="w-8 h-8 text-text-muted/50" />
+        <div className="mt-6 rounded-2xl p-12 text-center" style={{ background: "rgba(116,144,148,0.06)", border: "0.5px dashed var(--blue-green)" }}>
+          <div className="w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4" style={{ background: "var(--info-soft)", color: "var(--blue-green)" }}>
+            <Plus className="w-8 h-8" strokeWidth={1.5} />
           </div>
-          <h3 className="text-base font-medium text-text-primary mb-1">Simulación Vacía</h3>
-          <p className="text-sm text-text-muted">
+          <h3 style={{ marginBottom: 4 }}>Simulación Vacía</h3>
+          <p className="caption">
             Aún no hay productos en la tabla. Agrega productos para comenzar la simulación.
           </p>
           {!customer ? (
-            <div className="mt-6 inline-flex items-center gap-2 px-4 py-2 border border-amber-200 bg-amber-50 text-amber-700 text-sm font-medium rounded-xl shadow-sm">
+            <div className="pill pill--warn mt-6">
               Selecciona un cliente para ver productos disponibles
             </div>
           ) : !customer.default_channel_id ? (
-            <div className="mt-6 inline-flex items-center gap-2 px-4 py-2 border border-amber-200 bg-amber-50 text-amber-700 text-sm font-medium rounded-xl shadow-sm">
+            <div className="pill pill--warn mt-6">
               Este cliente no tiene canal asignado. Asigna un canal para ver productos disponibles.
             </div>
           ) : (
             <button
               onClick={() => setIsProductModalOpen(true)}
-              className="mt-6 inline-flex items-center gap-2 px-4 py-2 border border-border-subtle bg-surface-card text-text-primary text-sm font-medium rounded-xl hover:bg-surface-hover transition-colors shadow-sm"
+              className="btn btn--secondary mt-6"
             >
               Agregar mi primer producto
             </button>
@@ -1207,7 +1195,7 @@ function SimulatorContent() {
          * Table: table-fixed + colgroup pin every column width so the table
          *        fits within ~1040 px on desktop and scrolls internally on laptops.
          */
-        <div className="mt-6 rounded-2xl border border-border-subtle shadow-sm bg-surface-card flex flex-col relative" style={{ maxHeight: 'min(75vh, 800px)' }}>
+        <div className="surface-card mt-6 flex flex-col relative" style={{ maxHeight: 'min(75vh, 800px)' }}>
           <div 
             className="overflow-auto w-full scrollbar-thin scrollbar-thumb-slate-200 scrollbar-track-transparent flex-1" 
             id="simulator-table-container"
@@ -1216,67 +1204,52 @@ function SimulatorContent() {
               setShowBackToTop(target.scrollTop > 300);
             }}
           >
-            <table className={`w-full table-fixed ${tableStyles.tableWrapper}`} style={{ minWidth: "960px" }}>
-              {/* colgroup pins each column to a fixed width so the table fits ~1000px */}
-              <colgroup>
-                <col style={{ width: "130px" }} />{/* Código SAP */}
-                <col />{/* Descripción — takes remaining flex space */}
-                <col style={{ width: "88px" }} />{/* Costo Unit. */}
-                <col style={{ width: "88px" }} />{/* Precio Lista */}
-                <col style={{ width: tableStyles.colDescWidth || "72px" }} />{/* % Desc input */}
-                <col style={{ width: "88px" }} />{/* P. Neto */}
-                <col style={{ width: tableStyles.colCantWidth || "80px" }} />{/* Cant. input */}
-                <col style={{ width: "88px" }} />{/* Ing. Neto */}
-                <col style={{ width: "88px" }} />{/* Costo Total */}
-                <col style={{ width: "90px" }} />{/* Contribución */}
-                <col style={{ width: "76px" }} />{/* Margen & Δ */}
-                <col style={{ width: "36px" }} />{/* Delete */}
-              </colgroup>
-              <thead className="bg-surface-hover border-b border-border-subtle sticky top-0 z-20 shadow-sm after:absolute after:bottom-[-1px] after:left-0 after:right-0 after:h-[1px] after:bg-border-subtle">
+            <table className={`w-full ${tableStyles.tableWrapper}`} style={{ minWidth: "900px" }}>
+              <thead className="sticky top-0 z-20" style={{ background: "var(--bg-hover)", borderBottom: "0.5px solid var(--border-hair)" }}>
                 <tr>
-                  <th className={`text-left font-semibold text-text-primary whitespace-nowrap ${tableStyles.th}`}>Código SAP</th>
-                  <th className={`text-left font-semibold text-text-primary ${tableStyles.th}`}>Descripción</th>
-                  <th className={`text-right font-semibold text-text-primary whitespace-nowrap ${tableStyles.th}`}>
-                    Costo Unit.<br /><span className="text-[10px] text-text-muted font-normal">(COP)</span>
+                  <th className={`overline text-left whitespace-nowrap ${tableStyles.th}`} style={{ minWidth: "160px" }}>Código SAP</th>
+                  <th className={`overline text-left ${tableStyles.th}`} style={{ paddingLeft: "24px", minWidth: "180px" }}>Descripción</th>
+                  <th className={`overline text-right whitespace-nowrap hidden xl:table-cell ${tableStyles.th}`} style={{ minWidth: "96px" }}>
+                    Costo Unit.<br /><span className="caption font-normal">(COP)</span>
                   </th>
-                  <th className={`text-right font-semibold text-text-primary whitespace-nowrap ${tableStyles.th}`}>
-                    Precio Lista<br /><span className="text-[10px] text-text-muted font-normal">({currency})</span>
+                  <th className={`overline text-right whitespace-nowrap ${tableStyles.th}`} style={{ minWidth: "96px" }}>
+                    Precio Lista<br /><span className="caption font-normal">({currency})</span>
                   </th>
-                  <th className={`text-right font-semibold text-text-primary ${tableStyles.th}`}>% Desc</th>
-                  <th className={`text-right font-semibold text-text-primary whitespace-nowrap ${tableStyles.th}`}>
-                    P. Neto<br /><span className="text-[10px] text-text-muted font-normal">({currency})</span>
+                  <th className={`overline text-right ${tableStyles.th}`} style={{ minWidth: "80px" }}>% Desc</th>
+                  <th className={`overline text-right whitespace-nowrap ${tableStyles.th}`} style={{ minWidth: "96px" }}>
+                    P. Neto<br /><span className="caption font-normal">({currency})</span>
                   </th>
-                  <th className={`text-right font-semibold text-text-primary ${tableStyles.th}`}>Cant.</th>
-                  <th className={`text-right font-semibold text-text-primary whitespace-nowrap ${tableStyles.th}`}>
-                    Ing. Neto<br /><span className="text-[10px] text-text-muted font-normal">({currency})</span>
+                  <th className={`overline text-right ${tableStyles.th}`} style={{ minWidth: "92px" }}>Cant.</th>
+                  <th className={`overline text-right whitespace-nowrap hidden xl:table-cell ${tableStyles.th}`} style={{ minWidth: "96px" }}>
+                    Ing. Neto<br /><span className="caption font-normal">({currency})</span>
                   </th>
-                  <th className={`text-right font-semibold text-text-primary whitespace-nowrap ${tableStyles.th}`}>
-                    Costo Total<br /><span className="text-[10px] text-text-muted font-normal">(COP)</span>
+                  <th className={`overline text-right whitespace-nowrap ${tableStyles.th}`} style={{ minWidth: "110px" }}>
+                    Costo Total<br /><span className="caption font-normal">(COP)</span>
                   </th>
-                  <th className={`text-right font-semibold text-text-primary whitespace-nowrap ${tableStyles.th}`}>
-                    Contribución<br /><span className="text-[10px] text-text-muted font-normal">(COP)</span>
+                  <th className={`overline text-right whitespace-nowrap ${tableStyles.th}`} style={{ minWidth: "120px" }}>
+                    Contribución<br /><span className="caption font-normal">(COP)</span>
                   </th>
-                  <th className={`text-center font-semibold text-text-primary ${tableStyles.th}`}>Margen</th>
+                  <th className={`overline text-center ${tableStyles.th}`} style={{ minWidth: "88px" }}>Margen</th>
                   <th className={tableStyles.th}></th>
                 </tr>
               </thead>
 
-              <tbody className="divide-y divide-border-subtle">
+              <tbody>
                 {productos.map((p) => {
                   const r = calcularLinea(p);
 
                   return (
-                    <tr key={p.row_id} className="group hover:bg-surface-hover/40 transition-colors">
+                    <tr key={p.row_id} className="group [border-bottom:0.5px_solid_var(--border-hair)] hover:bg-[color:var(--bg-hover)] transition-colors">
 
                       {/* Código SAP */}
-                      <td className={`align-middle ${tableStyles.td}`}>
-                        <span className={`inline-flex items-center rounded font-semibold bg-surface-hover text-text-primary tracking-tight max-w-full break-all ${tableStyles.badge}`}>
+                      <td className={`align-middle ${tableStyles.td}`} style={{ paddingRight: "8px" }}>
+                        <span className={`pill pill--brand whitespace-nowrap ${tableStyles.badge}`}>
                           {p.Codigo}
                         </span>
                       </td>
 
                       {/* Descripción — truncate with tooltip */}
-                      <td className={`align-middle ${tableStyles.td}`}>
+                      <td className={`align-middle ${tableStyles.td}`} style={{ paddingLeft: "24px" }}>
                         <div
                           className="w-full font-medium text-text-primary leading-snug"
                           title={p.Descripcion}
@@ -1286,7 +1259,7 @@ function SimulatorContent() {
                       </td>
 
                       {/* Costo Unit. */}
-                      <td className={`text-right align-middle ${tableStyles.td}`}>
+                      <td className={`text-right align-middle hidden xl:table-cell ${tableStyles.td}`}>
                         {p.Costo_Mp > 0 ? (
                           <span className="text-text-muted font-medium">{formatMoney(p.Costo_Mp)}</span>
                         ) : (
@@ -1303,7 +1276,7 @@ function SimulatorContent() {
                       <td className={`text-right align-middle ${tableStyles.td}`}>
                         <div className="font-semibold text-text-primary">{formatMoney(r.precioDisplay, currency === "USD")}</div>
                         {p._hasPriceList === false && (
-                          <div className={`mt-0.5 font-semibold text-amber-600 bg-amber-50 inline-block rounded border border-amber-100 leading-none ${tableStyles.badge}`}>
+                          <div className={`pill pill--warn mt-0.5 ${tableStyles.badge}`}>
                             Sin precio
                           </div>
                         )}
@@ -1345,8 +1318,8 @@ function SimulatorContent() {
                       </td>
 
                       {/* Ing. Neto */}
-                      <td 
-                        className={`text-right font-semibold text-text-primary align-middle ${tableStyles.td}`}
+                      <td
+                        className={`text-right font-semibold text-text-primary align-middle hidden xl:table-cell ${tableStyles.td}`}
                         title={simulationType === "COMMISSION" && r.commissionValueCop > 0 ? `Incluye comisión de ${formatMoney(r.commissionValueCop)} COP` : undefined}
                       >
                         {formatMoney(r.ingresoNetoDisplay, currency === "USD")}
@@ -1359,9 +1332,8 @@ function SimulatorContent() {
 
                       {/* Contribución */}
                       <td
-                        className={`text-right font-semibold align-middle ${tableStyles.td} ${
-                          r.contribucionCop < 0 ? "text-red-600" : "text-emerald-600"
-                        }`}
+                        className={`text-right font-semibold align-middle ${tableStyles.td}`}
+                        style={{ color: r.contribucionCop < 0 ? "var(--danger)" : "var(--success)" }}
                       >
                         {formatMoney(r.contribucionCop)}
                       </td>
@@ -1371,13 +1343,11 @@ function SimulatorContent() {
                         {(() => {
                           const m = Number.isFinite(r.margen) ? r.margen : 0;
                           const d = m - r.margenObjetivoLinea;
-                          let badgeBg = "bg-emerald-50 text-emerald-700 border-emerald-200";
-                          if (d <= -5) badgeBg = "bg-red-50 text-red-700 border-red-200";
-                          else if (d < 0) badgeBg = "bg-amber-50 text-amber-700 border-amber-200";
+                          const tone = d <= -5 ? "danger" : d < 0 ? "warn" : "success";
                           return (
                             <div className="flex flex-col items-center gap-0.5" title={`Margen objetivo: ${r.margenObjetivoLinea}%`}>
-                              <span className="font-bold text-text-primary whitespace-nowrap">{m.toFixed(1)}%</span>
-                              <span className={`font-semibold rounded border whitespace-nowrap ${badgeBg} ${tableStyles.badge}`}>
+                              <span className="mono tabular whitespace-nowrap" style={{ color: "var(--fg-primary)" }}>{m.toFixed(1)}%</span>
+                              <span className={`pill pill--${tone} whitespace-nowrap ${tableStyles.badge}`}>
                                 {d > 0 ? "+" : ""}{d.toFixed(1)}%
                               </span>
                             </div>
@@ -1411,9 +1381,10 @@ function SimulatorContent() {
             className={[
               "absolute bottom-8 right-8 p-3 rounded-full shadow-lg transition-all duration-300 flex items-center justify-center group z-30",
               showBackToTop ? "opacity-30 hover:opacity-100 translate-y-0" : "opacity-0 pointer-events-none translate-y-4",
-              "bg-slate-800 hover:bg-[#0f172a] text-white"
+              "text-white"
             ].join(" ")}
             title="Volver arriba"
+            style={{ background: "var(--navy)" }}
           >
             <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 10l7-7m0 0l7 7m-7-7v18" />
@@ -1466,25 +1437,23 @@ function SimulatorContent() {
       {/* ========================================== */}
       {isDraftResumeModalOpen && foundDraftId && (
         <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4">
-          <div className="absolute inset-0 bg-slate-900/50 backdrop-blur-sm" />
-          <div className="relative w-full max-w-md bg-surface-card rounded-2xl shadow-2xl border border-border-subtle overflow-hidden animate-in fade-in zoom-in-95 duration-200">
-            <div className="px-6 pt-6 pb-4 border-b border-border-subtle">
-              <h2 className="text-base font-semibold text-text-primary leading-tight">
-                Borrador encontrado
-              </h2>
+          <div className="absolute inset-0 backdrop-blur-sm" style={{ background: "rgba(20,35,46,0.32)" }} />
+          <div className="surface-glass-strong w-full max-w-md overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+            <div className="px-6 pt-6 pb-4" style={{ borderBottom: "0.5px solid var(--border-hair)" }}>
+              <h3>Borrador encontrado</h3>
             </div>
             <div className="px-6 py-5">
-              <p className="text-sm text-text-muted leading-relaxed">
+              <p className="lead">
                 Encontramos una simulación en borrador guardada automáticamente. ¿Deseas continuar editándola?
               </p>
             </div>
-            <div className="px-6 pb-6 flex flex-col-reverse sm:flex-row gap-3 sm:justify-end">
+            <div className="px-6 pb-6 flex flex-col gap-3">
               <button
                 onClick={() => {
                   setIsDraftResumeModalOpen(false);
                   setFoundDraftId(null);
                 }}
-                className="px-4 py-2.5 rounded-xl text-sm font-medium text-text-muted bg-surface-card border border-border-subtle hover:bg-surface-hover transition-all"
+                className="btn btn--ghost"
               >
                 Empezar nueva simulación
               </button>
@@ -1493,7 +1462,7 @@ function SimulatorContent() {
                   setIsDraftResumeModalOpen(false);
                   router.push(`/simulator?id=${foundDraftId}`);
                 }}
-                className="px-5 py-2.5 rounded-xl text-sm font-semibold btn-primary shadow-sm"
+                className="btn btn--primary"
               >
                 Continuar borrador
               </button>

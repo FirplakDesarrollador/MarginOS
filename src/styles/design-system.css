@@ -253,6 +253,7 @@ small, .small { font: 400 var(--fs-small)/var(--lh-small) var(--font-sans); }
   font: 500 var(--fs-overline)/var(--lh-overline) var(--font-sans);
   letter-spacing: var(--tr-overline);
   text-transform: uppercase;
+  text-decoration: none;
   color: var(--blue-green);
 }
 
@@ -433,5 +434,6 @@ code, .mono, .num {
   font: 500 var(--fs-overline)/1.2 var(--font-sans);
   letter-spacing: var(--tracking-widest);
   text-transform: uppercase;
+  text-decoration: none;
   color: var(--blue-green);
 }

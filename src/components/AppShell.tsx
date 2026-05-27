@@ -24,7 +24,7 @@ function ShellInner({
       <div className="flex flex-col flex-1 min-w-0 max-h-screen overflow-y-auto">
         <Topbar title={title} />
 
-        <main className="flex-1 w-full max-w-[1600px] mx-auto px-4 sm:px-6 md:px-8 xl:px-10 pt-8 pb-16">
+        <main className="flex-1 w-full px-3 sm:px-4 md:px-5 lg:px-6 pt-8 pb-16">
           {children}
         </main>
       </div>
