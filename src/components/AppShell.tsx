@@ -13,7 +13,7 @@ function ShellInner({
   title?: string;
 }) {
   return (
-    <div className="flex min-h-[100dvh] bg-surface-hover/50 text-text-primary overflow-hidden">
+    <div className="flex min-h-[100dvh] bg-[color:var(--bg-base)] text-text-primary overflow-hidden">
       {/* Desktop sidebar */}
       <Sidebar />
 
@@ -24,7 +24,7 @@ function ShellInner({
       <div className="flex flex-col flex-1 min-w-0 max-h-screen overflow-y-auto">
         <Topbar title={title} />
 
-        <main className="flex-1 w-full max-w-[1600px] mx-auto px-4 sm:px-6 md:px-8 xl:px-10 2xl:px-14 py-8 md:py-10">
+        <main className="flex-1 w-full max-w-[1600px] mx-auto px-4 sm:px-6 md:px-8 xl:px-10 pt-8 pb-16">
           {children}
         </main>
       </div>

@@ -376,23 +376,22 @@ export default function ExecutiveDashboard() {
       <div className="w-full pb-32 print:pb-0">
         
         {/* HEADER & GLOBAL FILTERS */}
-        <div className="sticky top-0 z-40 bg-surface-background/80 backdrop-blur-md border-b border-border-subtle pt-6 pb-4 mb-8 print:static print:bg-transparent print:border-none">
+        <div className="sticky top-0 z-40 bg-[color:var(--bg-base)]/80 backdrop-blur-md pt-6 pb-4 mb-8 print:static print:bg-transparent" style={{ borderBottom: "0.5px solid var(--border-hair)" }}>
            <div className="flex flex-col xl:flex-row xl:items-end justify-between gap-6">
              <div>
-               <h1 className="text-3xl font-bold tracking-tight text-text-primary flex items-center gap-3">
-                 <BarChart3 className="w-8 h-8 text-brand-primary" /> Executive Dashboard
-               </h1>
-               <p className="text-text-muted text-sm mt-1">Visibilidad consolidada de la operación comercial y rentabilidad.</p>
+               <div className="overline" style={{ marginBottom: 6 }}>Cockpit Ejecutivo</div>
+               <h1 style={{ marginBottom: 4 }}>Executive Dashboard</h1>
+               <p className="lead" style={{ maxWidth: 560 }}>Visibilidad consolidada de la operación comercial y rentabilidad.</p>
              </div>
-             
+
              {/* Action Buttons */}
              <div className="flex gap-3 print:hidden">
-                <button onClick={handlePrint} className="inline-flex items-center gap-2 px-4 py-2 bg-surface-card border border-border-subtle rounded-xl text-sm font-medium hover:bg-surface-hover shadow-sm transition-colors">
-                   <Printer className="w-4 h-4 text-text-muted" /> PDF Report
+                <button onClick={handlePrint} className="btn btn--secondary">
+                   <Printer className="w-4 h-4" strokeWidth={1.75} /> PDF Report
                 </button>
                 {/* Excel Export omitted for brevity, logic follows print pattern */}
-                <button className="inline-flex items-center gap-2 px-4 py-2 btn-primary rounded-xl text-sm font-medium shadow-sm hover:-translate-y-0.5 transition-all">
-                   <Download className="w-4 h-4" /> Export Data
+                <button className="btn btn--primary">
+                   <Download className="w-4 h-4" strokeWidth={1.75} /> Export Data
                 </button>
              </div>
            </div>
@@ -438,7 +437,7 @@ export default function ExecutiveDashboard() {
         {/* LOADING STATE */}
         {loading ? (
            <div className="py-24 flex flex-col items-center justify-center">
-             <div className="w-8 h-8 border-2 border-brand-primary border-t-transparent rounded-full animate-spin mb-4" />
+             <div className="w-8 h-8 border-2 rounded-full animate-spin mb-4" style={{ borderColor: "var(--navy)", borderTopColor: "transparent" }} />
              <p className="text-sm font-medium text-text-muted">Procesando KPIs y agregando datos...</p>
            </div>
         ) : (
@@ -446,40 +445,38 @@ export default function ExecutiveDashboard() {
            
            {/* SECTION 1: EXECUTIVE KPI CARDS */}
            <section>
-              <h2 className="text-sm font-bold tracking-widest text-text-muted uppercase mb-4 flex items-center gap-2">
-                 <Target className="w-4 h-4" /> Resumen Ejecutivo
-              </h2>
+              <div className="section-title mb-4">Resumen Ejecutivo</div>
               <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
                 {/* 1. Simulaciones */}
-                <div className="bg-surface-card rounded-[1.25rem] p-5 border border-border-subtle shadow-sm flex flex-col justify-center relative overflow-hidden group">
-                   <div className="text-[11px] font-bold text-text-muted mb-1.5 uppercase tracking-wide">Total Simulaciones</div>
-                   <div className="text-3xl font-extrabold tracking-tight text-text-primary">{execKPIs.totalSims}</div>
-                   <div className="mt-3 text-xs font-medium flex gap-3 text-text-muted">
-                      <span className="text-emerald-600">{execKPIs.active} Vigentes</span>
-                      <span className="text-red-500">{execKPIs.rejected} Rechazadas</span>
+                <div className="surface-card p-5 flex flex-col justify-center relative overflow-hidden group">
+                   <div className="overline" style={{ marginBottom: 6 }}>Total Simulaciones</div>
+                   <div className="kpi tabular">{execKPIs.totalSims}</div>
+                   <div className="caption mt-3 flex gap-3">
+                      <span style={{ color: "var(--success)" }}>{execKPIs.active} Vigentes</span>
+                      <span style={{ color: "var(--danger)" }}>{execKPIs.rejected} Rechazadas</span>
                    </div>
                 </div>
 
                 {/* 2. Valor Neto */}
-                <div className="bg-surface-card rounded-[1.25rem] p-5 border border-border-subtle shadow-sm flex flex-col justify-center">
-                   <div className="text-[11px] font-bold text-text-muted mb-1.5 uppercase tracking-wide">Valor Neto Simulado (COP)</div>
-                   <div className="text-3xl font-extrabold tracking-tight text-text-primary truncate" title={formatCOP(execKPIs.netValueCOP)}>
+                <div className="surface-card p-5 flex flex-col justify-center">
+                   <div className="overline" style={{ marginBottom: 6 }}>Valor Neto Simulado (COP)</div>
+                   <div className="kpi tabular truncate" style={{ color: "var(--fg-primary)" }} title={formatCOP(execKPIs.netValueCOP)}>
                       {formatShortCOP(execKPIs.netValueCOP)}
                    </div>
                 </div>
 
                 {/* 3. Contribucion */}
-                <div className="bg-surface-card rounded-[1.25rem] p-5 border border-border-subtle shadow-sm flex flex-col justify-center">
-                   <div className="text-[11px] font-bold text-text-muted mb-1.5 uppercase tracking-wide">Contribución Total (COP)</div>
-                   <div className="text-3xl font-extrabold tracking-tight text-brand-primary truncate" title={formatCOP(execKPIs.totalContributionCOP)}>
+                <div className="surface-card p-5 flex flex-col justify-center">
+                   <div className="overline" style={{ marginBottom: 6 }}>Contribución Total (COP)</div>
+                   <div className="kpi tabular truncate" style={{ color: "var(--navy)" }} title={formatCOP(execKPIs.totalContributionCOP)}>
                       {formatShortCOP(execKPIs.totalContributionCOP)}
                    </div>
                 </div>
 
                 {/* 4. Margen Ponderado */}
-                <div className="bg-surface-card rounded-[1.25rem] p-5 border border-border-subtle shadow-sm flex flex-col justify-center">
-                   <div className="text-[11px] font-bold text-text-muted mb-1.5 uppercase tracking-wide">Margen Ponderado</div>
-                   <div className={`text-3xl font-extrabold tracking-tight ${execKPIs.weightedMargin >= 60 ? 'text-emerald-600' : execKPIs.weightedMargin >= 40 ? 'text-amber-500' : 'text-red-500'}`}>
+                <div className="surface-card p-5 flex flex-col justify-center">
+                   <div className="overline" style={{ marginBottom: 6 }}>Margen Ponderado</div>
+                   <div className="kpi tabular" style={{ color: execKPIs.weightedMargin >= 60 ? 'var(--margin-strong)' : execKPIs.weightedMargin >= 40 ? 'var(--margin-ok)' : 'var(--margin-weak)' }}>
                       {formatPct(execKPIs.weightedMargin)}
                    </div>
                 </div>
@@ -496,10 +493,8 @@ export default function ExecutiveDashboard() {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                        
                        {/* Valor Simulado por Mes */}
-                       <div className="bg-surface-card rounded-[1.25rem] p-6 border border-border-subtle shadow-sm col-span-1 md:col-span-2">
-                          <h3 className="text-sm font-bold text-text-primary mb-6 flex items-center gap-2">
-                             <TrendingUp className="w-4 h-4 text-brand-primary" /> Valor Simulado por Mes (COP)
-                          </h3>
+                       <div className="surface-card p-6 col-span-1 md:col-span-2">
+                          <h3 style={{ marginBottom: 24 }}>Valor Simulado por Mes (COP)</h3>
                           <div className="h-[280px] w-full">
                             <ResponsiveContainer width="100%" height="100%">
                               <LineChart data={chartsData.lineMonth} margin={{ top: 5, right: 20, bottom: 5, left: 0 }}>
@@ -514,10 +509,8 @@ export default function ExecutiveDashboard() {
                        </div>
 
                        {/* Status Pie */}
-                       <div className="bg-surface-card rounded-[1.25rem] p-6 border border-border-subtle shadow-sm">
-                          <h3 className="text-sm font-bold text-text-primary mb-4 flex items-center gap-2">
-                             <PieChartIcon className="w-4 h-4 text-brand-primary" /> Estado del Pipeline
-                          </h3>
+                       <div className="surface-card p-6">
+                          <h3 style={{ marginBottom: 16 }}>Estado del Pipeline</h3>
                           <div className="h-[220px]">
                             <ResponsiveContainer width="100%" height="100%">
                               <PieChart>
@@ -534,10 +527,8 @@ export default function ExecutiveDashboard() {
                        </div>
 
                        {/* Margen por canal */}
-                       <div className="bg-surface-card rounded-[1.25rem] p-6 border border-border-subtle shadow-sm">
-                          <h3 className="text-sm font-bold text-text-primary mb-4 flex items-center gap-2">
-                             <Layers className="w-4 h-4 text-brand-primary" /> Margen Promedio por Canal
-                          </h3>
+                       <div className="surface-card p-6">
+                          <h3 style={{ marginBottom: 16 }}>Margen Promedio por Canal</h3>
                           <div className="h-[220px]">
                             <ResponsiveContainer width="100%" height="100%">
                               <BarChart data={chartsData.marginChannel} layout="vertical" margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
@@ -560,31 +551,29 @@ export default function ExecutiveDashboard() {
 
                  {/* SECTION 5: CUSTOMER ANALYTICS */}
                  <section>
-                    <div className="bg-surface-card rounded-[1.25rem] border border-border-subtle shadow-sm overflow-hidden">
-                       <div className="px-6 py-5 border-b border-border-subtle bg-surface-hover/50 flex justify-between items-center">
-                          <h3 className="text-sm font-bold text-text-primary flex items-center gap-2">
-                             <Users className="w-4 h-4 text-brand-primary" /> Top Clientes por Valor Simulado
-                          </h3>
+                    <div className="surface-card overflow-hidden">
+                       <div className="px-6 py-5 flex justify-between items-center" style={{ borderBottom: "0.5px solid var(--border-hair)" }}>
+                          <h3>Top Clientes por Valor Simulado</h3>
                        </div>
                        <table className="w-full text-sm">
-                          <thead className="bg-surface-hover/30 border-b border-border-subtle text-left text-[11px] text-text-muted font-bold uppercase tracking-wider">
+                          <thead className="text-left" style={{ borderBottom: "0.5px solid var(--border-hair)" }}>
                              <tr>
-                                <th className="px-6 py-3">Cliente</th>
-                                <th className="px-6 py-3 text-center">Simulaciones</th>
-                                <th className="px-6 py-3 text-right">Valor Neto (COP)</th>
-                                <th className="px-6 py-3 text-center">Rechazos</th>
+                                <th className="overline px-6 py-3">Cliente</th>
+                                <th className="overline px-6 py-3 text-center">Simulaciones</th>
+                                <th className="overline px-6 py-3 text-right">Valor Neto (COP)</th>
+                                <th className="overline px-6 py-3 text-center">Rechazos</th>
                              </tr>
                           </thead>
-                          <tbody className="divide-y divide-border-subtle">
+                          <tbody>
                              {customerAnalytics.topByValue.map((c, i) => (
-                                <tr key={i} className="hover:bg-surface-hover/50 transition-colors">
-                                   <td className="px-6 py-3.5 font-semibold text-text-primary">{c.name}</td>
-                                   <td className="px-6 py-3.5 text-center font-medium text-text-muted">{c.count}</td>
-                                   <td className="px-6 py-3.5 text-right font-bold text-brand-primary">{formatCOP(c.valueCOP)}</td>
+                                <tr key={i} className="[border-bottom:0.5px_solid_var(--border-hair)] hover:bg-[color:var(--bg-hover)] transition-colors">
+                                   <td className="px-6 py-3.5 font-medium" style={{ color: "var(--fg-primary)" }}>{c.name}</td>
+                                   <td className="caption px-6 py-3.5 text-center">{c.count}</td>
+                                   <td className="mono tabular px-6 py-3.5 text-right" style={{ color: "var(--navy)" }}>{formatCOP(c.valueCOP)}</td>
                                    <td className="px-6 py-3.5 text-center">
                                       {c.rejected > 0 ? (
-                                         <span className="text-xs font-bold text-red-600 bg-red-50 px-2 py-0.5 rounded">{c.rejected}</span>
-                                      ) : <span className="text-text-muted">—</span>}
+                                         <span className="pill pill--danger">{c.rejected}</span>
+                                      ) : <span style={{ color: "var(--fg-muted)" }}>—</span>}
                                    </td>
                                 </tr>
                              ))}
@@ -603,66 +592,85 @@ export default function ExecutiveDashboard() {
                  
                  {/* SECTION 4: PROFITABILITY ALERTS */}
                  <section>
-                    <div className="bg-[#fff9f9] dark:bg-red-950/20 rounded-[1.25rem] border border-red-100 dark:border-red-900/50 p-6 shadow-sm relative overflow-hidden">
-                       <h2 className="text-xs font-bold tracking-widest text-red-700 dark:text-red-500 uppercase mb-5 flex items-center gap-2 relative z-10">
-                          <AlertTriangle className="w-4 h-4" /> Alertas Críticas
-                       </h2>
-                       <ul className="space-y-3 relative z-10">
-                          <li className="flex items-start gap-3 text-[13px] text-red-800 dark:text-red-300 bg-surface-card border border-red-50 dark:border-red-900/30 p-3.5 rounded-xl shadow-sm">
-                             <span className="font-extrabold text-red-600 dark:text-red-500 text-base leading-none">{alerts.lowMarginSims}</span>
-                             <span className="font-medium leading-snug">Simulaciones activas por debajo del margen objetivo del negocio.</span>
-                          </li>
-                          <li className="flex items-start gap-3 text-[13px] text-red-800 dark:text-red-300 bg-surface-card border border-red-50 dark:border-red-900/30 p-3.5 rounded-xl shadow-sm">
-                             <span className="font-extrabold text-red-600 dark:text-red-500 text-base leading-none">{alerts.highDiscountSims}</span>
-                             <span className="font-medium leading-snug">Simulaciones contienen descuentos comerciales mayores al 40%.</span>
-                          </li>
+                    <div className="surface-card overflow-hidden">
+                       <div className="px-6 py-5 flex items-center" style={{ borderBottom: "0.5px solid var(--border-hair)" }}>
+                          <h3>Alertas Críticas</h3>
+                       </div>
+                       <div>
+                          <div className="px-6 py-4 flex items-start gap-3" style={{ borderBottom: "0.5px solid var(--border-hair)" }}>
+                             <div className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0" style={{ background: "var(--danger-soft)", color: "var(--danger)" }}>
+                                <AlertTriangle className="w-4 h-4" strokeWidth={1.75} />
+                             </div>
+                             <div>
+                                <div style={{ fontSize: 13, fontWeight: 500, color: "var(--fg-primary)" }}>
+                                   {alerts.lowMarginSims} simulaciones bajo margen objetivo
+                                </div>
+                                <div className="caption">Simulaciones activas por debajo del margen objetivo del negocio.</div>
+                             </div>
+                          </div>
+                          <div className="px-6 py-4 flex items-start gap-3" style={{ borderBottom: pricingKPIs.pendingProducts > 0 ? "0.5px solid var(--border-hair)" : undefined }}>
+                             <div className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0" style={{ background: "var(--danger-soft)", color: "var(--danger)" }}>
+                                <Activity className="w-4 h-4" strokeWidth={1.75} />
+                             </div>
+                             <div>
+                                <div style={{ fontSize: 13, fontWeight: 500, color: "var(--fg-primary)" }}>
+                                   {alerts.highDiscountSims} simulaciones con descuento &gt;40%
+                                </div>
+                                <div className="caption">Simulaciones contienen descuentos comerciales mayores al 40%.</div>
+                             </div>
+                          </div>
                           {pricingKPIs.pendingProducts > 0 && (
-                             <li className="flex items-start gap-3 text-[13px] text-amber-800 dark:text-amber-300 bg-surface-card border border-amber-100 dark:border-amber-900/30 p-3.5 rounded-xl shadow-sm">
-                                <span className="font-extrabold text-amber-600 dark:text-amber-500 text-base leading-none">{pricingKPIs.pendingProducts}</span>
-                                <span className="font-medium leading-snug">Productos activos en SAP sin base tarifaria configurada.</span>
-                             </li>
+                             <div className="px-6 py-4 flex items-start gap-3">
+                                <div className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0" style={{ background: "var(--warning-soft)", color: "var(--warning)" }}>
+                                   <AlertCircle className="w-4 h-4" strokeWidth={1.75} />
+                                </div>
+                                <div>
+                                   <div style={{ fontSize: 13, fontWeight: 500, color: "var(--fg-primary)" }}>
+                                      {pricingKPIs.pendingProducts} productos sin base tarifaria
+                                   </div>
+                                   <div className="caption">Productos activos en SAP sin base tarifaria configurada.</div>
+                                </div>
+                             </div>
                           )}
-                       </ul>
+                       </div>
                     </div>
                  </section>
 
                  {/* SECTION 3: PRICING MANAGER KPIs */}
                  <section>
-                    <div className="bg-surface-card rounded-[1.25rem] border border-border-subtle shadow-sm overflow-hidden">
-                       <div className="px-6 py-5 border-b border-border-subtle bg-surface-hover/50 flex justify-between items-center">
-                          <h3 className="text-sm font-bold text-text-primary flex items-center gap-2">
-                             <DollarSign className="w-4 h-4 text-brand-primary" /> Cobertura Comercial
-                          </h3>
+                    <div className="surface-card overflow-hidden">
+                       <div className="px-6 py-5 flex justify-between items-center" style={{ borderBottom: "0.5px solid var(--border-hair)" }}>
+                          <h3>Cobertura Comercial</h3>
                        </div>
                        <div className="p-6">
                           <div className="w-full bg-surface-hover h-3 rounded-full overflow-hidden mb-3">
-                             <div 
-                               className="h-full bg-emerald-500 transition-all duration-1000"
-                               style={{ width: `${pricingKPIs.coveragePct}%` }}
+                             <div
+                               className="h-full transition-all duration-1000"
+                               style={{ width: `${pricingKPIs.coveragePct}%`, background: "var(--success)" }}
                              />
                           </div>
                           <div className="flex justify-between items-center mb-6">
-                             <span className="text-[11px] font-bold text-text-muted uppercase tracking-wide">Completitud del pricing</span>
-                             <span className="text-sm font-extrabold text-text-primary">{formatPct(pricingKPIs.coveragePct)}</span>
+                             <span className="overline">Completitud del pricing</span>
+                             <span className="text-sm font-medium" style={{ color: "var(--fg-primary)" }}>{formatPct(pricingKPIs.coveragePct)}</span>
                           </div>
 
                           <div className="grid grid-cols-2 gap-3">
-                             <div className="bg-surface-hover rounded-xl p-4 border border-border-subtle flex flex-col items-center text-center">
-                                <span className="text-[10px] font-bold text-text-muted uppercase tracking-wide mb-1">Configurados</span>
-                                <span className="text-xl font-bold text-text-primary flex items-center gap-1.5"><CheckCircle2 className="w-4 h-4 text-emerald-500"/>{pricingKPIs.configuredProducts}</span>
+                             <div className="rounded-xl p-4 [border:0.5px_solid_var(--border-hair)] flex flex-col items-center text-center" style={{ background: "var(--bg-hover)" }}>
+                                <span className="overline mb-1">Configurados</span>
+                                <span className="text-xl font-medium flex items-center gap-1.5" style={{ color: "var(--fg-primary)" }}><CheckCircle2 className="w-4 h-4" strokeWidth={1.75} style={{ color: "var(--success)" }}/>{pricingKPIs.configuredProducts}</span>
                              </div>
-                             <div className="bg-surface-hover rounded-xl p-4 border border-border-subtle flex flex-col items-center text-center">
-                                <span className="text-[10px] font-bold text-text-muted uppercase tracking-wide mb-1">Pendientes</span>
-                                <span className="text-xl font-bold text-amber-600 flex items-center gap-1.5"><AlertCircle className="w-4 h-4"/>{pricingKPIs.pendingProducts}</span>
+                             <div className="rounded-xl p-4 [border:0.5px_solid_var(--border-hair)] flex flex-col items-center text-center" style={{ background: "var(--bg-hover)" }}>
+                                <span className="overline mb-1">Pendientes</span>
+                                <span className="text-xl font-medium flex items-center gap-1.5" style={{ color: "var(--warning)" }}><AlertCircle className="w-4 h-4" strokeWidth={1.75}/>{pricingKPIs.pendingProducts}</span>
                              </div>
-                             <div className="bg-surface-hover rounded-xl p-4 border border-border-subtle flex flex-col items-center text-center col-span-2">
-                                <span className="text-[10px] font-bold text-text-muted uppercase tracking-wide mb-1">Con Excepciones (No Aplica)</span>
-                                <span className="text-xl font-bold text-slate-500 flex items-center gap-1.5"><XCircle className="w-4 h-4"/>{pricingKPIs.noAplicaProducts}</span>
+                             <div className="rounded-xl p-4 [border:0.5px_solid_var(--border-hair)] flex flex-col items-center text-center col-span-2" style={{ background: "var(--bg-hover)" }}>
+                                <span className="overline mb-1">Con Excepciones (No Aplica)</span>
+                                <span className="text-xl font-medium flex items-center gap-1.5" style={{ color: "var(--fg-muted)" }}><XCircle className="w-4 h-4" strokeWidth={1.75}/>{pricingKPIs.noAplicaProducts}</span>
                              </div>
                           </div>
-                          
+
                           <div className="mt-5 text-center">
-                             <Link href="/pricing-manager" className="text-xs font-semibold text-brand-primary hover:text-brand-accent transition-colors">
+                             <Link href="/pricing-manager" className="text-xs font-semibold transition-colors" style={{ color: "var(--navy)" }}>
                                 Gestionar Listas de Precios →
                              </Link>
                           </div>
@@ -672,13 +680,13 @@ export default function ExecutiveDashboard() {
 
                  {/* Last BOM Info */}
                  <section>
-                    <div className="bg-surface-card rounded-[1.25rem] border border-border-subtle shadow-sm p-5 flex items-center gap-4">
-                       <div className="w-10 h-10 rounded-xl bg-indigo-50 dark:bg-indigo-900/20 text-indigo-600 dark:text-indigo-400 flex items-center justify-center shrink-0 border border-indigo-100 dark:border-indigo-800">
-                          <Factory className="w-5 h-5" />
+                    <div className="surface-card p-5 flex items-center gap-4">
+                       <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0" style={{ background: "var(--info-soft)", color: "var(--blue-green)" }}>
+                          <Factory className="w-5 h-5" strokeWidth={1.75} />
                        </div>
                        <div>
-                          <div className="text-[11px] font-bold text-text-muted uppercase tracking-wide mb-0.5">Última Carga Costos BOM</div>
-                          <div className="text-sm font-semibold text-text-primary">
+                          <div className="overline" style={{ marginBottom: 2 }}>Última Carga Costos BOM</div>
+                          <div className="text-sm font-medium" style={{ color: "var(--fg-primary)" }}>
                              {lastBomDate ? format(parseISO(lastBomDate), "PPP p", { locale: es }) : "No disponible"}
                           </div>
                        </div>
