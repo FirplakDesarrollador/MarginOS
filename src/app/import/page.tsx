@@ -532,8 +532,7 @@ export default function ImportBOMPage() {
             </div>
             <div className="flex items-center gap-2">
               <button type="button" onClick={handleSave} disabled={!canSave}
-                className="rounded-2xl px-4 py-2 text-sm font-medium btn-primary disabled:cursor-not-allowed"
-                style={{ background: "var(--primary)" }}>
+                className="rounded-2xl px-4 py-2 text-sm font-medium btn-primary disabled:cursor-not-allowed">
                 <span className="inline-flex items-center gap-2">
                   <Save className="h-4 w-4" /> Guardar
                 </span>
@@ -558,8 +557,7 @@ export default function ImportBOMPage() {
 
               <div className="mt-6 flex flex-wrap items-center gap-3">
                 <label htmlFor="file-upload"
-                  className="inline-flex cursor-pointer items-center rounded-2xl px-5 py-2.5 text-sm font-medium btn-primary hover:shadow-[var(--shadow-md)] transition"
-                  style={{ background: "var(--primary)" }}>
+                  className="inline-flex cursor-pointer items-center rounded-2xl px-5 py-2.5 text-sm font-medium btn-primary hover:shadow-md transition">
                   Seleccionar archivo
                 </label>
                 <input id="file-upload" type="file" accept=".xlsx,.xls" onChange={handleFileChange} className="hidden" />
@@ -576,7 +574,7 @@ export default function ImportBOMPage() {
                 Nota: Guardamos productos (Nivel 1) con su Costo_Mp recalculado (MP). El costo total del negocio se calculará en la simulación con cantidades.
               </p>
 
-              {loading && <p className="mt-4 text-sm" style={{ color: "var(--primary)" }}>Procesando archivo…</p>}
+              {loading && <p className="mt-4 text-sm text-brand-primary font-medium">Procesando archivo…</p>}
               {error && <p className="mt-4 text-sm text-red-600">{error}</p>}
               {savedMsg && <p className="mt-4 text-sm text-green-700">{savedMsg}</p>}
             </div>

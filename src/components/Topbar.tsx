@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
-import { LogOut, Menu } from "lucide-react";
+import { LogOut, Menu, Search } from "lucide-react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
@@ -10,9 +10,11 @@ import { useSidebar } from "@/contexts/SidebarContext";
 import { useTheme } from "@/contexts/ThemeContext";
 import { useTableDensity } from "@/contexts/TableDensityContext";
 import { Sun, Moon, Monitor, Columns2, LayoutList, AlignJustify } from "lucide-react";
+import { GlobalSearchModal } from "./GlobalSearchModal";
 
-export function Topbar({ title }: { title?: string }) {
+export function Topbar({ title, subtitle }: { title?: string; subtitle?: string }) {
   const [userName, setUserName] = useState<string | null>(null);
+  const [userInitials, setUserInitials] = useState<string>("U");
   const router = useRouter();
   const supabase = createClient();
   const { toggleMobile } = useSidebar();
@@ -20,6 +22,29 @@ export function Topbar({ title }: { title?: string }) {
   const { density, setDensity } = useTableDensity();
   const [themeMenuOpen, setThemeMenuOpen] = useState(false);
   const [densityMenuOpen, setDensityMenuOpen] = useState(false);
+  const [isDark, setIsDark] = useState(false);
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key === "k") {
+        e.preventDefault();
+        setIsSearchOpen(true);
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, []);
+
+  useEffect(() => {
+    if (theme === "system") {
+      setIsDark(window.matchMedia("(prefers-color-scheme: dark)").matches);
+    } else {
+      setIsDark(theme === "dark");
+    }
+  }, [theme]);
+
+  const logoSrc = isDark ? "/brand/firplak-logo-dark.png" : "/brand/firplak-logo-light.png";
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -33,10 +58,14 @@ export function Topbar({ title }: { title?: string }) {
           .eq("uuid", user.id)
           .single();
 
+        let name = user.email ?? null;
         if (data && data.nombre) {
-          setUserName(data.nombre);
-        } else {
-          setUserName(user.email ?? null);
+          name = data.nombre;
+        }
+        setUserName(name);
+        if (name) {
+          const parts = name.split(" ");
+          setUserInitials(parts.slice(0, 2).map(p => p[0]).join("").toUpperCase() || "U");
         }
       }
     };
@@ -49,7 +78,14 @@ export function Topbar({ title }: { title?: string }) {
   };
 
   return (
-    <header className="sticky top-0 z-50 w-full bg-surface-bg/80 backdrop-blur-md border-b border-border-subtle h-16 flex items-center px-4 md:px-6 shadow-sm gap-3 transition-colors duration-200">
+    <header 
+      className="sticky top-0 z-50 w-full h-14 flex items-center gap-3.5 px-6 border-b border-border-subtle transition-colors duration-200"
+      style={{
+        background: "var(--glass-tint)",
+        WebkitBackdropFilter: "blur(var(--glass-blur)) saturate(var(--glass-saturation))",
+        backdropFilter: "blur(var(--glass-blur)) saturate(var(--glass-saturation))",
+      }}
+    >
       {/* Mobile hamburger */}
       <button
         onClick={toggleMobile}
@@ -63,113 +99,155 @@ export function Topbar({ title }: { title?: string }) {
       <div className="flex md:hidden items-center">
         <Link href="/">
           <Image
-            src="/brand/firplak-logo.png"
+            src={logoSrc}
             alt="FIRPLAK"
-            width={100}
-            height={25}
-            className="h-6 w-auto"
+            width={120}
+            height={36}
+            className="max-h-9 max-w-[120px] object-contain"
             priority
           />
         </Link>
       </div>
 
-      {/* Page title */}
-      <div className="flex-1 flex items-center">
-        {title ? (
-          <h1 className="text-[17px] font-semibold tracking-tight text-text-primary hidden md:block border-l-2 border-brand-primary pl-3 ml-2">
-            {title}
-          </h1>
-        ) : null}
+      {/* Page title & subtitle */}
+      <div className="flex-col min-w-0 hidden md:flex">
+        <div className="flex items-baseline gap-3">
+          {title ? (
+            <span className="font-semibold text-base md:text-lg leading-6 text-text-primary tracking-tight">
+              {title}
+            </span>
+          ) : null}
+          {subtitle && (
+            <span className="font-mono font-medium text-[11px] leading-none text-text-muted">{subtitle}</span>
+          )}
+        </div>
       </div>
 
-      {/* Right actions */}
-      <div className="flex items-center gap-3">
-        {/* Density Switcher */}
-        <div className="relative">
-          <button
-            onClick={() => setDensityMenuOpen(!densityMenuOpen)}
-            className="inline-flex items-center justify-center p-2 rounded-full border border-border-subtle bg-surface-card text-text-muted hover:text-text-primary hover:bg-surface-hover transition duration-200 shadow-sm"
-            title="Densidad de Tablas"
-          >
-            {density === "compact" ? <AlignJustify className="h-[14px] w-[14px]" /> : density === "normal" ? <LayoutList className="h-[14px] w-[14px]" /> : <Columns2 className="h-[14px] w-[14px]" />}
-          </button>
-          
-          {densityMenuOpen && (
-            <>
-              <div className="fixed inset-0 z-40" onClick={() => setDensityMenuOpen(false)}></div>
-              <div className="absolute right-0 mt-2 w-36 bg-surface-card border border-border-subtle rounded-xl shadow-md py-1 z-[9999] overflow-hidden animate-in fade-in zoom-in-95 duration-100">
-                <button
-                  onClick={() => { setDensity("compact"); setDensityMenuOpen(false); }}
-                  className={`w-full text-left px-3 py-2 text-sm flex items-center gap-2 transition-colors ${density === "compact" ? "bg-surface-hover text-brand-primary font-medium" : "text-text-primary hover:bg-surface-hover"}`}
-                >
-                  <AlignJustify className="h-4 w-4" /> Compacto
-                </button>
-                <button
-                  onClick={() => { setDensity("normal"); setDensityMenuOpen(false); }}
-                  className={`w-full text-left px-3 py-2 text-sm flex items-center gap-2 transition-colors ${density === "normal" ? "bg-surface-hover text-brand-primary font-medium" : "text-text-primary hover:bg-surface-hover"}`}
-                >
-                  <LayoutList className="h-4 w-4" /> Normal
-                </button>
-                <button
-                  onClick={() => { setDensity("comodo"); setDensityMenuOpen(false); }}
-                  className={`w-full text-left px-3 py-2 text-sm flex items-center gap-2 transition-colors ${density === "comodo" ? "bg-surface-hover text-brand-primary font-medium" : "text-text-primary hover:bg-surface-hover"}`}
-                >
-                  <Columns2 className="h-4 w-4" /> Cómodo
-                </button>
-              </div>
-            </>
-          )}
-        </div>
+      <div className="flex-1" />
 
-        {/* Theme Switcher */}
-        <div className="relative">
-          <button
-            onClick={() => setThemeMenuOpen(!themeMenuOpen)}
-            className="inline-flex items-center justify-center p-2 rounded-full border border-border-subtle bg-surface-card text-text-muted hover:text-text-primary hover:bg-surface-hover transition duration-200 shadow-sm"
-            title="Cambiar tema"
-          >
-            {theme === "light" ? <Sun className="h-[14px] w-[14px]" /> : theme === "dark" ? <Moon className="h-[14px] w-[14px]" /> : <Monitor className="h-[14px] w-[14px]" />}
-          </button>
-          
-          {themeMenuOpen && (
-            <>
-              <div className="fixed inset-0 z-40" onClick={() => setThemeMenuOpen(false)}></div>
-              <div className="absolute right-0 mt-2 w-36 bg-surface-card border border-border-subtle rounded-xl shadow-md py-1 z-[9999] overflow-hidden animate-in fade-in zoom-in-95 duration-100">
-                <button
-                  onClick={() => { setTheme("light"); setThemeMenuOpen(false); }}
-                  className={`w-full text-left px-3 py-2 text-sm flex items-center gap-2 transition-colors ${theme === "light" ? "bg-surface-hover text-brand-primary font-medium" : "text-text-primary hover:bg-surface-hover"}`}
-                >
-                  <Sun className="h-4 w-4" /> Claro
-                </button>
-                <button
-                  onClick={() => { setTheme("dark"); setThemeMenuOpen(false); }}
-                  className={`w-full text-left px-3 py-2 text-sm flex items-center gap-2 transition-colors ${theme === "dark" ? "bg-surface-hover text-brand-primary font-medium" : "text-text-primary hover:bg-surface-hover"}`}
-                >
-                  <Moon className="h-4 w-4" /> Oscuro
-                </button>
-                <button
-                  onClick={() => { setTheme("system"); setThemeMenuOpen(false); }}
-                  className={`w-full text-left px-3 py-2 text-sm flex items-center gap-2 transition-colors ${theme === "system" ? "bg-surface-hover text-brand-primary font-medium" : "text-text-primary hover:bg-surface-hover"}`}
-                >
-                  <Monitor className="h-4 w-4" /> Automático
-                </button>
-              </div>
-            </>
-          )}
-        </div>
+      {/* Command-K search (Triggers Modal) */}
+      <button
+        onClick={() => setIsSearchOpen(true)}
+        className="hidden md:inline-flex items-center gap-2.5 h-9 px-3 min-w-[280px] bg-surface-card border border-[rgba(15,22,36,0.10)] rounded-[10px] text-text-muted font-sans font-medium text-[12px] leading-none shadow-[0_1px_0_0_rgba(15,22,36,0.04)] cursor-pointer hover:border-[rgba(15,22,36,0.22)] transition-colors"
+      >
+        <Search className="w-3.5 h-3.5" strokeWidth={2} />
+        <span className="flex-1 text-left">Buscar simulación, cliente, SAP…</span>
+        <span className="inline-flex gap-1">
+          <span className="inline-flex items-center justify-center min-w-[18px] h-[18px] px-1 rounded bg-[rgba(15,22,36,0.05)] border border-[rgba(15,22,36,0.10)] font-mono font-semibold text-[10px] leading-none text-text-muted">⌘</span>
+          <span className="inline-flex items-center justify-center min-w-[18px] h-[18px] px-1 rounded bg-[rgba(15,22,36,0.05)] border border-[rgba(15,22,36,0.10)] font-mono font-semibold text-[10px] leading-none text-text-muted">K</span>
+        </span>
+      </button>
 
-        <div className="hidden sm:inline-flex items-center gap-2 rounded-full border border-border-subtle bg-surface-hover px-3 py-1.5 text-xs font-semibold shadow-sm text-text-primary transition duration-200">
-          {userName || "..."}
-        </div>
+      <div className="w-px h-6 bg-[rgba(15,22,36,0.10)] hidden md:block" />
+
+      {/* Density Switcher */}
+      <div className="relative hidden md:block">
         <button
-          onClick={handleLogout}
-          className="inline-flex items-center justify-center gap-1.5 rounded-full border border-border-subtle bg-surface-card text-text-muted px-3 py-1.5 text-xs font-semibold hover:border-red-200 hover:bg-red-50 hover:text-red-700 dark:hover:bg-red-900/20 dark:hover:text-red-400 transition duration-200 shadow-sm cursor-pointer"
-          title="Cerrar sesión"
+          onClick={() => setDensityMenuOpen(!densityMenuOpen)}
+          className="w-9 h-9 rounded-[9px] bg-surface-card border border-[rgba(15,22,36,0.10)] text-text-muted cursor-pointer inline-flex items-center justify-center shadow-[0_1px_0_0_rgba(15,22,36,0.04)] hover:bg-surface-hover hover:text-text-primary transition-colors"
+          title="Densidad de Tablas"
         >
-          <LogOut className="h-[14px] w-[14px]" />
-          <span className="hidden sm:inline">Salir</span>
+          {density === "compact" ? <AlignJustify className="w-3.5 h-3.5" strokeWidth={2} /> : density === "normal" ? <LayoutList className="w-3.5 h-3.5" strokeWidth={2} /> : <Columns2 className="w-3.5 h-3.5" strokeWidth={2} />}
         </button>
+        
+        {densityMenuOpen && (
+          <>
+            <div className="fixed inset-0 z-40" onClick={() => setDensityMenuOpen(false)}></div>
+            <div className="absolute right-0 mt-2 w-36 bg-surface-card border border-border-subtle rounded-xl shadow-[0_4px_12px_rgba(0,0,0,0.1)] py-1 z-[9999] overflow-hidden animate-in fade-in zoom-in-95 duration-100">
+              <button
+                onClick={() => { setDensity("compact"); setDensityMenuOpen(false); }}
+                className={`w-full text-left px-3 py-2 text-sm flex items-center gap-2 transition-colors ${density === "compact" ? "bg-surface-hover text-brand-primary font-medium" : "text-text-primary hover:bg-surface-hover"}`}
+              >
+                <AlignJustify className="h-4 w-4" /> Compacto
+              </button>
+              <button
+                onClick={() => { setDensity("normal"); setDensityMenuOpen(false); }}
+                className={`w-full text-left px-3 py-2 text-sm flex items-center gap-2 transition-colors ${density === "normal" ? "bg-surface-hover text-brand-primary font-medium" : "text-text-primary hover:bg-surface-hover"}`}
+              >
+                <LayoutList className="h-4 w-4" /> Normal
+              </button>
+              <button
+                onClick={() => { setDensity("comodo"); setDensityMenuOpen(false); }}
+                className={`w-full text-left px-3 py-2 text-sm flex items-center gap-2 transition-colors ${density === "comodo" ? "bg-surface-hover text-brand-primary font-medium" : "text-text-primary hover:bg-surface-hover"}`}
+              >
+                <Columns2 className="h-4 w-4" /> Cómodo
+              </button>
+            </div>
+          </>
+        )}
       </div>
+
+      {/* Theme Switcher */}
+      <div className="relative">
+        <button
+          onClick={() => setThemeMenuOpen(!themeMenuOpen)}
+          className="w-9 h-9 rounded-[9px] bg-surface-card border border-[rgba(15,22,36,0.10)] text-text-muted cursor-pointer inline-flex items-center justify-center shadow-[0_1px_0_0_rgba(15,22,36,0.04)] hover:bg-surface-hover hover:text-text-primary transition-colors"
+          title={`Tema: ${theme}`}
+        >
+          {theme === "light" ? <Sun className="w-3.5 h-3.5" strokeWidth={2} /> : theme === "dark" ? <Moon className="w-3.5 h-3.5" strokeWidth={2} /> : <Monitor className="w-3.5 h-3.5" strokeWidth={2} />}
+        </button>
+        
+        {themeMenuOpen && (
+          <>
+            <div className="fixed inset-0 z-40" onClick={() => setThemeMenuOpen(false)}></div>
+            <div className="absolute right-0 mt-2 w-36 bg-surface-card border border-border-subtle rounded-xl shadow-[0_4px_12px_rgba(0,0,0,0.1)] py-1 z-[9999] overflow-hidden animate-in fade-in zoom-in-95 duration-100">
+              <button
+                onClick={() => { setTheme("light"); setThemeMenuOpen(false); }}
+                className={`w-full text-left px-3 py-2 text-sm flex items-center gap-2 transition-colors ${theme === "light" ? "bg-surface-hover text-brand-primary font-medium" : "text-text-primary hover:bg-surface-hover"}`}
+              >
+                <Sun className="h-4 w-4" /> Claro
+              </button>
+              <button
+                onClick={() => { setTheme("dark"); setThemeMenuOpen(false); }}
+                className={`w-full text-left px-3 py-2 text-sm flex items-center gap-2 transition-colors ${theme === "dark" ? "bg-surface-hover text-brand-primary font-medium" : "text-text-primary hover:bg-surface-hover"}`}
+              >
+                <Moon className="h-4 w-4" /> Oscuro
+              </button>
+              <button
+                onClick={() => { setTheme("system"); setThemeMenuOpen(false); }}
+                className={`w-full text-left px-3 py-2 text-sm flex items-center gap-2 transition-colors ${theme === "system" ? "bg-surface-hover text-brand-primary font-medium" : "text-text-primary hover:bg-surface-hover"}`}
+              >
+                <Monitor className="h-4 w-4" /> Automático
+              </button>
+            </div>
+          </>
+        )}
+      </div>
+
+      {/* User chip */}
+      <div 
+        className="hidden sm:inline-flex items-center gap-2 p-[4px_14px_4px_4px] bg-surface-card border border-[rgba(15,22,36,0.10)] rounded-full shadow-[0_1px_0_0_rgba(15,22,36,0.04)] hover:shadow-[0_4px_12px_rgba(15,22,36,0.08)] transition-shadow cursor-pointer relative group"
+      >
+        <span className="w-7 h-7 rounded-full bg-brand-primary text-brand-primary-foreground inline-flex items-center justify-center font-sans font-semibold text-[11px] leading-none">
+          {userInitials}
+        </span>
+        <span className="font-sans font-semibold text-[12px] leading-[1.2] text-text-primary truncate max-w-[150px]">
+          {userName || "..."}
+        </span>
+        
+        {/* Simple hover dropdown for logout */}
+        <div className="absolute top-full right-0 mt-2 w-36 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-[9999]">
+          <div className="bg-surface-card border border-border-subtle rounded-xl shadow-[0_4px_12px_rgba(0,0,0,0.1)] p-1 overflow-hidden">
+            <button
+              onClick={handleLogout}
+              className="w-full text-left px-3 py-2 text-sm flex items-center gap-2 text-red-600 hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-900/20 rounded-lg transition-colors"
+            >
+              <LogOut className="w-4 h-4" /> Salir
+            </button>
+          </div>
+        </div>
+      </div>
+      
+      {/* Logout button visible on mobile */}
+      <button
+        onClick={handleLogout}
+        className="sm:hidden inline-flex items-center justify-center p-2 rounded-lg text-text-muted hover:bg-surface-hover hover:text-red-600 transition-colors"
+        title="Cerrar sesión"
+      >
+        <LogOut className="h-5 w-5" />
+      </button>
+
+      <GlobalSearchModal isOpen={isSearchOpen} onClose={() => setIsSearchOpen(false)} />
     </header>
   );
 }

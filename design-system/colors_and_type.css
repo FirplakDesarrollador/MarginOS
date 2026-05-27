@@ -4,6 +4,8 @@
    v2 — Liquid Glass / Premium Enterprise refresh
    ============================================================= */
 
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Geist+Mono:wght@400;500;600&family=Geist:wght@300;400;500;600;700&display=swap");
+
 :root {
   /* ── Brand ───────────────────────────────────────────────── */
   --brand-navy: #254153;          /* Firplak primary */

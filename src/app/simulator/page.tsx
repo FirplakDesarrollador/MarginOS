@@ -47,6 +47,7 @@ function SimulatorContent() {
   const [productos, setProductos] = useState<Producto[]>([]);
   const [inputs, setInputs] = useState<Record<string, Inputs>>({});
   const [margenObjetivo, setMargenObjetivo] = useState<number>(65);
+  const [commissionPct, setCommissionPct] = useState<number>(0);
   
   // ==========================================
   // ESTADOS DE METADATA (CABECERA)
@@ -133,11 +134,14 @@ function SimulatorContent() {
            setSimulationStatus(sim.status || "DRAFT");
            setSimulationNumber(sim.simulation_number || null);
            setMargenObjetivo(sim.target_margin_pct ?? 65);
-           setSimulationType(sim.simulation_type || "PRICE_LIST");
+           setSimulationType(
+             (sim.commission_pct && sim.commission_pct > 0) ? "COMMISSION" : (sim.simulation_type || "PRICE_LIST")
+           );
            setCurrency(sim.currency || "COP");
            setTrm(sim.trm || "");
            setValidFrom(sim.valid_from ? sim.valid_from.split("T")[0] : "");
            setValidTo(sim.valid_to ? sim.valid_to.split("T")[0] : "");
+           setCommissionPct(sim.commission_pct ?? 0);
            
            // Fetch if it is a version of something
            const { data: ver, error: verErr } = await supabase
@@ -296,22 +300,42 @@ function SimulatorContent() {
     const descuento = Number(inputs[p.row_id]?.descuento || 0);
     const cantidad = Number(inputs[p.row_id]?.cantidad || 0);
 
-    const ingresoBrutoDisplay = precioDisplay * cantidad;
-    const ingresoNetoDisplay = ingresoBrutoDisplay * (1 - descuento / 100);
+    const ingresoBrutoBase = precioDisplay * cantidad;
+    const ingresoNetoBase = ingresoBrutoBase * (1 - descuento / 100);
     
+    // COMMISSION GROSS UP (Inflates the customer-facing price)
+    const isCommission = simulationType === "COMMISSION" && commissionPct > 0;
+    const ingresoNetoDisplay = isCommission 
+      ? ingresoNetoBase / (1 - commissionPct / 100) 
+      : ingresoNetoBase;
+    
+    const ingresoBrutoDisplay = isCommission && (1 - descuento / 100) > 0
+      ? ingresoNetoDisplay / (1 - descuento / 100)
+      : ingresoBrutoBase;
+      
     // Convert to COP if needed
     const isUSD = currency === "USD";
     const trmValue = Number(trm) || 0;
     
+    // This is the total value invoiced to the customer (inflated)
     const ingresoNetoCop = isUSD ? ingresoNetoDisplay * trmValue : ingresoNetoDisplay;
+    
+    // Real Revenue FIRPLAK keeps after commission is deducted
+    const commissionValueCop = isCommission ? ingresoNetoCop * (commissionPct / 100) : 0;
+    const realRevenueCop = ingresoNetoCop - commissionValueCop;
+
     const costoTotalCop = p.Costo_Mp * cantidad;
-    const contribucionCop = ingresoNetoCop - costoTotalCop;
-    const margen = ingresoNetoCop > 0 ? (contribucionCop / ingresoNetoCop) * 100 : 0;
+    
+    // Contribution and Margin MUST use the real revenue
+    const contribucionCop = realRevenueCop - costoTotalCop;
+    const margen = realRevenueCop > 0 ? (contribucionCop / realRevenueCop) * 100 : 0;
 
     return { 
       ingresoBrutoDisplay, 
       ingresoNetoDisplay, 
       ingresoNetoCop,
+      commissionValueCop,
+      realRevenueCop,
       costoTotalCop, 
       contribucionCop, 
       margen, 
@@ -323,23 +347,34 @@ function SimulatorContent() {
   }
 
   const resumen = useMemo(() => {
-    let ingresoNetoTotalCop = 0;
+    let ingresoNetoTotalCop = 0; // Inflated (if commission)
     let costoTotalTotalCop = 0;
     let contribucionTotalCop = 0;
+    let commissionTotalCop = 0;
+    let realRevenueTotalCop = 0; // Real FIRPLAK revenue
 
     for (const p of productos) {
       const r = calcularLinea(p);
       ingresoNetoTotalCop += r.ingresoNetoCop;
       costoTotalTotalCop += r.costoTotalCop;
       contribucionTotalCop += r.contribucionCop;
+      commissionTotalCop += r.commissionValueCop;
+      realRevenueTotalCop += r.realRevenueCop;
     }
 
     const margenTotal =
-      ingresoNetoTotalCop > 0 ? (contribucionTotalCop / ingresoNetoTotalCop) * 100 : 0;
+      realRevenueTotalCop > 0 ? (contribucionTotalCop / realRevenueTotalCop) * 100 : 0;
 
-    return { ingresoNetoTotalCop, costoTotalTotalCop, contribucionTotalCop, margenTotal };
+    return { 
+      ingresoNetoTotalCop, 
+      costoTotalTotalCop, 
+      contribucionTotalCop, 
+      margenTotal,
+      commissionTotalCop,
+      realRevenueTotalCop
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [productos, inputs, currency, trm]);
+  }, [productos, inputs, currency, trm, simulationType, commissionPct]);
 
   // ==========================================
   // FUNCION PRINCIPAL: GUARDAR SIMULACION
@@ -370,14 +405,17 @@ function SimulatorContent() {
       const headerPayload = {
         customer_id: customer.id,
         channel_id: customer.default_channel_id || null,
-        simulation_type: simulationType,
+        simulation_type: simulationType === "COMMISSION" ? "PRICE_LIST" : simulationType,
         project_name: projectName || null,
         currency,
         trm: currency === "USD" ? Number(trm) : null,
         valid_from: validFrom || null,
         valid_to: validTo || null,
         status: targetId ? simulationStatus : "DRAFT",
-        target_margin_pct: margenObjetivo
+        target_margin_pct: margenObjetivo,
+        commission_pct: simulationType === "COMMISSION" ? (commissionPct || 0) : 0,
+        commission_amount: simulationType === "COMMISSION" ? (resumen.commissionTotalCop || 0) : 0,
+        real_revenue_after_commission: simulationType === "COMMISSION" ? (resumen.realRevenueTotalCop || 0) : (resumen.ingresoNetoTotalCop || 0)
       };
 
       let finalSimId;
@@ -439,7 +477,10 @@ function SimulatorContent() {
       setTimeout(() => setSaveSuccess(false), 4000); // clear success msg after a while
       
     } catch (err: any) {
-      console.error(err);
+      console.error("Save Error:", err.message, err.details, err.hint, "Payload:", {
+        simulation_type: simulationType === "COMMISSION" ? "PRICE_LIST" : simulationType,
+        commission_pct: commissionPct
+      });
       setSaveError(err.message || "Ocurrió un error guardando la simulación.");
     } finally {
       setIsSaving(false);
@@ -470,14 +511,17 @@ function SimulatorContent() {
       const headerPayload = {
         customer_id: customer.id,
         channel_id: customer.default_channel_id || null,
-        simulation_type: simulationType,
+        simulation_type: simulationType === "COMMISSION" ? "PRICE_LIST" : simulationType,
         project_name: projectName || null,
         currency,
         trm: currency === "USD" ? Number(trm) : null,
         valid_from: validFrom || null,
         valid_to: validTo || null,
         status: "VIGENTE",
-        target_margin_pct: margenObjetivo
+        target_margin_pct: margenObjetivo,
+        commission_pct: simulationType === "COMMISSION" ? (commissionPct || 0) : 0,
+        commission_amount: simulationType === "COMMISSION" ? (resumen.commissionTotalCop || 0) : 0,
+        real_revenue_after_commission: simulationType === "COMMISSION" ? (resumen.realRevenueTotalCop || 0) : (resumen.ingresoNetoTotalCop || 0)
       };
 
       // 1. Crear nuevo header simulación
@@ -566,7 +610,7 @@ function SimulatorContent() {
       router.push(`/simulator?id=${newSimId}`);
 
     } catch (err: any) {
-      console.error(err);
+      console.error("Save Nueva Versión Error:", err.message, err.details, err.hint);
       setSaveError(err.message || "Ocurrió un error clonando/actualizando la simulación.");
     } finally {
       setIsSaving(false);
@@ -626,14 +670,17 @@ function SimulatorContent() {
         const headerPayload = {
           customer_id: customer.id,
           channel_id: customer.default_channel_id || null,
-          simulation_type: simulationType,
+          simulation_type: simulationType === "COMMISSION" ? "PRICE_LIST" : simulationType,
           project_name: projectName || null,
           currency,
           trm: currency === "USD" ? Number(trm) : null,
           valid_from: validFrom || null,
           valid_to: validTo || null,
           updated_at: new Date().toISOString(),
-          target_margin_pct: margenObjetivo
+          target_margin_pct: margenObjetivo,
+          commission_pct: simulationType === "COMMISSION" ? (commissionPct || 0) : 0,
+          commission_amount: simulationType === "COMMISSION" ? (resumen.commissionTotalCop || 0) : 0,
+          real_revenue_after_commission: simulationType === "COMMISSION" ? (resumen.realRevenueTotalCop || 0) : (resumen.ingresoNetoTotalCop || 0)
         };
 
         let targetSimId = editId || autosavedDraftId;
@@ -677,8 +724,8 @@ function SimulatorContent() {
         setLastSavedAt(now);
         setAutosaveStatus("SAVED");
         setIsDirty(false); // Reset dirty flag because changes are persisted
-      } catch (err) {
-        console.error("Autosave failed", err);
+      } catch (err: any) {
+        console.error("Autosave failed:", err.message, err.details, err.hint);
         setAutosaveStatus("ERROR");
       }
     }, 2000); // 2 second debounce
@@ -703,7 +750,7 @@ function SimulatorContent() {
       const headerPayload = {
         customer_id: customer.id,
         channel_id: customer.default_channel_id || null,
-        simulation_type: simulationType,
+        simulation_type: simulationType === "COMMISSION" ? "PRICE_LIST" : simulationType,
         project_name: projectName || null,
         currency,
         trm: currency === "USD" ? Number(trm) : null,
@@ -711,7 +758,10 @@ function SimulatorContent() {
         valid_to: validTo || null,
         status: "VIGENTE",
         updated_at: new Date().toISOString(),
-        target_margin_pct: margenObjetivo
+        target_margin_pct: margenObjetivo,
+        commission_pct: simulationType === "COMMISSION" ? (commissionPct || 0) : 0,
+        commission_amount: simulationType === "COMMISSION" ? (resumen.commissionTotalCop || 0) : 0,
+        real_revenue_after_commission: simulationType === "COMMISSION" ? (resumen.realRevenueTotalCop || 0) : (resumen.ingresoNetoTotalCop || 0)
       };
 
       await supabase.from("simulations").update(headerPayload).eq("id", targetId);
@@ -741,6 +791,7 @@ function SimulatorContent() {
       setSaveSuccess(true);
       setTimeout(() => setSaveSuccess(false), 4000);
     } catch (err: any) {
+      console.error("Confirmar Error:", err.message, err.details, err.hint);
       setSaveError(err.message || "Error al confirmar la simulación.");
     } finally {
       setIsSaving(false);
@@ -834,6 +885,11 @@ function SimulatorContent() {
               <div className="text-lg font-semibold tracking-tight">
                 {formatMoney(resumen.ingresoNetoTotalCop)} <span className="text-xs font-normal text-text-muted">(COP)</span>
               </div>
+              {simulationType === "COMMISSION" && resumen.commissionTotalCop > 0 && (
+                <div className="mt-1 text-[10px] text-amber-700 bg-amber-50 border border-amber-200 px-1.5 py-0.5 rounded font-medium inline-block">
+                  Incluye {formatMoney(resumen.commissionTotalCop)} comisión
+                </div>
+              )}
             </div>
 
             <div>
@@ -954,8 +1010,34 @@ function SimulatorContent() {
             >
               <option value="PRICE_LIST">Lista de precios</option>
               <option value="PROJECT_PROMO">Proyecto / Promoción</option>
+              <option value="COMMISSION">Intermediario / Comisionista</option>
             </select>
           </div>
+
+          {simulationType === "COMMISSION" && (
+            <div className="col-span-1 md:col-span-2 lg:col-span-3 xl:col-span-4 rounded-xl p-3 border border-border-subtle bg-surface-hover flex flex-col md:flex-row gap-4 items-start md:items-center animate-in fade-in slide-in-from-top-2">
+               <div className="flex-none flex items-center gap-3">
+                 <label className="text-sm font-medium text-text-primary">% Comisión</label>
+                 <div className="relative w-24">
+                   <input 
+                     type="text"
+                     value={commissionPct === 0 ? "" : commissionPct}
+                     onChange={e => {
+                       const val = e.target.value.replace(/[^0-9.]/g, '');
+                       setCommissionPct(Number(val));
+                       setIsDirty(true);
+                     }}
+                     placeholder="0"
+                     className="w-full border border-border-subtle bg-surface-card rounded-md pl-3 pr-7 py-1.5 focus:outline-none focus:ring-2 focus:ring-brand-primary focus:border-brand-primary text-sm transition-all font-semibold text-text-primary"
+                   />
+                   <span className="absolute right-2 top-1.5 text-text-muted font-medium select-none pointer-events-none">%</span>
+                 </div>
+               </div>
+               <p className="text-xs text-text-muted">
+                 Calcula el precio al cliente cubriendo la comisión, sin inflar el margen real FIRPLAK.
+               </p>
+            </div>
+          )}
 
           {/* Fila 2 - Configuración Monetaria y Fechas */}
           <div className="col-span-1">
@@ -1242,8 +1324,11 @@ function SimulatorContent() {
 
                       {/* P. Neto */}
                       <td className={`text-right align-middle ${tableStyles.td}`}>
-                        <div className="font-semibold text-text-primary">
-                          {formatMoney(r.precioDisplay * (1 - r.descuento / 100), currency === "USD")}
+                        <div 
+                          className="font-semibold text-text-primary"
+                          title={simulationType === "COMMISSION" && commissionPct > 0 ? `Incluye ${commissionPct}% de comisión gross-up` : undefined}
+                        >
+                          {formatMoney(r.ingresoNetoDisplay / (r.cantidad || 1), currency === "USD")}
                         </div>
                       </td>
 
@@ -1260,7 +1345,10 @@ function SimulatorContent() {
                       </td>
 
                       {/* Ing. Neto */}
-                      <td className={`text-right font-semibold text-text-primary align-middle ${tableStyles.td}`}>
+                      <td 
+                        className={`text-right font-semibold text-text-primary align-middle ${tableStyles.td}`}
+                        title={simulationType === "COMMISSION" && r.commissionValueCop > 0 ? `Incluye comisión de ${formatMoney(r.commissionValueCop)} COP` : undefined}
+                      >
                         {formatMoney(r.ingresoNetoDisplay, currency === "USD")}
                       </td>
 

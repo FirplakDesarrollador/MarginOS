@@ -19,6 +19,8 @@ import {
   BadgeDollarSign,
 } from "lucide-react";
 import { useSidebar } from "@/contexts/SidebarContext";
+import { useTheme } from "@/contexts/ThemeContext";
+import { useEffect, useState } from "react";
 
 const navGroups = [
   {
@@ -46,101 +48,84 @@ const navGroups = [
 // ─── Desktop sidebar ───────────────────────────────────────────────────────────
 export function Sidebar() {
   const pathname = usePathname();
-  const { isCollapsed, isHovered, isExpanded, setIsCollapsed, setIsHovered } =
-    useSidebar();
+  const { isCollapsed, isHovered, isExpanded, setIsCollapsed, setIsHovered } = useSidebar();
+  const { theme } = useTheme();
+  const [isDark, setIsDark] = useState(false);
+
+  useEffect(() => {
+    if (theme === "system") {
+      setIsDark(window.matchMedia("(prefers-color-scheme: dark)").matches);
+    } else {
+      setIsDark(theme === "dark");
+    }
+  }, [theme]);
+
+  const logoSrc = isDark ? "/brand/firplak-logo-dark.png" : "/brand/firplak-logo-light.png";
+
+  const width = isExpanded ? 240 : 64;
 
   return (
     <aside
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       style={{
-        width: isExpanded ? "15rem" : "4rem",
-        minWidth: isExpanded ? "15rem" : "4rem",
+        width,
+        minWidth: width,
       }}
       className={[
-        // base
         "hidden md:flex flex-col h-screen sticky top-0 z-40",
-        "bg-surface-bg border-r border-border-subtle",
-        "overflow-hidden transition-[width,min-width] duration-200 ease-in-out",
-        "shadow-[1px_0_6px_-2px_rgba(0,0,0,0.07)]",
+        "bg-surface-card border-r border-border-subtle shrink-0",
+        "overflow-hidden transition-[width,min-width] duration-200 ease-out",
       ].join(" ")}
     >
-      {/* ── Logo / brand ── */}
-      <div className="flex items-center justify-between px-3 py-5 shrink-0">
-        <div
-          className={[
-            "flex items-center gap-3 overflow-hidden",
-            "transition-opacity duration-150",
-            isExpanded ? "opacity-100" : "opacity-0 pointer-events-none w-0",
-          ].join(" ")}
-        >
-          <Image
-            src="/brand/firplak-logo.png"
-            alt="FIRPLAK"
-            width={110}
-            height={28}
-            className="h-7 w-auto shrink-0"
-            priority
-          />
-        </div>
-
-        {/* Icon-only logo when collapsed */}
-        {!isExpanded && (
-          <div className="w-full flex justify-center">
-            <Image
-              src="/brand/firplak-logo.png"
-              alt="FIRPLAK"
-              width={28}
-              height={28}
-              className="h-7 w-7 object-contain"
-              priority
-            />
+      {/* Brand */}
+      <div 
+        className={[
+          "flex items-center h-16 border-b border-border-subtle shrink-0",
+          isExpanded ? "justify-between px-4" : "justify-center px-0"
+        ].join(" ")}
+      >
+        <div className="flex flex-col">
+          <div className="flex items-center gap-2.5 overflow-hidden transition-all duration-200">
+            {isExpanded ? (
+              <Image src={logoSrc} alt="FIRPLAK" width={120} height={36} className="max-h-9 max-w-[120px] object-contain" priority />
+            ) : (
+              <Image src={logoSrc} alt="FIRPLAK" width={28} height={28} className="max-h-7 max-w-7 object-contain" priority />
+            )}
           </div>
-        )}
-
-        {/* Collapse toggle — only visible when expanded (pinned or hovered) */}
+          {isExpanded && (
+            <div className="text-[10px] text-text-muted mt-1 opacity-60 font-medium pl-1">
+              MarginOS v1.1.1
+            </div>
+          )}
+        </div>
+        
         {isExpanded && (
           <button
             onClick={() => setIsCollapsed(!isCollapsed)}
-            className="shrink-0 p-1.5 rounded-lg text-text-muted hover:text-text-primary hover:bg-surface-hover transition-colors"
-            title={isCollapsed ? "Expandir menú" : "Colapsar menú"}
+            className="w-7 h-7 rounded-lg border border-transparent bg-transparent text-text-muted inline-flex items-center justify-center cursor-pointer hover:bg-surface-hover hover:text-text-primary transition-colors"
+            aria-label="Colapsar"
           >
-            {isCollapsed ? (
-              <ChevronRight className="h-4 w-4" />
-            ) : (
-              <ChevronLeft className="h-4 w-4" />
-            )}
+            <ChevronLeft className="w-3.5 h-3.5" strokeWidth={2} />
           </button>
         )}
       </div>
 
-      {/* Version badge */}
-      <div
+      {/* Nav */}
+      <nav 
         className={[
-          "px-3 pb-3 shrink-0 transition-opacity duration-150",
-          isExpanded ? "opacity-100" : "opacity-0",
+          "flex-1 overflow-y-auto flex flex-col gap-4 scrollbar-thin",
+          isExpanded ? "p-[14px_12px]" : "p-[12px_8px]"
         ].join(" ")}
       >
-        <span className="text-[10px] font-semibold tracking-tight text-text-muted opacity-70 px-1">
-          MarginOS <span className="font-normal opacity-70 ml-1">v1.1</span>
-        </span>
-      </div>
-
-      {/* ── Nav ── */}
-      <nav className="flex-1 overflow-y-auto px-2 pb-6 space-y-5 mt-1 scrollbar-thin">
         {navGroups.map((group, i) => (
           <div key={i}>
-            {/* Group label — hidden when collapsed */}
-            <div
-              className={[
-                "px-2 text-[10px] font-bold uppercase tracking-wider text-text-muted transition-all duration-150 whitespace-nowrap overflow-hidden",
-                isExpanded ? "mb-2 opacity-70 max-h-8" : "mb-0 opacity-0 max-h-0 max-w-0 p-0 pointer-events-none",
-              ].join(" ")}
-            >
-              {group.title}
-            </div>
-
-            <div className="space-y-0.5">
+            {isExpanded && (
+              <div className="px-2.5 pb-1.5 pt-1 font-sans font-semibold text-[10px] leading-none tracking-[0.14em] uppercase text-text-muted opacity-70">
+                {group.title}
+              </div>
+            )}
+            <div className="flex flex-col gap-0.5">
               {group.items.map((item, j) => {
                 const isActive =
                   pathname === item.href ||
@@ -151,30 +136,25 @@ export function Sidebar() {
                     href={item.href}
                     title={!isExpanded ? item.title : undefined}
                     className={[
-                      "flex items-center gap-3 px-2 py-2.5 text-sm font-medium rounded-xl transition-all duration-150",
-                      isExpanded ? "" : "justify-center",
+                      "flex items-center gap-3 rounded-[11px] cursor-pointer border border-transparent w-full transition-all duration-200 ease-out text-left",
+                      isExpanded ? "justify-start py-2 px-2.5" : "justify-center py-2.5 px-0",
                       isActive
-                        ? "bg-brand-primary/[0.08] text-brand-primary"
-                        : "text-text-muted hover:bg-surface-hover hover:text-text-primary",
+                        ? "bg-[rgba(37,65,83,0.08)] text-brand-primary font-semibold"
+                        : "bg-transparent text-text-muted font-medium hover:bg-surface-hover hover:text-text-primary",
                     ].join(" ")}
                   >
                     <item.icon
                       className={[
                         "shrink-0",
-                        isActive ? "text-brand-primary" : "text-text-muted",
-                        isExpanded ? "h-[18px] w-[18px]" : "h-5 w-5",
+                        isExpanded ? "w-[16px] h-[16px]" : "w-[18px] h-[18px]",
                       ].join(" ")}
+                      strokeWidth={isActive ? 2 : 1.75}
                     />
-                    <span
-                      className={[
-                        "truncate transition-all duration-150 whitespace-nowrap overflow-hidden",
-                        isExpanded
-                          ? "opacity-100 max-w-[160px]"
-                          : "opacity-0 max-w-0 pointer-events-none",
-                      ].join(" ")}
-                    >
-                      {item.title}
-                    </span>
+                    {isExpanded && (
+                      <span className="truncate whitespace-nowrap text-[13px] leading-[1.2] tracking-[-0.004em]">
+                        {item.title}
+                      </span>
+                    )}
                   </Link>
                 );
               })}
@@ -182,6 +162,19 @@ export function Sidebar() {
           </div>
         ))}
       </nav>
+
+      {/* Collapse-toggle when collapsed */}
+      {!isExpanded && (
+        <div className="border-t border-border-subtle p-2 flex justify-center">
+          <button
+            onClick={() => setIsCollapsed(!isCollapsed)}
+            className="w-8 h-8 rounded-[9px] border border-[rgba(15,22,36,0.10)] bg-surface-card text-text-muted inline-flex items-center justify-center cursor-pointer hover:bg-surface-hover hover:text-text-primary transition-colors"
+            aria-label="Expandir"
+          >
+            <ChevronRight className="w-3.5 h-3.5" strokeWidth={2} />
+          </button>
+        </div>
+      )}
     </aside>
   );
 }
@@ -190,13 +183,24 @@ export function Sidebar() {
 export function MobileSidebar() {
   const pathname = usePathname();
   const { isMobileOpen, closeMobile } = useSidebar();
+  const { theme } = useTheme();
+  const [isDark, setIsDark] = useState(false);
+
+  useEffect(() => {
+    if (theme === "system") {
+      setIsDark(window.matchMedia("(prefers-color-scheme: dark)").matches);
+    } else {
+      setIsDark(theme === "dark");
+    }
+  }, [theme]);
+
+  const logoSrc = isDark ? "/brand/firplak-logo-dark.png" : "/brand/firplak-logo-light.png";
 
   return (
     <>
-      {/* Backdrop */}
       <div
         className={[
-          "md:hidden fixed inset-0 z-40 bg-slate-900/50 backdrop-blur-sm transition-opacity duration-200",
+          "md:hidden fixed inset-0 z-40 bg-[rgba(10,13,20,0.5)] backdrop-blur-sm transition-opacity duration-200",
           isMobileOpen
             ? "opacity-100 pointer-events-auto"
             : "opacity-0 pointer-events-none",
@@ -204,39 +208,33 @@ export function MobileSidebar() {
         onClick={closeMobile}
       />
 
-      {/* Drawer panel */}
       <aside
         className={[
           "md:hidden fixed inset-y-0 left-0 z-50 w-64 flex flex-col",
-          "bg-surface-bg border-r border-border-subtle shadow-xl",
-          "transition-transform duration-200 ease-in-out",
+          "bg-surface-card border-r border-border-subtle shadow-xl",
+          "transition-transform duration-200 ease-out",
           isMobileOpen ? "translate-x-0" : "-translate-x-full",
         ].join(" ")}
       >
-        <div className="flex items-center justify-between px-4 py-4 border-b border-border-subtle">
-          <Image
-            src="/brand/firplak-logo.png"
-            alt="FIRPLAK"
-            width={110}
-            height={28}
-            className="h-7 w-auto"
-            priority
-          />
+        <div className="flex items-center justify-between h-16 px-4 border-b border-border-subtle shrink-0">
+          <div className="flex items-center gap-2.5 overflow-hidden">
+            <Image src={logoSrc} alt="FIRPLAK" width={120} height={36} className="max-h-9 max-w-[120px] object-contain" priority />
+          </div>
           <button
             onClick={closeMobile}
             className="p-1.5 rounded-lg text-text-muted hover:text-text-primary hover:bg-surface-hover transition-colors"
           >
-            <X className="h-4 w-4" />
+            <X className="w-4 h-4" strokeWidth={2} />
           </button>
         </div>
 
-        <nav className="flex-1 overflow-y-auto px-3 py-4 space-y-5">
+        <nav className="flex-1 overflow-y-auto p-[14px_12px] flex flex-col gap-4">
           {navGroups.map((group, i) => (
             <div key={i}>
-              <div className="mb-2 px-2 text-[10px] font-bold uppercase tracking-wider text-text-muted opacity-70">
+              <div className="px-2.5 pb-1.5 pt-1 font-sans font-semibold text-[10px] leading-none tracking-[0.14em] uppercase text-text-muted opacity-70">
                 {group.title}
               </div>
-              <div className="space-y-0.5">
+              <div className="flex flex-col gap-0.5">
                 {group.items.map((item, j) => {
                   const isActive =
                     pathname === item.href ||
@@ -247,16 +245,17 @@ export function MobileSidebar() {
                       href={item.href}
                       onClick={closeMobile}
                       className={[
-                        "flex items-center gap-3 px-3 py-2.5 text-sm font-medium rounded-xl transition-all duration-150",
+                        "flex items-center gap-3 justify-start py-2 px-2.5 rounded-[11px] transition-all duration-200 ease-out",
                         isActive
-                          ? "bg-brand-primary/[0.08] text-brand-primary"
-                          : "text-text-muted hover:bg-surface-hover hover:text-text-primary",
+                          ? "bg-[rgba(37,65,83,0.08)] text-brand-primary font-semibold"
+                          : "bg-transparent text-text-muted font-medium hover:bg-surface-hover hover:text-text-primary",
                       ].join(" ")}
                     >
                       <item.icon
-                        className={`h-[18px] w-[18px] shrink-0 ${isActive ? "text-brand-primary" : "text-text-muted"}`}
+                        className="w-[16px] h-[16px] shrink-0"
+                        strokeWidth={isActive ? 2 : 1.75}
                       />
-                      {item.title}
+                      <span className="text-[13px] leading-[1.2] tracking-[-0.004em]">{item.title}</span>
                     </Link>
                   );
                 })}
