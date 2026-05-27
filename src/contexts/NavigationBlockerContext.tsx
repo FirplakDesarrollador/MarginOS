@@ -93,17 +93,17 @@ export function NavigationBlockerProvider({ children }: { children: React.ReactN
         <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4">
           {/* Backdrop */}
           <div
-            className="absolute inset-0 bg-slate-900/50 backdrop-blur-sm"
+            className="absolute inset-0 bg-slate-900/50 dark:bg-slate-950/60 backdrop-blur-md"
             onClick={handleStay}
           />
 
           {/* Dialog */}
-          <div className="relative w-full max-w-md bg-surface-card rounded-2xl shadow-2xl border border-border-subtle overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+          <div className="relative w-full max-w-md bg-surface-card/95 backdrop-blur-md rounded-2xl shadow-2xl border border-border-subtle overflow-hidden animate-in fade-in zoom-in-95 duration-200">
             {/* Header */}
             <div className="flex items-start justify-between px-6 pt-6 pb-4 border-b border-border-subtle">
               <div className="flex items-center gap-3">
-                <div className="p-2 rounded-xl bg-amber-50 border border-amber-100">
-                  <AlertTriangle className="w-5 h-5 text-amber-600" />
+                <div className="p-2 rounded-xl bg-amber-500/10 border border-amber-500/20">
+                  <AlertTriangle className="w-5 h-5 text-amber-500" />
                 </div>
                 <div>
                   <h2 className="text-base font-semibold text-text-primary leading-tight">
@@ -134,13 +134,13 @@ export function NavigationBlockerProvider({ children }: { children: React.ReactN
             <div className="px-6 pb-6 flex flex-col-reverse sm:flex-row gap-3 sm:justify-end">
               <button
                 onClick={handleLeave}
-                className="px-4 py-2.5 rounded-xl text-sm font-medium text-text-muted bg-surface-card border border-border-subtle hover:bg-red-50 hover:text-red-600 hover:border-red-200 transition-all"
+                className="px-4 py-2.5 rounded-xl text-sm font-medium text-text-muted bg-surface-card border border-border-subtle hover:bg-surface-hover hover:text-text-primary transition-all focus:outline-none focus:ring-2 focus:ring-border-subtle"
               >
                 Salir sin guardar
               </button>
               <button
                 onClick={handleStay}
-                className="px-5 py-2.5 rounded-xl text-sm font-semibold text-white bg-brand-primary hover:bg-brand-accent transition-all shadow-sm"
+                className="px-5 py-2.5 rounded-xl text-sm font-semibold btn-primary focus:outline-none focus:ring-2 focus:ring-brand-accent/40"
               >
                 Continuar editando
               </button>

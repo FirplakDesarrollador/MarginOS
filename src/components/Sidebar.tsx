@@ -95,7 +95,7 @@ export function Sidebar() {
           </div>
           {isExpanded && (
             <div className="text-[10px] text-text-muted mt-1 opacity-60 font-medium pl-1">
-              MarginOS v1.1.1
+              MarginOS v1.1.2
             </div>
           )}
         </div>
