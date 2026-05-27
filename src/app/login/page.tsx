@@ -1,21 +1,33 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { login, signup } from './actions'
-import { Lock, Mail, Calculator } from 'lucide-react'
+import { Lock, Mail, Sun, Moon } from 'lucide-react'
+import Image from 'next/image'
+import { useTheme } from '@/contexts/ThemeContext'
 
 export default function LoginPage() {
   const [isLogin, setIsLogin] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
+  const { theme, setTheme } = useTheme()
+  const [isDark, setIsDark] = useState(false)
+
+  useEffect(() => {
+    if (theme === 'system') {
+      setIsDark(window.matchMedia('(prefers-color-scheme: dark)').matches)
+    } else {
+      setIsDark(theme === 'dark')
+    }
+  }, [theme])
 
   async function handleSubmit(formData: FormData) {
     setLoading(true)
     setError(null)
-    
+
     const action = isLogin ? login : signup
     const result = await action(formData)
-    
+
     if (result?.error) {
       setError(result.error)
       setLoading(false)
@@ -23,99 +35,166 @@ export default function LoginPage() {
   }
 
   return (
-    <main className="min-h-screen bg-surface-bg flex items-center justify-center p-4 selection:bg-brand-primary selection:text-white relative">
-      {/* Decorative Background Elements */}
-      <div className="fixed inset-0 z-0 pointer-events-none overflow-hidden">
-        <div className="absolute top-[-20%] right-[-10%] w-[50%] h-[50%] bg-brand-accent/5 rounded-full blur-[120px]" />
-        <div className="absolute bottom-[-10%] left-[-5%] w-[30%] h-[30%] bg-brand-primary/5 rounded-full blur-[100px]" />
-      </div>
+    <main
+      className="min-h-screen flex items-center justify-center p-6 relative overflow-hidden"
+      style={{ background: 'var(--bg-base)', color: 'var(--fg-primary)' }}
+    >
+      {/* Decorative auras — radial gradients as per design */}
+      <div aria-hidden style={{
+        position: 'absolute', top: '-20%', right: '-10%',
+        width: 520, height: 520, borderRadius: '50%',
+        background: 'radial-gradient(closest-side, rgba(116,144,148,0.18), transparent 70%)',
+        filter: 'blur(60px)', pointerEvents: 'none',
+      }} />
+      <div aria-hidden style={{
+        position: 'absolute', bottom: '-10%', left: '-5%',
+        width: 360, height: 360, borderRadius: '50%',
+        background: 'radial-gradient(closest-side, rgba(37,65,83,0.14), transparent 70%)',
+        filter: 'blur(60px)', pointerEvents: 'none',
+      }} />
 
-      <div className="w-full max-w-md bg-surface-card rounded-3xl shadow-xl shadow-brand-primary/5 border border-border-subtle p-8 md:p-10 relative z-10">
-        <div className="flex justify-center mb-8">
-            <div className="h-16 w-16 bg-brand-primary rounded-2xl flex items-center justify-center shadow-lg shadow-brand-primary/20">
-                <Calculator className="w-8 h-8 text-white" />
-            </div>
-        </div>
-        
-        <div className="text-center space-y-2 mb-8">
-          <h1 className="text-2xl font-semibold text-text-primary tracking-tight">
-            {isLogin ? 'Bienvenido al Simulador' : 'Crear Cuenta'}
-          </h1>
-          <p className="text-sm text-text-muted">
-            {isLogin 
-              ? 'Ingresa tus credenciales para continuar.' 
+      {/* Theme toggle — top right */}
+      <button
+        onClick={() => setTheme(isDark ? 'light' : 'dark')}
+        className="absolute top-6 right-6 w-[38px] h-[38px] rounded-full inline-flex items-center justify-center cursor-pointer transition-colors"
+        style={{
+          background: 'var(--glass-tint)',
+          backdropFilter: 'blur(20px)',
+          WebkitBackdropFilter: 'blur(20px)',
+          border: '0.5px solid var(--border-hair)',
+          color: 'var(--fg-muted)',
+        }}
+        aria-label="Cambiar tema"
+      >
+        {isDark
+          ? <Sun size={15} strokeWidth={1.75} />
+          : <Moon size={15} strokeWidth={1.75} />
+        }
+      </button>
+
+      {/* Glass card */}
+      <form
+        action={handleSubmit}
+        className="surface-glass-strong w-full relative z-10"
+        style={{ maxWidth: 420, padding: '40px 36px', borderRadius: 28 }}
+      >
+        {/* Brand header */}
+        <div className="flex flex-col items-center mb-7">
+          <div
+            className="mb-[18px] inline-flex items-center justify-center"
+            style={{
+              width: 64, height: 64, borderRadius: 20,
+              background: 'var(--navy)',
+              boxShadow: '0 12px 30px -10px rgba(37,65,83,0.40)',
+            }}
+          >
+            <Image
+              src="/brand/firplak-logo-dark.png"
+              alt="FIRPLAK"
+              width={40}
+              height={40}
+              className="object-contain max-h-8 max-w-[40px]"
+              priority
+            />
+          </div>
+          <div className="overline mb-1.5">FIRPLAK · MarginOS</div>
+          <h2 className="mb-1.5 text-center">
+            {isLogin ? 'Bienvenido' : 'Crear cuenta'}
+          </h2>
+          <p className="text-center" style={{ color: 'var(--fg-muted)', maxWidth: 300, fontSize: 14, lineHeight: 1.5 }}>
+            {isLogin
+              ? 'Ingresa con tus credenciales corporativas para acceder al simulador.'
               : 'Registra un nuevo usuario para acceder al sistema.'}
           </p>
         </div>
 
-        <form action={handleSubmit} className="space-y-5">
-          {error && (
-            <div className="bg-red-50 text-red-600 p-3 rounded-xl text-sm border border-red-100 text-center">
-              {error}
-            </div>
-          )}
+        {/* Error banner */}
+        {error && (
+          <div
+            className="mb-4 p-3 rounded-xl text-sm text-center"
+            style={{
+              background: 'var(--danger-soft)',
+              border: '0.5px solid rgba(178,58,58,0.30)',
+              color: 'var(--danger)',
+            }}
+          >
+            {error}
+          </div>
+        )}
 
-          <div className="space-y-4">
-            <div className="space-y-2">
-              <label className="text-sm font-medium text-text-primary pl-1" htmlFor="email">
-                Correo Electrónico
-              </label>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                  <Mail className="h-5 w-5 text-text-muted" />
-                </div>
-                <input
-                  id="email"
-                  name="email"
-                  type="email"
-                  required
-                  placeholder="ejemplo@firplak.com"
-                  className="block w-full pl-11 pr-4 py-3 bg-surface-hover border border-border-subtle rounded-xl text-base text-text-primary placeholder:text-text-muted focus:ring-2 focus:ring-brand-primary focus:border-transparent transition-all outline-none"
-                />
+        {/* Fields */}
+        <div className="flex flex-col gap-4">
+          <div>
+            <label className="field-label block mb-1.5" htmlFor="email">
+              Correo electrónico
+            </label>
+            <div className="relative">
+              <div
+                className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none"
+                style={{ color: 'var(--fg-muted)' }}
+              >
+                <Mail className="h-[14px] w-[14px]" strokeWidth={1.75} />
               </div>
-            </div>
-
-            <div className="space-y-2">
-              <label className="text-sm font-medium text-text-primary pl-1" htmlFor="password">
-                Contraseña
-              </label>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                  <Lock className="h-5 w-5 text-text-muted" />
-                </div>
-                <input
-                  id="password"
-                  name="password"
-                  type="password"
-                  required
-                  placeholder="••••••••"
-                  className="block w-full pl-11 pr-4 py-3 bg-surface-hover border border-border-subtle rounded-xl text-base text-text-primary placeholder:text-text-muted focus:ring-2 focus:ring-brand-primary focus:border-transparent transition-all outline-none"
-                />
-              </div>
+              <input
+                id="email"
+                name="email"
+                type="email"
+                required
+                placeholder="usuario@firplak.com"
+                className="input"
+                style={{ paddingLeft: 36 }}
+              />
             </div>
           </div>
 
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full flex justify-center py-3 px-4 border border-transparent rounded-xl shadow-sm text-base font-medium text-white bg-brand-primary hover:bg-brand-accent focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-primary transition-colors disabled:opacity-50 disabled:cursor-not-allowed mt-2"
-          >
-             {loading ? 'Cargando...' : (isLogin ? 'Iniciar Sesión' : 'Registrarse')}
-          </button>
-        </form>
+          <div>
+            <label className="field-label block mb-1.5" htmlFor="password">
+              Contraseña
+            </label>
+            <div className="relative">
+              <div
+                className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none"
+                style={{ color: 'var(--fg-muted)' }}
+              >
+                <Lock className="h-[14px] w-[14px]" strokeWidth={1.75} />
+              </div>
+              <input
+                id="password"
+                name="password"
+                type="password"
+                required
+                placeholder="••••••••"
+                className="input"
+                style={{ paddingLeft: 36 }}
+              />
+            </div>
+          </div>
+        </div>
 
-        <div className="mt-6 text-center">
+        {/* Submit */}
+        <button
+          type="submit"
+          disabled={loading}
+          className="btn btn--primary w-full mt-6"
+          style={{ paddingTop: '0.75rem', paddingBottom: '0.75rem' }}
+        >
+          {loading ? 'Validando…' : (isLogin ? 'Iniciar sesión' : 'Registrarse')}
+        </button>
+
+        {/* Footer toggle */}
+        <div className="text-center mt-5">
           <button
             type="button"
             onClick={() => setIsLogin(!isLogin)}
-            className="text-sm text-brand-primary hover:text-brand-accent font-medium mt-2 focus:outline-none transition-colors"
+            className="bg-transparent border-none cursor-pointer text-[13px] font-medium"
+            style={{ color: 'var(--blue-green)' }}
           >
             {isLogin
-              ? '¿No tienes cuenta? Regístrate'
-              : '¿Ya tienes cuenta? Inicia sesión'}
+              ? '¿No tienes cuenta? Regístrate →'
+              : '¿Ya tienes cuenta? Inicia sesión →'}
           </button>
         </div>
-      </div>
+      </form>
     </main>
   )
 }
