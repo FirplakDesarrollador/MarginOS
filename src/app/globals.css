@@ -1,5 +1,6 @@
 @import "tailwindcss";
 @import "../styles/tokens.css";
+@import "../styles/design-system.css";
 
 @theme {
   --color-brand-primary: var(--brand-navy);
