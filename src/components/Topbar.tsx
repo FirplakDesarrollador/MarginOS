@@ -79,11 +79,12 @@ export function Topbar({ title, subtitle }: { title?: string; subtitle?: string 
 
   return (
     <header 
-      className="sticky top-0 z-50 w-full h-14 flex items-center gap-3.5 px-6 border-b border-border-subtle transition-colors duration-200"
+      className="sticky top-0 z-50 w-full h-14 flex items-center gap-3.5 px-6 transition-colors duration-200"
       style={{
         background: "var(--glass-tint)",
         WebkitBackdropFilter: "blur(var(--glass-blur)) saturate(var(--glass-saturation))",
         backdropFilter: "blur(var(--glass-blur)) saturate(var(--glass-saturation))",
+        borderBottom: "0.5px solid var(--border-hair)",
       }}
     >
       {/* Mobile hamburger */}
@@ -92,7 +93,7 @@ export function Topbar({ title, subtitle }: { title?: string; subtitle?: string 
         className="md:hidden inline-flex items-center justify-center p-2 rounded-lg text-text-muted hover:bg-surface-hover hover:text-text-primary transition-colors"
         aria-label="Abrir menú"
       >
-        <Menu className="h-5 w-5" />
+        <Menu className="h-5 w-5" strokeWidth={1.75} />
       </button>
 
       {/* Mobile logo — shown when there's no desktop sidebar */}
@@ -113,7 +114,7 @@ export function Topbar({ title, subtitle }: { title?: string; subtitle?: string 
       <div className="flex-col min-w-0 hidden md:flex">
         <div className="flex items-baseline gap-3">
           {title ? (
-            <span className="font-semibold text-base md:text-lg leading-6 text-text-primary tracking-tight">
+            <span className="font-medium text-base text-[color:var(--fg-primary)] tracking-[-0.012em] leading-tight">
               {title}
             </span>
           ) : null}
@@ -128,26 +129,26 @@ export function Topbar({ title, subtitle }: { title?: string; subtitle?: string 
       {/* Command-K search (Triggers Modal) */}
       <button
         onClick={() => setIsSearchOpen(true)}
-        className="hidden md:inline-flex items-center gap-2.5 h-9 px-3 min-w-[280px] bg-surface-card border border-[rgba(15,22,36,0.10)] rounded-[10px] text-text-muted font-sans font-medium text-[12px] leading-none shadow-[0_1px_0_0_rgba(15,22,36,0.04)] cursor-pointer hover:border-[rgba(15,22,36,0.22)] transition-colors"
+        className="hidden md:inline-flex items-center gap-2.5 h-9 px-3 min-w-[280px] bg-[color:var(--bg-elevated)] rounded-full text-[color:var(--fg-muted)] font-sans font-normal text-[13px] leading-none cursor-pointer hover:[border-color:var(--blue-green)] transition-colors [border:0.5px_solid_var(--border-hair)]"
       >
-        <Search className="w-3.5 h-3.5" strokeWidth={2} />
+        <Search className="w-3.5 h-3.5" strokeWidth={1.75} />
         <span className="flex-1 text-left">Buscar simulación, cliente, SAP…</span>
         <span className="inline-flex gap-1">
-          <span className="inline-flex items-center justify-center min-w-[18px] h-[18px] px-1 rounded bg-[rgba(15,22,36,0.05)] border border-[rgba(15,22,36,0.10)] font-mono font-semibold text-[10px] leading-none text-text-muted">⌘</span>
-          <span className="inline-flex items-center justify-center min-w-[18px] h-[18px] px-1 rounded bg-[rgba(15,22,36,0.05)] border border-[rgba(15,22,36,0.10)] font-mono font-semibold text-[10px] leading-none text-text-muted">K</span>
+          <span className="inline-flex items-center justify-center min-w-[18px] h-[18px] px-1 rounded-[5px] bg-[rgba(116,144,148,0.10)] font-mono font-medium text-[10px] leading-none text-[color:var(--fg-muted)] [border:0.5px_solid_var(--border-hair)]">⌘</span>
+          <span className="inline-flex items-center justify-center min-w-[18px] h-[18px] px-1 rounded-[5px] bg-[rgba(116,144,148,0.10)] font-mono font-medium text-[10px] leading-none text-[color:var(--fg-muted)] [border:0.5px_solid_var(--border-hair)]">K</span>
         </span>
       </button>
 
-      <div className="w-px h-6 bg-[rgba(15,22,36,0.10)] hidden md:block" />
+      <div className="w-px h-6 bg-[color:var(--border-hair)] hidden md:block" />
 
       {/* Density Switcher */}
       <div className="relative hidden md:block">
         <button
           onClick={() => setDensityMenuOpen(!densityMenuOpen)}
-          className="w-9 h-9 rounded-[9px] bg-surface-card border border-[rgba(15,22,36,0.10)] text-text-muted cursor-pointer inline-flex items-center justify-center shadow-[0_1px_0_0_rgba(15,22,36,0.04)] hover:bg-surface-hover hover:text-text-primary transition-colors"
+          className="w-9 h-9 rounded-full bg-[color:var(--bg-elevated)] text-[color:var(--fg-muted)] cursor-pointer inline-flex items-center justify-center hover:bg-[color:var(--bg-hover)] hover:text-[color:var(--fg-primary)] transition-colors [border:0.5px_solid_var(--border-hair)]"
           title="Densidad de Tablas"
         >
-          {density === "compact" ? <AlignJustify className="w-3.5 h-3.5" strokeWidth={2} /> : density === "normal" ? <LayoutList className="w-3.5 h-3.5" strokeWidth={2} /> : <Columns2 className="w-3.5 h-3.5" strokeWidth={2} />}
+          {density === "compact" ? <AlignJustify className="w-3.5 h-3.5" strokeWidth={1.75} /> : density === "normal" ? <LayoutList className="w-3.5 h-3.5" strokeWidth={1.75} /> : <Columns2 className="w-3.5 h-3.5" strokeWidth={1.75} />}
         </button>
         
         {densityMenuOpen && (
@@ -158,19 +159,19 @@ export function Topbar({ title, subtitle }: { title?: string; subtitle?: string 
                 onClick={() => { setDensity("compact"); setDensityMenuOpen(false); }}
                 className={`w-full text-left px-3 py-2 text-sm flex items-center gap-2 transition-colors ${density === "compact" ? "bg-surface-hover text-brand-primary font-medium" : "text-text-primary hover:bg-surface-hover"}`}
               >
-                <AlignJustify className="h-4 w-4" /> Compacto
+                <AlignJustify className="h-4 w-4" strokeWidth={1.75} /> Compacto
               </button>
               <button
                 onClick={() => { setDensity("normal"); setDensityMenuOpen(false); }}
                 className={`w-full text-left px-3 py-2 text-sm flex items-center gap-2 transition-colors ${density === "normal" ? "bg-surface-hover text-brand-primary font-medium" : "text-text-primary hover:bg-surface-hover"}`}
               >
-                <LayoutList className="h-4 w-4" /> Normal
+                <LayoutList className="h-4 w-4" strokeWidth={1.75} /> Normal
               </button>
               <button
                 onClick={() => { setDensity("comodo"); setDensityMenuOpen(false); }}
                 className={`w-full text-left px-3 py-2 text-sm flex items-center gap-2 transition-colors ${density === "comodo" ? "bg-surface-hover text-brand-primary font-medium" : "text-text-primary hover:bg-surface-hover"}`}
               >
-                <Columns2 className="h-4 w-4" /> Cómodo
+                <Columns2 className="h-4 w-4" strokeWidth={1.75} /> Cómodo
               </button>
             </div>
           </>
@@ -181,10 +182,10 @@ export function Topbar({ title, subtitle }: { title?: string; subtitle?: string 
       <div className="relative">
         <button
           onClick={() => setThemeMenuOpen(!themeMenuOpen)}
-          className="w-9 h-9 rounded-[9px] bg-surface-card border border-[rgba(15,22,36,0.10)] text-text-muted cursor-pointer inline-flex items-center justify-center shadow-[0_1px_0_0_rgba(15,22,36,0.04)] hover:bg-surface-hover hover:text-text-primary transition-colors"
+          className="w-9 h-9 rounded-full bg-[color:var(--bg-elevated)] text-[color:var(--fg-muted)] cursor-pointer inline-flex items-center justify-center hover:bg-[color:var(--bg-hover)] hover:text-[color:var(--fg-primary)] transition-colors [border:0.5px_solid_var(--border-hair)]"
           title={`Tema: ${theme}`}
         >
-          {theme === "light" ? <Sun className="w-3.5 h-3.5" strokeWidth={2} /> : theme === "dark" ? <Moon className="w-3.5 h-3.5" strokeWidth={2} /> : <Monitor className="w-3.5 h-3.5" strokeWidth={2} />}
+          {theme === "light" ? <Sun className="w-3.5 h-3.5" strokeWidth={1.75} /> : theme === "dark" ? <Moon className="w-3.5 h-3.5" strokeWidth={1.75} /> : <Monitor className="w-3.5 h-3.5" strokeWidth={1.75} />}
         </button>
         
         {themeMenuOpen && (
@@ -195,19 +196,19 @@ export function Topbar({ title, subtitle }: { title?: string; subtitle?: string 
                 onClick={() => { setTheme("light"); setThemeMenuOpen(false); }}
                 className={`w-full text-left px-3 py-2 text-sm flex items-center gap-2 transition-colors ${theme === "light" ? "bg-surface-hover text-brand-primary font-medium" : "text-text-primary hover:bg-surface-hover"}`}
               >
-                <Sun className="h-4 w-4" /> Claro
+                <Sun className="h-4 w-4" strokeWidth={1.75} /> Claro
               </button>
               <button
                 onClick={() => { setTheme("dark"); setThemeMenuOpen(false); }}
                 className={`w-full text-left px-3 py-2 text-sm flex items-center gap-2 transition-colors ${theme === "dark" ? "bg-surface-hover text-brand-primary font-medium" : "text-text-primary hover:bg-surface-hover"}`}
               >
-                <Moon className="h-4 w-4" /> Oscuro
+                <Moon className="h-4 w-4" strokeWidth={1.75} /> Oscuro
               </button>
               <button
                 onClick={() => { setTheme("system"); setThemeMenuOpen(false); }}
                 className={`w-full text-left px-3 py-2 text-sm flex items-center gap-2 transition-colors ${theme === "system" ? "bg-surface-hover text-brand-primary font-medium" : "text-text-primary hover:bg-surface-hover"}`}
               >
-                <Monitor className="h-4 w-4" /> Automático
+                <Monitor className="h-4 w-4" strokeWidth={1.75} /> Automático
               </button>
             </div>
           </>
@@ -216,9 +217,9 @@ export function Topbar({ title, subtitle }: { title?: string; subtitle?: string 
 
       {/* User chip */}
       <div 
-        className="hidden sm:inline-flex items-center gap-2 p-[4px_14px_4px_4px] bg-surface-card border border-[rgba(15,22,36,0.10)] rounded-full shadow-[0_1px_0_0_rgba(15,22,36,0.04)] hover:shadow-[0_4px_12px_rgba(15,22,36,0.08)] transition-shadow cursor-pointer relative group"
+        className="hidden sm:inline-flex items-center gap-2 p-[4px_14px_4px_4px] bg-[color:var(--bg-elevated)] rounded-full hover:shadow-[var(--shadow-md)] transition-shadow cursor-pointer relative group [border:0.5px_solid_var(--border-hair)]"
       >
-        <span className="w-7 h-7 rounded-full bg-brand-primary text-brand-primary-foreground inline-flex items-center justify-center font-sans font-semibold text-[11px] leading-none">
+        <span className="w-7 h-7 rounded-full bg-[color:var(--navy)] text-[color:var(--bone)] inline-flex items-center justify-center font-sans font-medium text-[11px] leading-none">
           {userInitials}
         </span>
         <span className="font-sans font-semibold text-[12px] leading-[1.2] text-text-primary truncate max-w-[150px]">
@@ -232,7 +233,7 @@ export function Topbar({ title, subtitle }: { title?: string; subtitle?: string 
               onClick={handleLogout}
               className="w-full text-left px-3 py-2 text-sm flex items-center gap-2 text-red-600 hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-900/20 rounded-lg transition-colors"
             >
-              <LogOut className="w-4 h-4" /> Salir
+              <LogOut className="w-4 h-4" strokeWidth={1.75} /> Salir
             </button>
           </div>
         </div>
@@ -244,7 +245,7 @@ export function Topbar({ title, subtitle }: { title?: string; subtitle?: string 
         className="sm:hidden inline-flex items-center justify-center p-2 rounded-lg text-text-muted hover:bg-surface-hover hover:text-red-600 transition-colors"
         title="Cerrar sesión"
       >
-        <LogOut className="h-5 w-5" />
+        <LogOut className="h-5 w-5" strokeWidth={1.75} />
       </button>
 
       <GlobalSearchModal isOpen={isSearchOpen} onClose={() => setIsSearchOpen(false)} />

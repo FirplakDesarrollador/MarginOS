@@ -71,19 +71,21 @@ export function Sidebar() {
       style={{
         width,
         minWidth: width,
+        borderRight: "0.5px solid var(--border-hair)",
       }}
       className={[
         "hidden md:flex flex-col h-screen sticky top-0 z-40",
-        "bg-surface-card border-r border-border-subtle shrink-0",
+        "bg-surface-card shrink-0",
         "overflow-hidden transition-[width,min-width] duration-200 ease-out",
       ].join(" ")}
     >
       {/* Brand */}
       <div 
         className={[
-          "flex items-center h-16 border-b border-border-subtle shrink-0",
+          "flex items-center h-16 shrink-0",
           isExpanded ? "justify-between px-4" : "justify-center px-0"
         ].join(" ")}
+        style={{ borderBottom: "0.5px solid var(--border-hair)" }}
       >
         <div className="flex flex-col">
           <div className="flex items-center gap-2.5 overflow-hidden transition-all duration-200">
@@ -106,7 +108,7 @@ export function Sidebar() {
             className="w-7 h-7 rounded-lg border border-transparent bg-transparent text-text-muted inline-flex items-center justify-center cursor-pointer hover:bg-surface-hover hover:text-text-primary transition-colors"
             aria-label="Colapsar"
           >
-            <ChevronLeft className="w-3.5 h-3.5" strokeWidth={2} />
+            <ChevronLeft className="w-3.5 h-3.5" strokeWidth={1.75} />
           </button>
         )}
       </div>
@@ -114,14 +116,14 @@ export function Sidebar() {
       {/* Nav */}
       <nav 
         className={[
-          "flex-1 overflow-y-auto flex flex-col gap-4 scrollbar-thin",
+          "flex-1 overflow-y-auto flex flex-col gap-[18px] scrollbar-thin",
           isExpanded ? "p-[14px_12px]" : "p-[12px_8px]"
         ].join(" ")}
       >
         {navGroups.map((group, i) => (
           <div key={i}>
             {isExpanded && (
-              <div className="px-2.5 pb-1.5 pt-1 font-sans font-semibold text-[10px] leading-none tracking-[0.14em] uppercase text-text-muted opacity-70">
+              <div className="overline px-2.5 pb-1.5 pt-1" style={{ color: "var(--fg-muted)" }}>
                 {group.title}
               </div>
             )}
@@ -139,8 +141,8 @@ export function Sidebar() {
                       "flex items-center gap-3 rounded-[11px] cursor-pointer border border-transparent w-full transition-all duration-200 ease-out text-left",
                       isExpanded ? "justify-start py-2 px-2.5" : "justify-center py-2.5 px-0",
                       isActive
-                        ? "bg-[rgba(37,65,83,0.08)] text-brand-primary font-semibold"
-                        : "bg-transparent text-text-muted font-medium hover:bg-surface-hover hover:text-text-primary",
+                        ? "bg-[rgba(37,65,83,0.08)] text-[color:var(--navy)] font-medium"
+                        : "bg-transparent text-[color:var(--fg-muted)] font-normal hover:bg-[color:var(--bg-hover)] hover:text-[color:var(--fg-primary)]",
                     ].join(" ")}
                   >
                     <item.icon
@@ -165,13 +167,13 @@ export function Sidebar() {
 
       {/* Collapse-toggle when collapsed */}
       {!isExpanded && (
-        <div className="border-t border-border-subtle p-2 flex justify-center">
+        <div className="p-2 flex justify-center" style={{ borderTop: "0.5px solid var(--border-hair)" }}>
           <button
             onClick={() => setIsCollapsed(!isCollapsed)}
-            className="w-8 h-8 rounded-[9px] border border-[rgba(15,22,36,0.10)] bg-surface-card text-text-muted inline-flex items-center justify-center cursor-pointer hover:bg-surface-hover hover:text-text-primary transition-colors"
+            className="w-8 h-8 rounded-full bg-[color:var(--bg-elevated)] text-[color:var(--fg-muted)] inline-flex items-center justify-center cursor-pointer hover:bg-[color:var(--bg-hover)] hover:text-[color:var(--fg-primary)] transition-colors [border:0.5px_solid_var(--border-hair)]"
             aria-label="Expandir"
           >
-            <ChevronRight className="w-3.5 h-3.5" strokeWidth={2} />
+            <ChevronRight className="w-3.5 h-3.5" strokeWidth={1.75} />
           </button>
         </div>
       )}
@@ -211,12 +213,12 @@ export function MobileSidebar() {
       <aside
         className={[
           "md:hidden fixed inset-y-0 left-0 z-50 w-64 flex flex-col",
-          "bg-surface-card border-r border-border-subtle shadow-xl",
+          "bg-surface-card shadow-xl [border-right:0.5px_solid_var(--border-hair)]",
           "transition-transform duration-200 ease-out",
           isMobileOpen ? "translate-x-0" : "-translate-x-full",
         ].join(" ")}
       >
-        <div className="flex items-center justify-between h-16 px-4 border-b border-border-subtle shrink-0">
+        <div className="flex items-center justify-between h-16 px-4 shrink-0" style={{ borderBottom: "0.5px solid var(--border-hair)" }}>
           <div className="flex items-center gap-2.5 overflow-hidden">
             <Image src={logoSrc} alt="FIRPLAK" width={120} height={36} className="max-h-9 max-w-[120px] object-contain" priority />
           </div>
@@ -224,14 +226,14 @@ export function MobileSidebar() {
             onClick={closeMobile}
             className="p-1.5 rounded-lg text-text-muted hover:text-text-primary hover:bg-surface-hover transition-colors"
           >
-            <X className="w-4 h-4" strokeWidth={2} />
+            <X className="w-4 h-4" strokeWidth={1.75} />
           </button>
         </div>
 
-        <nav className="flex-1 overflow-y-auto p-[14px_12px] flex flex-col gap-4">
+        <nav className="flex-1 overflow-y-auto p-[14px_12px] flex flex-col gap-[18px]">
           {navGroups.map((group, i) => (
             <div key={i}>
-              <div className="px-2.5 pb-1.5 pt-1 font-sans font-semibold text-[10px] leading-none tracking-[0.14em] uppercase text-text-muted opacity-70">
+              <div className="overline px-2.5 pb-1.5 pt-1" style={{ color: "var(--fg-muted)" }}>
                 {group.title}
               </div>
               <div className="flex flex-col gap-0.5">
@@ -247,8 +249,8 @@ export function MobileSidebar() {
                       className={[
                         "flex items-center gap-3 justify-start py-2 px-2.5 rounded-[11px] transition-all duration-200 ease-out",
                         isActive
-                          ? "bg-[rgba(37,65,83,0.08)] text-brand-primary font-semibold"
-                          : "bg-transparent text-text-muted font-medium hover:bg-surface-hover hover:text-text-primary",
+                          ? "bg-[rgba(37,65,83,0.08)] text-[color:var(--navy)] font-medium"
+                          : "bg-transparent text-[color:var(--fg-muted)] font-normal hover:bg-[color:var(--bg-hover)] hover:text-[color:var(--fg-primary)]",
                       ].join(" ")}
                     >
                       <item.icon
