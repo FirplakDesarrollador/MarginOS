@@ -279,7 +279,7 @@ export function PriceListUploadModal({ isOpen, onClose, onSuccess }: PriceListUp
         onClick={onClose}
       />
       
-      <div className="relative w-full max-w-4xl bg-surface-card rounded-2xl shadow-xl border border-border-subtle flex flex-col max-h-[90vh] overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+      <div className="relative w-full max-w-4xl modal-panel rounded-2xl flex flex-col max-h-[90vh] overflow-hidden animate-in fade-in zoom-in-95 duration-200">
         
         <div className="flex items-center justify-between px-6 py-4 border-b border-border-subtle bg-surface-hover/50">
           <div className="flex items-center gap-3">
@@ -363,12 +363,12 @@ export function PriceListUploadModal({ isOpen, onClose, onSuccess }: PriceListUp
                     </div>
                     <div className="max-h-64 overflow-y-auto">
                       <table className="min-w-full text-xs">
-                         <thead className="bg-surface-card sticky top-0 border-b border-border-subtle z-10 shadow-sm">
+                         <thead className="bg-surface-hover/30 sticky top-0 border-b border-border-subtle z-10 shadow-sm">
                            <tr>
-                             <th className="px-4 py-2 font-semibold text-left text-text-primary bg-surface-card">Canal / Producto</th>
-                             <th className="px-4 py-2 font-semibold text-left text-text-primary bg-surface-card">Importe</th>
-                             <th className="px-4 py-2 font-semibold text-left text-text-primary bg-surface-card">Vigencia</th>
-                             <th className="px-4 py-2 font-semibold text-left text-text-primary bg-surface-card">Anomalía Detectada</th>
+                             <th className="px-4 py-2 font-semibold text-left text-text-primary bg-surface-hover/30">Canal / Producto</th>
+                             <th className="px-4 py-2 font-semibold text-left text-text-primary bg-surface-hover/30">Importe</th>
+                             <th className="px-4 py-2 font-semibold text-left text-text-primary bg-surface-hover/30">Vigencia</th>
+                             <th className="px-4 py-2 font-semibold text-left text-text-primary bg-surface-hover/30">Anomalía Detectada</th>
                            </tr>
                          </thead>
                          <tbody className="divide-y divide-border-subtle">

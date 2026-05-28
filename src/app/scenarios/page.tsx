@@ -380,7 +380,7 @@ export default function ScenariosPage() {
           /* ============================================= */
           /* MAIN TABLE: ONE ROW PER CUSTOMER              */
           /* ============================================= */
-          <div className="mt-10 overflow-x-auto rounded-[var(--radius-lg)] border border-[color:var(--border)] bg-surface-card shadow-sm">
+          <div className="mt-10 overflow-x-auto rounded-[var(--radius-lg)] [border:0.5px_solid_rgba(37,65,83,0.12)] bg-surface-card shadow-sm">
             <table className={`w-full ${tableStyles.tableWrapper}`}>
               <thead className="bg-surface-hover/80 border-b border-border-subtle">
                 <tr>
@@ -532,7 +532,7 @@ export default function ScenariosPage() {
             className="absolute inset-0 bg-slate-900/50 backdrop-blur-sm transition-opacity"
             onClick={() => setSelectedGroup(null)}
           />
-          <div className="relative w-full max-w-[1280px] max-h-[85vh] bg-surface-card rounded-2xl shadow-2xl border border-border-subtle flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+          <div className="relative w-full max-w-[1280px] max-h-[85vh] modal-panel rounded-2xl flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200">
             {/* MODAL HEADER */}
             <div className="px-6 py-5 border-b border-border-subtle bg-surface-hover/50 flex items-center justify-between flex-shrink-0">
               <div className="flex items-center gap-3 min-w-0">
@@ -701,7 +701,7 @@ export default function ScenariosPage() {
             className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm transition-opacity"
             onClick={() => !exporting && setActionSim(null)}
           />
-          <div className="relative w-full max-w-sm bg-surface-card rounded-2xl shadow-xl border border-border-subtle flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+          <div className="relative w-full max-w-sm modal-panel rounded-2xl flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200">
             <div className="px-5 py-4 border-b border-border-subtle bg-surface-hover/50">
               <h3 className="text-base font-semibold text-text-primary">
                 Acciones del escenario

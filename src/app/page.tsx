@@ -379,7 +379,6 @@ export default function ExecutiveDashboard() {
         <div className="sticky top-0 z-40 bg-[color:var(--bg-base)]/80 backdrop-blur-md pt-6 pb-4 mb-8 print:static print:bg-transparent" style={{ borderBottom: "0.5px solid var(--border-hair)" }}>
            <div className="flex flex-col xl:flex-row xl:items-end justify-between gap-6">
              <div>
-               <div className="overline" style={{ marginBottom: 6 }}>Cockpit Ejecutivo</div>
                <h1 style={{ marginBottom: 4 }}>Executive Dashboard</h1>
                <p className="lead" style={{ maxWidth: 560 }}>Visibilidad consolidada de la operación comercial y rentabilidad.</p>
              </div>

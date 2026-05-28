@@ -139,7 +139,7 @@ export function ProductModal({ isOpen, onClose, onSuccess, product }: ProductMod
         onClick={onClose}
       />
       
-      <div className="relative w-full max-w-lg bg-surface-card rounded-2xl shadow-xl border border-border-subtle flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+      <div className="relative w-full max-w-lg modal-panel rounded-2xl flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200">
         
         <div className="flex items-center justify-between px-6 py-4 border-b border-border-subtle bg-surface-hover/50">
           <div className="flex items-center gap-3">
@@ -176,7 +176,7 @@ export function ProductModal({ isOpen, onClose, onSuccess, product }: ProductMod
                   type="text" 
                   value={formData.sap_code}
                   onChange={(e) => setFormData({...formData, sap_code: e.target.value})}
-                  className="w-full border border-border-subtle rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary transition-all bg-surface-card"
+                  className="w-full border border-border-subtle rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary transition-all bg-surface-hover"
                   placeholder="Ej: 43003001"
                   required
                 />
@@ -188,7 +188,7 @@ export function ProductModal({ isOpen, onClose, onSuccess, product }: ProductMod
                   type="text" 
                   value={formData.description}
                   onChange={(e) => setFormData({...formData, description: e.target.value})}
-                  className="w-full border border-border-subtle rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary transition-all bg-surface-card"
+                  className="w-full border border-border-subtle rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary transition-all bg-surface-hover"
                   placeholder="Ej: Pintura Acrílica Galón"
                   required
                 />
@@ -201,7 +201,7 @@ export function ProductModal({ isOpen, onClose, onSuccess, product }: ProductMod
                     type="text" 
                     value={formData.category || ""}
                     onChange={(e) => setFormData({...formData, category: e.target.value})}
-                    className="w-full border border-border-subtle rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary transition-all bg-surface-card"
+                    className="w-full border border-border-subtle rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary transition-all bg-surface-hover"
                     placeholder="Ej: Pinturas"
                   />
                 </div>
@@ -211,7 +211,7 @@ export function ProductModal({ isOpen, onClose, onSuccess, product }: ProductMod
                     type="text" 
                     value={formData.uom || ""}
                     onChange={(e) => setFormData({...formData, uom: e.target.value})}
-                    className="w-full border border-border-subtle rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary transition-all bg-surface-card"
+                    className="w-full border border-border-subtle rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary transition-all bg-surface-hover"
                     placeholder="Ej: GAL, UND, MT"
                   />
                 </div>
@@ -224,7 +224,7 @@ export function ProductModal({ isOpen, onClose, onSuccess, product }: ProductMod
                   step="0.1"
                   value={formData.target_margin_pct ?? ""}
                   onChange={(e) => setFormData({...formData, target_margin_pct: e.target.value ? Number(e.target.value) : null})}
-                  className="w-full border border-border-subtle rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary transition-all bg-surface-card"
+                  className="w-full border border-border-subtle rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary transition-all bg-surface-hover"
                   placeholder="Dejar vacío para usar margen global (65%)"
                 />
               </div>

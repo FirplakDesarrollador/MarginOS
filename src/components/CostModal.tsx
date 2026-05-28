@@ -114,8 +114,8 @@ export function CostModal({ isOpen, onClose, onSuccess, editCost }: Props) {
         className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm transition-opacity" 
         onClick={() => !isSaving && onClose()}
       />
-      <div className="relative w-full max-w-lg bg-surface-card rounded-2xl shadow-xl border border-border-subtle flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200">
-        
+      <div className="relative w-full max-w-lg modal-panel rounded-2xl flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-border-subtle bg-surface-hover/50">
           <h2 className="text-lg font-semibold text-text-primary">
@@ -124,7 +124,7 @@ export function CostModal({ isOpen, onClose, onSuccess, editCost }: Props) {
           <button
             onClick={onClose}
             disabled={isSaving}
-            className="p-2 text-text-muted hover:text-text-primary hover:bg-slate-200/50 rounded-lg transition-colors disabled:opacity-50"
+            className="p-2 text-text-muted hover:text-text-primary hover:bg-surface-hover rounded-lg transition-colors disabled:opacity-50"
           >
             <X className="w-5 h-5" />
           </button>
@@ -150,7 +150,7 @@ export function CostModal({ isOpen, onClose, onSuccess, editCost }: Props) {
                 value={codigo}
                 onChange={(e) => setCodigo(e.target.value)}
                 placeholder="Ej: AB-123456"
-                className="w-full px-3 py-2 border border-border-subtle rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary text-sm transition-all"
+                className="w-full px-3 py-2 bg-surface-hover border border-border-subtle rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary text-sm transition-all"
                 disabled={isSaving || !!editCost} // Si está en edición no dejamos cambiar el código para no corromper links reales a SAP
               />
               {!!editCost && (
@@ -167,7 +167,7 @@ export function CostModal({ isOpen, onClose, onSuccess, editCost }: Props) {
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
                 placeholder="Ej: Tornillo Zincado 2x4"
-                className="w-full px-3 py-2 border border-border-subtle rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary text-sm transition-all"
+                className="w-full px-3 py-2 bg-surface-hover border border-border-subtle rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary text-sm transition-all"
                 disabled={isSaving}
               />
             </div>
@@ -181,7 +181,7 @@ export function CostModal({ isOpen, onClose, onSuccess, editCost }: Props) {
                   required
                   value={moneda}
                   onChange={(e) => setMoneda(e.target.value)}
-                  className="w-full px-3 py-2 border border-border-subtle rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary text-sm transition-all"
+                  className="w-full px-3 py-2 bg-surface-hover border border-border-subtle rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary text-sm transition-all"
                   disabled={isSaving}
                 >
                   <option value="COP">COP (Pesos)</option>
@@ -200,7 +200,7 @@ export function CostModal({ isOpen, onClose, onSuccess, editCost }: Props) {
                   value={costoUnitario}
                   onChange={(e) => setCostoUnitario(e.target.value === "" ? "" : Number(e.target.value))}
                   placeholder="0.00"
-                  className="w-full px-3 py-2 border border-border-subtle rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary text-sm transition-all"
+                  className="w-full px-3 py-2 bg-surface-hover border border-border-subtle rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary text-sm transition-all"
                   disabled={isSaving}
                 />
               </div>

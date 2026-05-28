@@ -94,7 +94,7 @@ export function ProductPickerModal({ isOpen, onClose, onSelect, existingSapCodes
       />
       
       {/* Modal / Dialog */}
-      <div className="relative w-full max-w-4xl max-h-[85vh] bg-surface-card rounded-2xl shadow-xl border border-border-subtle flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+      <div className="relative w-full max-w-4xl max-h-[85vh] modal-panel rounded-2xl flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200">
         
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-border-subtle bg-surface-hover/50">

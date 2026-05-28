@@ -108,7 +108,7 @@ export function CostUploadModal({ isOpen, onClose, onSuccess }: Props) {
         className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm transition-opacity" 
         onClick={closeModal}
       />
-      <div className="relative w-full max-w-lg bg-surface-card rounded-2xl shadow-xl border border-border-subtle flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+      <div className="relative w-full max-w-lg modal-panel rounded-2xl flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200">
         
         <div className="flex items-center justify-between px-6 py-4 border-b border-border-subtle bg-surface-hover/50">
           <h2 className="text-lg font-semibold text-text-primary">
@@ -117,7 +117,7 @@ export function CostUploadModal({ isOpen, onClose, onSuccess }: Props) {
           <button
             onClick={closeModal}
             disabled={isProcessing}
-            className="p-2 text-text-muted hover:text-text-primary hover:bg-slate-200/50 rounded-lg transition-colors disabled:opacity-50"
+            className="p-2 text-text-muted hover:text-text-primary hover:bg-surface-hover rounded-lg transition-colors disabled:opacity-50"
           >
             <X className="w-5 h-5" />
           </button>
