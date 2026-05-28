@@ -221,8 +221,8 @@ export function PriceListModal({ isOpen, onClose, onSuccess }: PriceListModalPro
                 <label className="block text-sm font-medium text-text-primary mb-1">Producto <span className="text-red-500">*</span></label>
 
                 {selectedProductName ? (
-                  <div className="flex items-center justify-between w-full border border-brand-primary/30 bg-brand-primary/5 rounded-xl px-3 py-2">
-                    <span className="text-sm font-medium text-brand-primary truncate pr-4">
+                  <div className="flex items-start justify-between w-full border border-brand-primary/30 bg-brand-primary/5 rounded-xl px-3 py-2 gap-2">
+                    <span className="text-sm font-medium text-brand-primary min-w-[200px] leading-snug">
                       {selectedProductName}
                     </span>
                     <button

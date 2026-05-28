@@ -19,8 +19,6 @@ import {
   BadgeDollarSign,
 } from "lucide-react";
 import { useSidebar } from "@/contexts/SidebarContext";
-import { useTheme } from "@/contexts/ThemeContext";
-import { useEffect, useState } from "react";
 
 const navGroups = [
   {
@@ -49,18 +47,9 @@ const navGroups = [
 export function Sidebar() {
   const pathname = usePathname();
   const { isCollapsed, isHovered, isExpanded, setIsCollapsed, setIsHovered } = useSidebar();
-  const { theme } = useTheme();
-  const [isDark, setIsDark] = useState(false);
 
-  useEffect(() => {
-    if (theme === "system") {
-      setIsDark(window.matchMedia("(prefers-color-scheme: dark)").matches);
-    } else {
-      setIsDark(theme === "dark");
-    }
-  }, [theme]);
-
-  const logoSrc = isDark ? "/brand/firplak-logo-dark.png" : "/brand/firplak-logo-light.png";
+  // Sidebar background is always dark navy — always use the white logo variant
+  const logoSrc = "/brand/firplak-logo-dark.png";
 
   const width = isExpanded ? 240 : 64;
 
@@ -188,18 +177,9 @@ export function Sidebar() {
 export function MobileSidebar() {
   const pathname = usePathname();
   const { isMobileOpen, closeMobile } = useSidebar();
-  const { theme } = useTheme();
-  const [isDark, setIsDark] = useState(false);
 
-  useEffect(() => {
-    if (theme === "system") {
-      setIsDark(window.matchMedia("(prefers-color-scheme: dark)").matches);
-    } else {
-      setIsDark(theme === "dark");
-    }
-  }, [theme]);
-
-  const logoSrc = isDark ? "/brand/firplak-logo-dark.png" : "/brand/firplak-logo-light.png";
+  // Mobile sidebar background is always dark navy — always use the white logo variant
+  const logoSrc = "/brand/firplak-logo-dark.png";
 
   return (
     <>

@@ -380,7 +380,7 @@ export default function ScenariosPage() {
           /* ============================================= */
           /* MAIN TABLE: ONE ROW PER CUSTOMER              */
           /* ============================================= */
-          <div className="mt-10 overflow-x-auto rounded-[var(--radius-lg)] border border-[color:var(--border)] bg-surface-card shadow-sm">
+          <div className="mt-10 overflow-x-auto rounded-[var(--radius-lg)] [border:0.5px_solid_rgba(37,65,83,0.12)] bg-surface-card shadow-sm">
             <table className={`w-full ${tableStyles.tableWrapper}`}>
               <thead className="bg-surface-hover/80 border-b border-border-subtle">
                 <tr>
