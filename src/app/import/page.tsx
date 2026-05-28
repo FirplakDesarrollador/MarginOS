@@ -520,13 +520,13 @@ export default function ImportBOMPage() {
           {/* HEADER */}
           <div className="flex items-start justify-between gap-4">
             <div className="max-w-3xl">
-              <Link href="/" className="inline-flex items-center gap-2 text-sm text-[color:var(--muted)] hover:text-[color:var(--text)]">
+              <Link href="/" className="inline-flex items-center gap-2 text-sm text-text-muted hover:text-text-primary">
                 <ArrowLeft className="h-4 w-4" /> Volver
               </Link>
               <h1 className="mt-5 text-3xl md:text-4xl font-semibold tracking-tight">
                 Importar BOM (SAP)
               </h1>
-              <p className="mt-2 text-[color:var(--muted)] leading-relaxed">
+              <p className="mt-2 text-text-muted leading-relaxed">
                 Centro de control BOM. Sube archivos de SAP, consulta histórico de cargas y revisa los costos recalculados por producto.
               </p>
             </div>
@@ -541,15 +541,15 @@ export default function ImportBOMPage() {
           </div>
 
           {/* UPLOAD CARD */}
-          <div className="mt-8 rounded-[var(--radius-lg)] border border-[color:var(--border)] bg-[color:var(--surface)] shadow-[var(--shadow-sm)]">
+          <div className="mt-8 rounded-[var(--radius-lg)] [border:0.5px_solid_rgba(37,65,83,0.12)] bg-surface-card shadow-[var(--shadow-sm)]">
             <div className="p-6">
               <div className="flex items-center gap-3">
-                <div className="flex h-10 w-10 items-center justify-center rounded-2xl border border-[color:var(--border)] bg-surface-card shadow-[var(--shadow-sm)]">
+                <div className="flex h-10 w-10 items-center justify-center rounded-2xl [border:0.5px_solid_rgba(37,65,83,0.12)] bg-surface-card shadow-[var(--shadow-sm)]">
                   <UploadCloud className="h-5 w-5 opacity-80" />
                 </div>
                 <div>
                   <div className="text-base font-semibold">Archivo Excel (SAP Export)</div>
-                  <div className="text-sm text-[color:var(--muted)]">
+                  <div className="text-sm text-text-muted">
                     Formato esperado: Codigo, Descripcion, Nivel, Cantidad, Costo_Unitario
                   </div>
                 </div>
@@ -561,16 +561,16 @@ export default function ImportBOMPage() {
                   Seleccionar archivo
                 </label>
                 <input id="file-upload" type="file" accept=".xlsx,.xls" onChange={handleFileChange} className="hidden" />
-                <div className="text-sm text-[color:var(--muted)]">
+                <div className="text-sm text-text-muted">
                   {fileName ? (
-                    <>Archivo: <span className="font-medium text-[color:var(--text)]">{fileName}</span></>
+                    <>Archivo: <span className="font-medium text-text-primary">{fileName}</span></>
                   ) : (
                     <span>Ningún archivo seleccionado</span>
                   )}
                 </div>
               </div>
 
-              <p className="mt-4 text-xs text-[color:var(--muted)] leading-relaxed">
+              <p className="mt-4 text-xs text-text-muted leading-relaxed">
                 Nota: Guardamos productos (Nivel 1) con su Costo_Mp recalculado (MP). El costo total del negocio se calculará en la simulación con cantidades.
               </p>
 
@@ -587,14 +587,14 @@ export default function ImportBOMPage() {
                 <h3 className="text-lg font-semibold">
                   Productos detectados (Nivel 1): {productos.length}
                 </h3>
-                <p className="text-sm text-[color:var(--muted)]">
+                <p className="text-sm text-text-muted">
                   MP recalculado = Σ (Cantidad × Costo_Unitario) de componentes, excluyendo PZ.
                 </p>
               </div>
-              <div className="mt-4 overflow-x-auto rounded-[var(--radius-lg)] border border-[color:var(--border)] bg-[color:var(--surface)] shadow-[var(--shadow-sm)]">
+              <div className="mt-4 overflow-x-auto rounded-[var(--radius-lg)] [border:0.5px_solid_rgba(37,65,83,0.12)] bg-surface-card shadow-[var(--shadow-sm)]">
                 <table className={`w-full ${tableStyles.tableWrapper}`}>
                   <thead className="bg-surface-card/60">
-                    <tr className="border-b border-[color:var(--border)]">
+                    <tr className="[border-bottom:0.5px_solid_rgba(37,65,83,0.12)]">
                       <th className={`text-left font-semibold ${tableStyles.th}`}>Código</th>
                       <th className={`text-left font-semibold ${tableStyles.th}`}>Descripción</th>
                       <th className={`text-right font-semibold ${tableStyles.th}`}>Costo MP</th>
@@ -606,12 +606,12 @@ export default function ImportBOMPage() {
                   </thead>
                   <tbody>
                     {productos.slice(0, 50).map((p, i) => (
-                      <tr key={i} className="border-t border-[color:var(--border)]">
+                      <tr key={i} className="[border-top:0.5px_solid_rgba(37,65,83,0.12)]">
                         <td className={`font-medium ${tableStyles.td}`}>{p.Codigo}</td>
-                        <td className={`text-[color:var(--muted)] ${tableStyles.td}`}>{p.Descripcion}</td>
+                        <td className={`text-text-muted ${tableStyles.td}`}>{p.Descripcion}</td>
                         <td className={`text-right font-semibold ${tableStyles.td}`}>{formatMoney(p.Costo_Mp)}</td>
-                        <td className={`text-right text-[color:var(--muted)] ${tableStyles.td}`}>{p.componentes_count || "—"}</td>
-                        <td className={`text-right text-[color:var(--muted)] ${tableStyles.td}`}>{p.excluidos_PZ_count || "—"}</td>
+                        <td className={`text-right text-text-muted ${tableStyles.td}`}>{p.componentes_count || "—"}</td>
+                        <td className={`text-right text-text-muted ${tableStyles.td}`}>{p.excluidos_PZ_count || "—"}</td>
                         <td className={`text-right text-emerald-600 font-medium ${tableStyles.td}`}>{p.usaron_costo_real || 0}</td>
                         <td className={`text-right text-text-muted font-medium ${tableStyles.td}`}>{p.usaron_costo_excel || 0}</td>
                       </tr>
@@ -619,7 +619,7 @@ export default function ImportBOMPage() {
                   </tbody>
                 </table>
               </div>
-              <p className="mt-2 text-xs text-[color:var(--muted)]">Mostrando los primeros 50.</p>
+              <p className="mt-2 text-xs text-text-muted">Mostrando los primeros 50.</p>
             </div>
           )}
 
@@ -648,7 +648,7 @@ export default function ImportBOMPage() {
                 <p className="text-sm text-text-muted">No hay importaciones registradas aún.</p>
               </div>
             ) : (
-              <div className="overflow-x-auto rounded-[var(--radius-lg)] border border-[color:var(--border)] bg-surface-card shadow-sm">
+              <div className="overflow-x-auto rounded-[var(--radius-lg)] [border:0.5px_solid_rgba(37,65,83,0.12)] bg-surface-card shadow-sm">
                 <table className={`w-full ${tableStyles.tableWrapper}`}>
                   <thead className="bg-surface-hover/80 border-b border-border-subtle">
                     <tr>
@@ -714,7 +714,7 @@ export default function ImportBOMPage() {
                 <p className="text-sm text-text-muted">No hay productos BOM procesados aún.</p>
               </div>
             ) : (
-              <div className="overflow-x-auto rounded-[var(--radius-lg)] border border-[color:var(--border)] bg-surface-card shadow-sm">
+              <div className="overflow-x-auto rounded-[var(--radius-lg)] [border:0.5px_solid_rgba(37,65,83,0.12)] bg-surface-card shadow-sm">
                 <table className={`w-full ${tableStyles.tableWrapper}`}>
                   <thead className="bg-surface-hover/80 border-b border-border-subtle">
                     <tr>

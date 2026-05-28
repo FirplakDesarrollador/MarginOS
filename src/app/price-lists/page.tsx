@@ -351,7 +351,7 @@ export default function PriceListsPage() {
         <div className="fixed inset-0 z-[60] flex items-center justify-center px-6 py-6 lg:px-12">
           <div className="absolute inset-0 bg-slate-900/50 backdrop-blur-sm" onClick={() => { setSelectedChannel(null); setChannelSearch(""); }} />
           <div className="relative w-full max-w-[1280px] max-h-[85vh] flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200"
-            style={{ background: "var(--bg-card)", borderRadius: "var(--radius-xl)", boxShadow: "var(--shadow-lg)", border: "0.5px solid var(--border-hair)" }}>
+            style={{ background: "var(--bg-card)", borderRadius: "var(--radius-xl)", boxShadow: "0 8px 32px -8px rgba(37,65,83,0.18)", border: "0.5px solid rgba(37,65,83,0.12)" }}>
             {/* HEADER */}
             <div className="px-6 py-5 flex items-center justify-between flex-shrink-0 gap-4"
               style={{ borderBottom: "0.5px solid var(--border-hair)", background: "var(--bg-hover)" }}>
@@ -390,9 +390,9 @@ export default function PriceListsPage() {
 
             {/* TABLE */}
             <div className="overflow-y-auto flex-1">
-              <table className={`w-full table-fixed ${tableStyles.tableWrapper}`}>
+              <table className={`w-full ${tableStyles.tableWrapper}`}>
                 <colgroup>
-                  <col className="w-[28%]" />
+                  <col className="min-w-[220px]" />
                   <col className="w-[11%]" />
                   <col className="w-[13%]" />
                   <col className="w-[7%]" />
@@ -421,10 +421,10 @@ export default function PriceListsPage() {
                     </tr>
                   ) : filteredChannelPrices.map((row) => (
                     <tr key={row.id} className="[border-bottom:0.5px_solid_var(--border-hair)] hover:bg-[color:var(--bg-hover)] transition-colors">
-                      <td className={`align-middle ${tableStyles.td}`}>
-                        <div className="flex items-center gap-2.5">
-                          <Package className="w-4 h-4 flex-shrink-0" style={{ color: "var(--fg-muted)", opacity: 0.4 }} />
-                          <span className="font-medium truncate" style={{ color: "var(--fg-primary)" }}>{row.products?.description || "—"}</span>
+                      <td className={`align-top ${tableStyles.td}`} style={{ minWidth: "220px" }}>
+                        <div className="flex items-start gap-2.5">
+                          <Package className="w-4 h-4 flex-shrink-0 mt-0.5" style={{ color: "var(--fg-muted)", opacity: 0.4 }} />
+                          <span className="font-medium" style={{ color: "var(--fg-primary)", whiteSpace: "normal", wordBreak: "break-word" }}>{row.products?.description || "—"}</span>
                         </div>
                       </td>
                       <td className={`align-middle ${tableStyles.td}`}>
@@ -489,7 +489,7 @@ export default function PriceListsPage() {
         <div className="fixed inset-0 z-[70] flex items-center justify-center p-4 sm:p-6">
           <div className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm" onClick={() => setEditingRow(null)} />
           <div className="relative w-full max-w-md flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200"
-            style={{ background: "var(--bg-card)", borderRadius: "var(--radius-xl)", boxShadow: "var(--shadow-lg)", border: "0.5px solid var(--border-hair)" }}>
+            style={{ background: "var(--bg-card)", borderRadius: "var(--radius-xl)", boxShadow: "0 8px 32px -8px rgba(37,65,83,0.18)", border: "0.5px solid rgba(37,65,83,0.12)" }}>
             <div className="flex items-center justify-between px-6 py-4"
               style={{ borderBottom: "0.5px solid var(--border-hair)", background: "var(--bg-hover)" }}>
               <div className="flex items-center gap-3">
@@ -499,7 +499,7 @@ export default function PriceListsPage() {
                 </div>
                 <div>
                   <h2 className="text-base font-semibold" style={{ color: "var(--fg-primary)" }}>Editar Precio</h2>
-                  <p className="text-xs mt-0.5 truncate max-w-[250px]" style={{ color: "var(--fg-muted)" }}>
+                  <p className="text-xs mt-0.5 leading-snug" style={{ color: "var(--fg-muted)", wordBreak: "break-word", maxWidth: "300px" }}>
                     {editingRow.products?.sap_code} — {editingRow.products?.description}
                   </p>
                 </div>

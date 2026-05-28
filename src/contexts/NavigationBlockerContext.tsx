@@ -98,7 +98,7 @@ export function NavigationBlockerProvider({ children }: { children: React.ReactN
           />
 
           {/* Dialog */}
-          <div className="relative w-full max-w-md bg-surface-card/95 backdrop-blur-md rounded-2xl shadow-2xl border border-border-subtle overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+          <div className="relative w-full max-w-md modal-panel rounded-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-200">
             {/* Header */}
             <div className="flex items-start justify-between px-6 pt-6 pb-4 border-b border-border-subtle">
               <div className="flex items-center gap-3">

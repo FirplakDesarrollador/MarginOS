@@ -80,7 +80,7 @@ export function CustomerSelectModal({ isOpen, onClose, onSelect }: CustomerSelec
         onClick={onClose}
       />
       
-      <div className="relative w-full max-w-2xl max-h-[85vh] bg-surface-card rounded-2xl shadow-xl border border-border-subtle flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+      <div className="relative w-full max-w-2xl max-h-[85vh] modal-panel rounded-2xl flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200">
         
         <div className="flex items-center justify-between px-6 py-4 border-b border-border-subtle bg-surface-hover/50">
           <div className="flex items-center gap-3">
@@ -113,7 +113,7 @@ export function CustomerSelectModal({ isOpen, onClose, onSelect }: CustomerSelec
           <select 
             value={channelFilter}
             onChange={(e) => setChannelFilter(e.target.value)}
-            className="border border-border-subtle rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary transition-all bg-surface-card sm:w-48"
+            className="border border-border-subtle rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary transition-all bg-surface-hover sm:w-48"
           >
             <option value="">Todos los canales</option>
             {channels.map((ch) => (
