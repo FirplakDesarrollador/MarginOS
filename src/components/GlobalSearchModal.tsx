@@ -211,7 +211,7 @@ export function GlobalSearchModal({ isOpen, onClose }: { isOpen: boolean; onClos
       />
       
       {/* Modal */}
-      <div className="fixed inset-x-0 top-[10%] md:top-[15%] mx-auto z-[101] w-[90%] max-w-2xl bg-surface-card border border-border-subtle rounded-2xl shadow-[0_16px_48px_rgba(0,0,0,0.12),0_4px_16px_rgba(0,0,0,0.08)] overflow-hidden flex flex-col max-h-[70vh] animate-in fade-in zoom-in-95 duration-200">
+      <div className="fixed inset-x-0 top-[10%] md:top-[15%] mx-auto z-[101] w-[90%] max-w-2xl modal-panel rounded-2xl overflow-hidden flex flex-col max-h-[70vh] animate-in fade-in zoom-in-95 duration-200">
         
         {/* Search Input */}
         <div className="relative flex items-center px-4 border-b border-border-subtle shrink-0">

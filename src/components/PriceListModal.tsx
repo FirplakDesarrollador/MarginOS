@@ -173,7 +173,7 @@ export function PriceListModal({ isOpen, onClose, onSuccess }: PriceListModalPro
         onClick={onClose}
       />
 
-      <div className="relative w-full max-w-lg bg-surface-card rounded-2xl shadow-xl border border-border-subtle flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+      <div className="relative w-full max-w-lg modal-panel rounded-2xl flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200">
 
         <div className="flex items-center justify-between px-6 py-4 border-b border-border-subtle bg-surface-hover/50">
           <div className="flex items-center gap-3">
@@ -206,7 +206,7 @@ export function PriceListModal({ isOpen, onClose, onSuccess }: PriceListModalPro
                 <select
                   value={formData.channel_id}
                   onChange={(e) => setFormData({ ...formData, channel_id: e.target.value })}
-                  className="w-full border border-border-subtle rounded-xl px-3 py-2 focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary text-sm transition-all bg-surface-card"
+                  className="w-full border border-border-subtle rounded-xl px-3 py-2 focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary text-sm transition-all bg-surface-hover"
                   disabled={loadingInitial}
                   required
                 >
@@ -290,7 +290,7 @@ export function PriceListModal({ isOpen, onClose, onSuccess }: PriceListModalPro
                   <select
                     value={formData.currency}
                     onChange={(e) => setFormData({ ...formData, currency: e.target.value })}
-                    className="w-full border border-border-subtle bg-surface-card rounded-xl px-3 py-2 focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary text-sm transition-all"
+                    className="w-full border border-border-subtle bg-surface-hover rounded-xl px-3 py-2 focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary text-sm transition-all"
                   >
                     <option value="COP">COP (Pesos)</option>
                     <option value="USD">USD (Dólares)</option>
@@ -361,7 +361,7 @@ export function PriceListModal({ isOpen, onClose, onSuccess }: PriceListModalPro
                     <select
                       value={selectedYear}
                       onChange={(e) => setSelectedYear(e.target.value)}
-                      className="border border-border-subtle rounded-xl px-3 py-1 focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary text-sm transition-all bg-surface-card min-w-[90px]"
+                      className="border border-border-subtle rounded-xl px-3 py-1 focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary text-sm transition-all bg-surface-hover min-w-[90px]"
                     >
                       {[currentYear - 1, currentYear, currentYear + 1, currentYear + 2, currentYear + 3].map(y => (
                         <option key={y} value={y}>{y}</option>

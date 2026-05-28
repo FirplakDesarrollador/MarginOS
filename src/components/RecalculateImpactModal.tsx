@@ -100,7 +100,7 @@ export function RecalculateImpactModal({ isOpen, onClose, onConfirm, impacts }: 
         onClick={() => !isUpdating && onClose()}
       />
       
-      <div className="relative w-full max-w-5xl max-h-[90vh] bg-surface-card rounded-2xl shadow-xl border border-border-subtle flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+      <div className="relative w-full max-w-5xl max-h-[90vh] modal-panel rounded-2xl flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200">
         
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-5 border-b border-border-subtle bg-surface-hover/50">
@@ -116,7 +116,7 @@ export function RecalculateImpactModal({ isOpen, onClose, onConfirm, impacts }: 
           <button
             onClick={onClose}
             disabled={isUpdating}
-            className="p-2 text-text-muted hover:text-text-primary hover:bg-slate-200/50 rounded-lg transition-colors disabled:opacity-50"
+            className="p-2 text-text-muted hover:text-text-primary hover:bg-surface-hover rounded-lg transition-colors disabled:opacity-50"
           >
             <X className="w-5 h-5" />
           </button>
@@ -166,14 +166,14 @@ export function RecalculateImpactModal({ isOpen, onClose, onConfirm, impacts }: 
                          placeholder="Buscar SAP o nombre..."
                          value={searchQuery}
                          onChange={e => setSearchQuery(e.target.value)}
-                         className="pl-8 pr-3 py-1.5 text-sm border border-border-subtle rounded-lg focus:outline-none focus:ring-1 focus:ring-brand-primary/30 w-64 bg-surface-card"
+                         className="pl-8 pr-3 py-1.5 text-sm border border-border-subtle rounded-lg focus:outline-none focus:ring-1 focus:ring-brand-primary/30 w-64 bg-surface-hover"
                       />
                    </div>
                 </div>
                 
                 <div className="overflow-x-auto flex-1 h-[400px]">
                    <table className="w-full text-sm text-left">
-                     <thead className="bg-surface-card sticky top-0 shadow-sm z-10">
+                     <thead className="bg-surface-hover/30 sticky top-0 shadow-sm z-10">
                        <tr className="border-b border-border-subtle text-xs uppercase tracking-wide text-text-muted">
                          <th className="px-4 py-3 font-semibold w-32">Código SAP</th>
                          <th className="px-4 py-3 font-semibold">Producto Nivel 1</th>
@@ -187,7 +187,7 @@ export function RecalculateImpactModal({ isOpen, onClose, onConfirm, impacts }: 
                      </thead>
                      <tbody className="divide-y divide-border-subtle">
                        {filteredImpacts.map(item => (
-                         <tr key={item.bom_product_id} className="hover:bg-surface-hover/50 bg-surface-card group">
+                         <tr key={item.bom_product_id} className="hover:bg-surface-hover/60 group">
                            <td className="px-4 py-3 font-mono font-semibold text-text-primary">{item.sap_code}</td>
                            <td className="px-4 py-3 text-text-muted">
                               <div className="truncate max-w-[200px]" title={item.description}>{item.description}</div>

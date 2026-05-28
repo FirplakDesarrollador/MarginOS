@@ -24,6 +24,7 @@
   /* ── Surfaces (light) ────────────────────────────────────── */
   --bg-base:        #FFFFFF;             /* canvas */
   --bg-elevated:    #FFFFFF;            /* card */
+  --bg-card:        #FFFFFF;            /* modal / dialog panels */
   --bg-sunken:      #F0EEF8;            /* well */
   --bg-hover:       rgba(37, 65, 83, 0.05);
   --bg-active:      rgba(37, 65, 83, 0.09);
@@ -158,6 +159,7 @@
 .dark, [data-theme="dark"] {
   --bg-base:     #0F1A22;     /* navy-obsidian canvas */
   --bg-elevated: #14232E;
+  --bg-card:     #14232E;     /* modal / dialog panels */
   --bg-sunken:   #0A141B;
   --bg-hover:    #1A2C39;
   --bg-active:   #213642;
@@ -317,6 +319,19 @@ code, .mono, .num {
   box-shadow: var(--shadow-lg), var(--shadow-inset);
 }
 .divider { height: 1px; background: var(--border-subtle); }
+
+/* ── Modal / dialog panel ────────────────────────────────── */
+.modal-panel {
+  background: #FFFFFF;
+  border: 0.5px solid rgba(37, 65, 83, 0.12) !important;
+  box-shadow: 0 8px 32px -8px rgba(37, 65, 83, 0.18) !important;
+}
+.dark .modal-panel,
+[data-theme="dark"] .modal-panel {
+  background: var(--bg-elevated);
+  border: 0.5px solid var(--border-default) !important;
+  box-shadow: var(--shadow-xl) !important;
+}
 
 /* =============================================================
    FORM PRIMITIVES — glass inputs, pill CTA

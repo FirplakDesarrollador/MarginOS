@@ -106,7 +106,7 @@ export function SalesChannelModal({ isOpen, onClose, onSuccess, editChannel }: P
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       <div className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm transition-opacity" onClick={() => !isSaving && onClose()} />
-      <div className="relative w-full max-w-md bg-surface-card rounded-2xl shadow-xl border border-border-subtle flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+      <div className="relative w-full max-w-md modal-panel rounded-2xl flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200">
         
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-border-subtle bg-surface-hover/50">
@@ -116,7 +116,7 @@ export function SalesChannelModal({ isOpen, onClose, onSuccess, editChannel }: P
           <button
             onClick={onClose}
             disabled={isSaving}
-            className="p-2 text-text-muted hover:text-text-primary hover:bg-slate-200/50 rounded-lg transition-colors disabled:opacity-50"
+            className="p-2 text-text-muted hover:text-text-primary hover:bg-surface-hover rounded-lg transition-colors disabled:opacity-50"
           >
             <X className="w-5 h-5" />
           </button>
@@ -142,7 +142,7 @@ export function SalesChannelModal({ isOpen, onClose, onSuccess, editChannel }: P
               onChange={(e) => setName(e.target.value)}
               disabled={isSaving}
               placeholder="Ej. Distribuidores ZS"
-              className="w-full px-3 py-2 bg-surface-card border border-border-subtle rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary transition-all disabled:opacity-50"
+              className="w-full px-3 py-2 bg-surface-hover border border-border-subtle rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary transition-all disabled:opacity-50"
             />
           </div>
 
@@ -154,7 +154,7 @@ export function SalesChannelModal({ isOpen, onClose, onSuccess, editChannel }: P
               value={currency}
               onChange={(e) => setCurrency(e.target.value)}
               disabled={isSaving}
-              className="w-full px-3 py-2 bg-surface-card border border-border-subtle rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary transition-all disabled:opacity-50"
+              className="w-full px-3 py-2 bg-surface-hover border border-border-subtle rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary transition-all disabled:opacity-50"
             >
               <option value="COP">COP</option>
               <option value="USD">USD</option>
@@ -172,7 +172,7 @@ export function SalesChannelModal({ isOpen, onClose, onSuccess, editChannel }: P
               onChange={(e) => setMinMargin(e.target.value ? Number(e.target.value) : "")}
               disabled={isSaving}
               placeholder="Ej. 15.5"
-              className="w-full px-3 py-2 bg-surface-card border border-border-subtle rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary transition-all disabled:opacity-50"
+              className="w-full px-3 py-2 bg-surface-hover border border-border-subtle rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary transition-all disabled:opacity-50"
             />
           </div>
 
