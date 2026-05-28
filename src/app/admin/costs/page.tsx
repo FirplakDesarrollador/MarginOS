@@ -283,25 +283,25 @@ export default function RealCostsPage() {
                   <tr>
                     <th className={`overline text-left w-44 ${tableStyles.th}`}>Código Componente</th>
                     <th className={`overline text-left max-w-[280px] ${tableStyles.th}`}>Descripción</th>
-                    <th className={`overline text-right min-w-[140px] ${tableStyles.th}`}>Costo Base</th>
+                    <th className={`overline text-left min-w-[160px] ${tableStyles.th}`}>Costo Base</th>
                     <th className={`overline text-center min-w-[80px] ${tableStyles.th}`}>Acción</th>
                   </tr>
                 </thead>
                 <tbody>
                   {filteredCosts.map((c) => (
                     <tr key={c.id} className="[border-bottom:0.5px_solid_var(--border-hair)] hover:bg-[color:var(--bg-hover)] transition-colors group">
-                      <td className={`align-middle font-mono font-semibold ${tableStyles.td}`} style={{ color: "var(--fg-primary)", fontFamily: "var(--font-mono)", fontSize: "12px" }}>
+                      <td className={`align-middle ${tableStyles.td}`} style={{ fontFamily: "var(--font-sans)", fontSize: "13px", fontWeight: 500, color: "var(--fg-primary)" }}>
                         {c.codigo}
                       </td>
                       <td className={`align-middle max-w-[280px] ${tableStyles.td}`} style={{ color: "var(--fg-primary)" }}>
                         {c.description || <span style={{ fontStyle: "italic", opacity: 0.5, color: "var(--fg-muted)" }}>Sin descripción</span>}
                       </td>
-                      <td className={`text-right align-middle ${tableStyles.td}`}>
-                        <div className="flex flex-col items-end">
+                      <td className={`align-middle ${tableStyles.td}`} style={{ minWidth: "160px" }}>
+                        <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
                           <span className="font-semibold" style={{ color: "var(--fg-primary)" }}>
                             {formatMoney(c.costo_unitario, c.moneda)}
                           </span>
-                          <span className={`pill mt-1 ${tableStyles.badge}`} style={{ background: "var(--info-soft)", color: "var(--blue-green)", borderColor: "rgba(116,144,148,0.30)" }}>{c.moneda}</span>
+                          <span className={`pill ${tableStyles.badge}`} style={{ background: "var(--info-soft)", color: "var(--blue-green)", borderColor: "rgba(116,144,148,0.30)" }}>{c.moneda}</span>
                         </div>
                       </td>
                       <td className={`text-center align-middle ${tableStyles.td}`}>
