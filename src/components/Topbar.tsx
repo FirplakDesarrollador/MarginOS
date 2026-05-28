@@ -48,25 +48,31 @@ export function Topbar({ title, subtitle }: { title?: string; subtitle?: string 
 
   useEffect(() => {
     const fetchUser = async () => {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
-      if (user) {
-        const { data } = await supabase
-          .from("Usuarios_MarginOS")
-          .select("nombre")
-          .eq("uuid", user.id)
-          .single();
+      try {
+        const {
+          data: { user },
+        } = await supabase.auth.getUser();
+        if (user) {
+          const { data } = await supabase
+            .from("Usuarios_MarginOS")
+            .select("nombre")
+            .eq("uuid", user.id)
+            .single();
 
-        let name = user.email ?? null;
-        if (data && data.nombre) {
-          name = data.nombre;
+          let name = user.email ?? null;
+          if (data && data.nombre) {
+            name = data.nombre;
+          }
+          setUserName(name);
+          if (name) {
+            const parts = name.split(" ");
+            setUserInitials(parts.slice(0, 2).map(p => p[0]).join("").toUpperCase() || "U");
+          }
         }
-        setUserName(name);
-        if (name) {
-          const parts = name.split(" ");
-          setUserInitials(parts.slice(0, 2).map(p => p[0]).join("").toUpperCase() || "U");
-        }
+      } catch (err: any) {
+        // Supabase auth lock race condition — another concurrent request took the lock; ignore silently
+        if (err?.name === "AbortError" || err?.message?.includes("Lock was released")) return;
+        console.error("Topbar fetchUser error:", err);
       }
     };
     fetchUser();

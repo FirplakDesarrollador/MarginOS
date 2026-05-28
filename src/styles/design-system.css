@@ -347,6 +347,7 @@ code, .mono, .num {
   border-color: var(--blue-green);
   box-shadow: 0 0 0 4px rgba(116, 144, 148, 0.30);
 }
+.dark .select { color-scheme: dark; }
 
 /* Pill primary CTA */
 .btn {
