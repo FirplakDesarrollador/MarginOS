@@ -298,8 +298,8 @@ code, .mono, .num {
   -webkit-backdrop-filter: blur(28px) saturate(200%) brightness(1.02);
   border: 0.5px solid rgba(37, 65, 83, 0.14);
   border-radius: var(--radius-lg);
-  box-shadow: 0 2px 12px -4px rgba(37,65,83,0.10),
-              0 1px 0 rgba(255,255,255,0.6) inset;
+  box-shadow: 0 2px 16px -4px rgba(37,65,83,0.12),
+              0 1px 0 rgba(255,255,255,0.8) inset;
 }
 .surface-glass {
   background: rgba(37, 65, 83, 0.07);
@@ -324,6 +324,7 @@ code, .mono, .num {
 .modal-panel {
   background: #FFFFFF;
   border: 0.5px solid rgba(37, 65, 83, 0.12) !important;
+  border-radius: var(--radius-xl) !important;
   box-shadow: 0 8px 32px -8px rgba(37, 65, 83, 0.18) !important;
 }
 .dark .modal-panel,
@@ -331,6 +332,24 @@ code, .mono, .num {
   background: var(--bg-elevated);
   border: 0.5px solid var(--border-default) !important;
   box-shadow: var(--shadow-xl) !important;
+}
+
+/* ── Modal inputs — refined border visibility ────────────── */
+.modal-panel input:not([type="checkbox"]):not([type="radio"]):not([type="range"]),
+.modal-panel select,
+.modal-panel textarea {
+  border: 0.5px solid rgba(37, 65, 83, 0.20) !important;
+}
+
+/* ── Checkbox — FIRPLAK Navy brand color ─────────────────── */
+input[type="checkbox"] {
+  accent-color: #254153;
+}
+
+/* ── Pricing Manager table — extra row breathing room ────── */
+.pricing-table td {
+  padding-top: 18px !important;
+  padding-bottom: 18px !important;
 }
 
 /* =============================================================

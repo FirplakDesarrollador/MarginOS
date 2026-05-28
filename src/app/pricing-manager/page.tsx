@@ -582,7 +582,7 @@ export default function PricingManagerPage() {
                     <h3 className="overline">Tarifas por Canal de Venta</h3>
                   </div>
                   <div className="overflow-x-auto">
-                    <table className={`w-full ${tableStyles.tableWrapper}`}>
+                    <table className={`w-full pricing-table ${tableStyles.tableWrapper}`}>
                       <thead style={{ background: "var(--bg-hover)", borderBottom: "0.5px solid var(--border-hair)" }}>
                         <tr>
                           <th className={`overline text-left ${tableStyles.th}`}>Canal de Venta</th>
@@ -833,7 +833,7 @@ export default function PricingManagerPage() {
             ) : (
               <div className="surface-card mt-6 overflow-hidden">
                 <div className="overflow-x-auto">
-                  <table className={`w-full ${tableStyles.tableWrapper}`}>
+                  <table className={`w-full pricing-table ${tableStyles.tableWrapper}`}>
                     <thead style={{ background: "var(--bg-hover)", borderBottom: "0.5px solid var(--border-hair)" }}>
                       <tr>
                         <th className={`overline text-left ${tableStyles.th}`}>Código SAP</th>

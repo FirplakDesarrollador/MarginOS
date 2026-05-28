@@ -867,7 +867,7 @@ function SimulatorContent() {
             )}
           </div>
 
-        <div className="surface-card p-4 w-full md:w-auto">
+        <div className="surface-card p-4 w-full md:w-auto" style={{ background: "rgba(37,65,83,0.08)", border: "0.5px solid rgba(37,65,83,0.16)" }}>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6 px-2">
             <div>
               <div className="overline mb-1">Ingreso Neto Total</div>
@@ -1277,7 +1277,7 @@ function SimulatorContent() {
                           type="number"
                           min="0"
                           max="100"
-                          className={`border border-border-subtle rounded-md focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary transition-all bg-surface-card shadow-sm ${tableStyles.inputDesc}`}
+                          className={`[border:0.5px_solid_rgba(37,65,83,0.18)] rounded-[var(--radius-sm)] focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary transition-all bg-surface-card shadow-sm ${tableStyles.inputDesc}`}
                           value={inputs[p.row_id]?.descuento ?? ""}
                           onChange={(e) => updateInput(p.row_id, "descuento", Number(e.target.value))}
                           placeholder="0"
@@ -1299,7 +1299,7 @@ function SimulatorContent() {
                         <input
                           type="number"
                           min="0"
-                          className={`border border-border-subtle rounded-md focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary transition-all bg-surface-card shadow-sm ${tableStyles.inputCant}`}
+                          className={`[border:0.5px_solid_rgba(37,65,83,0.18)] rounded-[var(--radius-sm)] focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary transition-all bg-surface-card shadow-sm ${tableStyles.inputCant}`}
                           value={inputs[p.row_id]?.cantidad ?? ""}
                           onChange={(e) => updateInput(p.row_id, "cantidad", Number(e.target.value))}
                           placeholder="0"
