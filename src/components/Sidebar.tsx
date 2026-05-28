@@ -72,10 +72,13 @@ export function Sidebar() {
         width,
         minWidth: width,
         borderRight: "0.5px solid var(--border-hair)",
+        background: "rgba(28, 40, 50, 0.92)",
+        backdropFilter: "blur(30px)",
+        WebkitBackdropFilter: "blur(30px)",
       }}
       className={[
         "hidden md:flex flex-col h-screen sticky top-0 z-40",
-        "bg-surface-card shrink-0",
+        "shrink-0",
         "overflow-hidden transition-[width,min-width] duration-200 ease-out",
       ].join(" ")}
     >
@@ -123,7 +126,7 @@ export function Sidebar() {
         {navGroups.map((group, i) => (
           <div key={i}>
             {isExpanded && (
-              <div className="overline px-2.5 pb-1.5 pt-1" style={{ color: "var(--fg-muted)" }}>
+              <div className="overline px-2.5 pb-1.5 pt-1" style={{ color: "rgba(245,241,234,0.60)", fontWeight: 600 }}>
                 {group.title}
               </div>
             )}
@@ -141,8 +144,8 @@ export function Sidebar() {
                       "flex items-center gap-3 rounded-[11px] cursor-pointer border border-transparent w-full transition-all duration-200 ease-out text-left",
                       isExpanded ? "justify-start py-2 px-2.5" : "justify-center py-2.5 px-0",
                       isActive
-                        ? "bg-[rgba(37,65,83,0.08)] text-[color:var(--navy)] font-medium"
-                        : "bg-transparent text-[color:var(--fg-muted)] font-normal hover:bg-[color:var(--bg-hover)] hover:text-[color:var(--fg-primary)]",
+                        ? "bg-[rgba(255,255,255,0.12)] text-[rgba(245,241,234,1)] font-medium"
+                        : "bg-transparent text-[rgba(245,241,234,0.72)] font-medium hover:bg-[rgba(255,255,255,0.08)] hover:text-[rgba(245,241,234,1)]",
                     ].join(" ")}
                   >
                     <item.icon
@@ -211,9 +214,10 @@ export function MobileSidebar() {
       />
 
       <aside
+        style={{ background: "rgba(28, 40, 50, 0.92)", backdropFilter: "blur(30px)", WebkitBackdropFilter: "blur(30px)" }}
         className={[
           "md:hidden fixed inset-y-0 left-0 z-50 w-64 flex flex-col",
-          "bg-surface-card shadow-xl [border-right:0.5px_solid_var(--border-hair)]",
+          "shadow-xl [border-right:0.5px_solid_var(--border-hair)]",
           "transition-transform duration-200 ease-out",
           isMobileOpen ? "translate-x-0" : "-translate-x-full",
         ].join(" ")}
@@ -233,7 +237,7 @@ export function MobileSidebar() {
         <nav className="flex-1 overflow-y-auto p-[14px_12px] flex flex-col gap-[18px]">
           {navGroups.map((group, i) => (
             <div key={i}>
-              <div className="overline px-2.5 pb-1.5 pt-1" style={{ color: "var(--fg-muted)" }}>
+              <div className="overline px-2.5 pb-1.5 pt-1" style={{ color: "rgba(245,241,234,0.60)", fontWeight: 600 }}>
                 {group.title}
               </div>
               <div className="flex flex-col gap-0.5">
@@ -249,8 +253,8 @@ export function MobileSidebar() {
                       className={[
                         "flex items-center gap-3 justify-start py-2 px-2.5 rounded-[11px] transition-all duration-200 ease-out",
                         isActive
-                          ? "bg-[rgba(37,65,83,0.08)] text-[color:var(--navy)] font-medium"
-                          : "bg-transparent text-[color:var(--fg-muted)] font-normal hover:bg-[color:var(--bg-hover)] hover:text-[color:var(--fg-primary)]",
+                          ? "bg-[rgba(255,255,255,0.12)] text-[rgba(245,241,234,1)] font-medium"
+                          : "bg-transparent text-[rgba(245,241,234,0.72)] font-medium hover:bg-[rgba(255,255,255,0.08)] hover:text-[rgba(245,241,234,1)]",
                       ].join(" ")}
                     >
                       <item.icon

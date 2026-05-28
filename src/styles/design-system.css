@@ -22,11 +22,11 @@
   --ink-200:     #B6B6B3;
 
   /* ── Surfaces (light) ────────────────────────────────────── */
-  --bg-base:        var(--bone);        /* canvas */
+  --bg-base:        #FFFFFF;             /* canvas */
   --bg-elevated:    #FFFFFF;            /* card */
-  --bg-sunken:      #EDE7DA;            /* well */
-  --bg-hover:       #EFE9DD;
-  --bg-active:      #E6DFCE;
+  --bg-sunken:      #F0EEF8;            /* well */
+  --bg-hover:       rgba(37, 65, 83, 0.05);
+  --bg-active:      rgba(37, 65, 83, 0.09);
 
   /* ── Foreground (light) ──────────────────────────────────── */
   --fg-primary:   var(--ink);
@@ -57,13 +57,13 @@
   --margin-weak:   #B23A3A;
 
   /* ── Glass tokens ────────────────────────────────────────── */
-  --glass-tint:        rgba(255, 255, 255, 0.62);
-  --glass-tint-strong: rgba(255, 255, 255, 0.78);
-  --glass-border:      rgba(255, 255, 255, 0.55);
-  --glass-blur:        20px;
-  --glass-blur-strong: 32px;
-  --glass-saturation:  180%;
-  --glass-card-tint:   rgba(255, 255, 255, 0.62);
+  --glass-tint:        rgba(37, 65, 83, 0.07);
+  --glass-tint-strong: rgba(37, 65, 83, 0.12);
+  --glass-border:      rgba(37, 65, 83, 0.14);
+  --glass-blur:        28px;
+  --glass-blur-strong: 36px;
+  --glass-saturation:  200%;
+  --glass-card-tint:   rgba(37, 65, 83, 0.07);
 
   /* ── Radii ───────────────────────────────────────────────── */
   --radius-xs:  6px;
@@ -215,6 +215,24 @@
   --btn-secondary-bg-hover:rgba(116, 144, 148, 0.12);
 }
 
+/* Dark mode glass card overrides — counters hardcoded light values in .surface-card/.surface-glass */
+.dark .surface-card,
+[data-theme="dark"] .surface-card {
+  background: rgba(37, 65, 83, 0.45);
+  backdrop-filter: blur(32px) saturate(180%) brightness(1.02);
+  -webkit-backdrop-filter: blur(32px) saturate(180%) brightness(1.02);
+  border: 0.5px solid rgba(116, 144, 148, 0.25);
+  box-shadow: 0 8px 32px -8px rgba(0,0,0,0.35),
+              0 1px 0 rgba(255,255,255,0.06) inset;
+}
+.dark .surface-glass,
+[data-theme="dark"] .surface-glass {
+  background: rgba(37, 65, 83, 0.36);
+  backdrop-filter: blur(28px) saturate(180%);
+  -webkit-backdrop-filter: blur(28px) saturate(180%);
+  border: 0.5px solid rgba(116, 144, 148, 0.22);
+}
+
 /* =============================================================
    ROOT TYPE — applied directly to html/body
    ============================================================= */
@@ -230,7 +248,6 @@ html, body {
   text-rendering: optimizeLegibility;
   font-weight: 400;
 }
-
 /* Headings — weight 500 max (per brief) */
 .display { font: 500 var(--fs-display)/var(--lh-display) var(--font-display);
            letter-spacing: var(--tr-display); }
@@ -274,18 +291,22 @@ code, .mono, .num {
    UTILITY SURFACES
    ============================================================= */
 .surface-card {
-  background: var(--bg-elevated);
-  border: 1px solid var(--border-subtle);
+  background: rgba(37, 65, 83, 0.07);
+  backdrop-filter: blur(28px) saturate(200%) brightness(1.02);
+  -webkit-backdrop-filter: blur(28px) saturate(200%) brightness(1.02);
+  border: 0.5px solid rgba(37, 65, 83, 0.14);
   border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-sm);
+  box-shadow: 0 2px 12px -4px rgba(37,65,83,0.10),
+              0 1px 0 rgba(255,255,255,0.6) inset;
 }
 .surface-glass {
-  background: var(--glass-card-tint);
-  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturation));
-  backdrop-filter:         blur(var(--glass-blur)) saturate(var(--glass-saturation));
-  border: 1px solid var(--glass-border);
+  background: rgba(37, 65, 83, 0.07);
+  backdrop-filter: blur(28px) saturate(200%) brightness(1.02);
+  -webkit-backdrop-filter: blur(28px) saturate(200%) brightness(1.02);
+  border: 0.5px solid rgba(37, 65, 83, 0.14);
   border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-glass);
+  box-shadow: 0 2px 12px -4px rgba(37,65,83,0.10),
+              0 1px 0 rgba(255,255,255,0.6) inset;
 }
 .surface-glass-strong {
   background: var(--glass-tint-strong);
@@ -347,7 +368,6 @@ code, .mono, .num {
   border-color: var(--blue-green);
   box-shadow: 0 0 0 4px rgba(116, 144, 148, 0.30);
 }
-.dark .select { color-scheme: dark; }
 
 /* Pill primary CTA */
 .btn {
