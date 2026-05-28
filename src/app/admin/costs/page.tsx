@@ -281,8 +281,8 @@ export default function RealCostsPage() {
               <table className={`w-full ${tableStyles.tableWrapper}`}>
                 <thead style={{ background: "var(--bg-hover)", borderBottom: "0.5px solid var(--border-hair)" }}>
                   <tr>
-                    <th className={`overline text-left min-w-[200px] ${tableStyles.th}`}>Código Componente</th>
-                    <th className={`overline text-left max-w-[280px] ${tableStyles.th}`}>Descripción</th>
+                    <th className={`overline text-left w-[220px] max-w-[220px] ${tableStyles.th}`}>Código Componente</th>
+                    <th className={`overline text-left ${tableStyles.th}`} style={{ width: "100%" }}>Descripción</th>
                     <th className={`overline text-right min-w-[160px] ${tableStyles.th}`}>Costo Base</th>
                     <th className={`overline text-center min-w-[80px] ${tableStyles.th}`}>Acción</th>
                   </tr>
@@ -290,10 +290,10 @@ export default function RealCostsPage() {
                 <tbody>
                   {filteredCosts.map((c) => (
                     <tr key={c.id} className="[border-bottom:0.5px_solid_var(--border-hair)] hover:bg-[color:var(--bg-hover)] transition-colors group">
-                      <td className={`align-middle ${tableStyles.td}`} style={{ fontFamily: "var(--font-sans)", fontSize: "13px", fontWeight: 500, color: "var(--fg-primary)", whiteSpace: "nowrap", minWidth: "200px" }}>
+                      <td className={`align-middle ${tableStyles.td}`} style={{ fontFamily: "var(--font-sans)", fontSize: "13px", fontWeight: 500, color: "var(--fg-primary)", whiteSpace: "nowrap", width: "220px", maxWidth: "220px" }}>
                         {c.codigo}
                       </td>
-                      <td className={`align-middle max-w-[280px] ${tableStyles.td}`} style={{ color: "var(--fg-primary)" }}>
+                      <td className={`align-middle ${tableStyles.td}`} style={{ color: "var(--fg-primary)", width: "100%" }}>
                         {c.description || <span style={{ fontStyle: "italic", opacity: 0.5, color: "var(--fg-muted)" }}>Sin descripción</span>}
                       </td>
                       <td className={`align-middle ${tableStyles.td}`} style={{ minWidth: "160px", textAlign: "right" }}>
