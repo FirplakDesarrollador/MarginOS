@@ -9,6 +9,7 @@ import { CustomerSelectModal, type Customer } from "@/components/CustomerSelectM
 import { VersionModal, type VersionOption } from "@/components/VersionModal";
 import { createClient } from "@/lib/supabase/client";
 import { AppShell } from "@/components/AppShell";
+import { Toast } from "@/components/ui/Toast";
 import { useNavigationBlocker } from "@/contexts/NavigationBlockerContext";
 import { useTableDensity } from "@/contexts/TableDensityContext";
 
@@ -827,18 +828,6 @@ function SimulatorContent() {
     <AppShell title="Simulador Comercial">
       <div className="mx-auto w-full selection:bg-brand-primary selection:text-white pb-32">
       
-      {/* ========================================== */}
-      {/* ALERTAS DE GUARDADO */}
-      {saveError && (
-        <div className="mb-6 p-4 rounded-xl text-sm font-medium animate-in fade-in slide-in-from-top-2" style={{ background: "var(--danger-soft)", border: "0.5px solid rgba(178,58,58,0.30)", color: "var(--danger)" }}>
-          {saveError}
-        </div>
-      )}
-      {saveSuccess && (
-        <div className="mb-6 p-4 rounded-xl text-sm font-medium animate-in fade-in slide-in-from-top-2" style={{ background: "var(--success-soft)", border: "0.5px solid rgba(46,125,91,0.30)", color: "var(--success)" }}>
-          Simulación guardada exitosamente en el historial de Escenarios.
-        </div>
-      )}
 
       {/* ========================================== */}
       {/* ENCABEZADO Y RESUMEN KPls */}
@@ -1470,6 +1459,14 @@ function SimulatorContent() {
           </div>
         </div>
       )}
+
+      {/* ========================================== */}
+      {/* FLOATING TOAST                             */}
+      {/* ========================================== */}
+      <Toast
+        message={saveSuccess ? "Simulación guardada exitosamente en el historial de Escenarios." : (saveError || null)}
+        type={saveError ? "error" : "success"}
+      />
 
       </div>
     </AppShell>

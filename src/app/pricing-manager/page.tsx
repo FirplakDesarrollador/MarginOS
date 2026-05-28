@@ -55,7 +55,7 @@ type ProductDashboardStatus = {
 
 export default function PricingManagerPage() {
   const supabase = createClient();
-  const { getTableClasses } = useTableDensity();
+  const { getTableClasses, density } = useTableDensity();
   const tableStyles = getTableClasses();
 
   // Dashboard state
@@ -538,10 +538,7 @@ export default function PricingManagerPage() {
                     </div>
                   </div>
 
-                  <div className="flex flex-col lg:items-end justify-center min-w-[200px] p-4 lg:p-0 rounded-xl lg:rounded-none gap-4"
-                    style={{ background: "var(--bg-hover)", border: "0.5px solid var(--border-hair)" }}
-                    onMouseEnter={(e) => (e.currentTarget.style.background = "var(--bg-hover)")}
-                  >
+                  <div className="flex flex-col lg:items-end justify-center min-w-[200px] p-4 lg:p-0 rounded-xl lg:rounded-none gap-4">
                     <div className="text-right">
                       <span className="text-xs font-medium uppercase tracking-wider mb-1 block" style={{ color: "var(--fg-muted)" }}>Costo MP (BOM)</span>
                       {bomCost !== null ? (
@@ -672,6 +669,12 @@ export default function PricingManagerPage() {
                                   value={row.not_applicable_reason || ""}
                                   onChange={(e) => updatePricingRow(row.channel_id, "not_applicable_reason", e.target.value)}
                                   className={`select ${tableStyles.input}`}
+                                  style={{
+                                    paddingTop:    density === "compact" ? "0.25rem"  : density === "comodo" ? "0.5rem"  : "0.375rem",
+                                    paddingBottom: density === "compact" ? "0.25rem"  : density === "comodo" ? "0.5rem"  : "0.375rem",
+                                    paddingLeft:   density === "compact" ? "0.5rem"   : density === "comodo" ? "1rem"    : "0.75rem",
+                                    paddingRight:  density === "compact" ? "0.5rem"   : density === "comodo" ? "1rem"    : "0.75rem",
+                                  }}
                                 >
                                   <option value="">Razón (Opcional)</option>
                                   <option value="Producto exclusivo de cliente">Producto exclusivo de cliente</option>
@@ -698,6 +701,7 @@ export default function PricingManagerPage() {
                                       value={row.valid_from}
                                       onChange={e => updatePricingRow(row.channel_id, "valid_from", e.target.value)}
                                       className={`input max-w-[120px] ${tableStyles.input}`}
+                                      style={{ fontSize: "0.75rem" }}
                                     />
                                     <span className="text-xs" style={{ color: "var(--fg-muted)" }}>→</span>
                                     <input
@@ -705,6 +709,7 @@ export default function PricingManagerPage() {
                                       value={row.valid_to}
                                       onChange={e => updatePricingRow(row.channel_id, "valid_to", e.target.value)}
                                       className={`input max-w-[120px] ${tableStyles.input}`}
+                                      style={{ fontSize: "0.75rem" }}
                                     />
                                   </div>
                                 </div>
