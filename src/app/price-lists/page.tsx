@@ -227,29 +227,26 @@ export default function PriceListsPage() {
         {/* HEADER */}
         <div className="mt-8 flex items-start justify-between gap-4 flex-wrap">
           <div>
-            <Link href="/" className="inline-flex items-center gap-2 text-sm text-[color:var(--muted)] hover:text-[color:var(--text)] transition-colors mb-4">
+            <Link href="/" className="inline-flex items-center gap-2 caption mb-4 hover:opacity-80 transition-opacity">
               <ArrowLeft className="h-4 w-4" /> Volver al inicio
             </Link>
-            <h1 className="text-3xl font-semibold tracking-tight text-text-primary flex items-center gap-3">
-              <Tag className="w-8 h-8 text-brand-primary" />
+            <h1 className="flex items-center gap-3">
+              <Tag className="w-8 h-8" style={{ color: "var(--blue-green)" }} />
               Listas de Precios
             </h1>
-            <p className="mt-2 text-text-muted leading-relaxed max-w-2xl">
+            <p className="lead mt-2">
               Administra las tarifas de la compañía organizadas por canal de venta.
               Selecciona un canal para ver y gestionar sus productos y precios.
             </p>
           </div>
           <div className="flex items-center gap-3 w-full md:w-auto">
-            <button onClick={downloadTemplate}
-              className="inline-flex flex-1 md:flex-none items-center justify-center gap-2 px-4 py-2 bg-surface-card text-text-primary border border-border-subtle text-sm font-medium rounded-xl hover:bg-surface-hover transition-all shadow-sm">
+            <button onClick={downloadTemplate} className="btn btn--secondary flex-1 md:flex-none">
               <Download className="w-4 h-4" /> Plantilla
             </button>
-            <button onClick={() => setIsUploadModalOpen(true)}
-              className="inline-flex flex-1 md:flex-none items-center justify-center gap-2 px-4 py-2 bg-surface-card text-brand-primary border border-brand-primary/20 text-sm font-medium rounded-xl hover:bg-brand-primary/5 hover:border-brand-primary/40 transition-all shadow-sm">
+            <button onClick={() => setIsUploadModalOpen(true)} className="btn btn--secondary flex-1 md:flex-none">
               <UploadCloud className="w-4 h-4" /> Carga Masiva
             </button>
-            <button onClick={() => setIsModalOpen(true)}
-              className="inline-flex flex-1 md:flex-none items-center justify-center gap-2 px-6 py-2 btn-primary text-sm font-medium rounded-xl hover:-translate-y-0.5">
+            <button onClick={() => setIsModalOpen(true)} className="btn btn--primary flex-1 md:flex-none">
               <Plus className="w-4 h-4" /> Nueva Lista
             </button>
           </div>
@@ -257,92 +254,92 @@ export default function PriceListsPage() {
 
         {/* MAIN TABLE: CHANNEL-FIRST */}
         {loading ? (
-          <div className="mt-12 py-24 flex flex-col items-center justify-center border border-border-subtle rounded-2xl bg-surface-card shadow-sm">
-            <div className="w-8 h-8 border-2 border-brand-primary border-t-transparent rounded-full animate-spin mb-4" />
-            <p className="text-sm font-medium text-text-muted">Cargando tarifas...</p>
+          <div className="surface-card mt-12 py-24 flex flex-col items-center justify-center">
+            <div className="w-8 h-8 border-2 rounded-full animate-spin mb-4"
+              style={{ borderColor: "var(--navy)", borderTopColor: "transparent" }} />
+            <p className="caption">Cargando tarifas...</p>
           </div>
         ) : channelGroups.length === 0 ? (
-          <div className="mt-12 border-2 border-dashed border-border-subtle rounded-3xl py-24 px-6 text-center bg-surface-hover/50 shadow-sm flex flex-col items-center justify-center">
-            <div className="w-16 h-16 bg-surface-card border border-border-subtle rounded-2xl flex items-center justify-center mb-6 shadow-sm">
-              <FolderOpen className="w-8 h-8 text-text-muted/50" />
+          <div className="mt-12 py-24 px-6 text-center flex flex-col items-center justify-center"
+            style={{ border: "0.5px dashed var(--blue-green)", borderRadius: "var(--radius-xl)" }}>
+            <div className="w-16 h-16 rounded-2xl flex items-center justify-center mb-5"
+              style={{ background: "var(--info-soft)", color: "var(--blue-green)" }}>
+              <FolderOpen className="w-8 h-8" />
             </div>
-            <h3 className="text-xl font-semibold text-text-primary mb-2 tracking-tight">
-              Aún no hay listas de precios
-            </h3>
-            <p className="text-sm text-text-muted max-w-sm">
+            <h3 className="mb-2">Aún no hay listas de precios</h3>
+            <p className="caption max-w-sm">
               Crea tu primera lista estableciendo un precio base atado a un canal de venta.
             </p>
-            <button onClick={() => setIsModalOpen(true)}
-              className="mt-8 inline-flex items-center gap-2 px-6 py-3 bg-brand-primary/10 text-brand-primary text-sm font-medium rounded-xl hover:bg-brand-primary/20 transition-all shadow-sm">
+            <button onClick={() => setIsModalOpen(true)} className="btn btn--secondary mt-8">
               Comenzar a crear
             </button>
           </div>
         ) : (
-          <div className="mt-10 overflow-x-auto rounded-[var(--radius-lg)] border border-[color:var(--border)] bg-surface-card shadow-sm">
-            <table className={`w-full ${tableStyles.tableWrapper}`}>
-              <thead className="bg-surface-hover/80 border-b border-border-subtle">
-                <tr>
-                  <th className={`text-left font-semibold text-text-primary ${tableStyles.th}`}>Canal de Venta</th>
-                  <th className={`text-center font-semibold text-text-primary ${tableStyles.th}`}>Moneda</th>
-                  <th className={`text-center font-semibold text-text-primary ${tableStyles.th}`}>Productos</th>
-                  <th className={`text-center font-semibold text-text-primary ${tableStyles.th}`}>Activos</th>
-                  <th className={`text-left font-semibold text-text-primary ${tableStyles.th}`}>Última Actualización</th>
-                  <th className={`text-center font-semibold text-text-primary ${tableStyles.th}`}>Estado</th>
-                  <th className={`text-center font-semibold text-text-primary w-24 ${tableStyles.th}`}>Acción</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-border-subtle">
-                {channelGroups.map((group) => (
-                  <tr key={group.channelId} className="hover:bg-surface-hover/50 transition-colors cursor-pointer group"
-                    onClick={() => setSelectedChannel(group)}>
-                    <td className={`align-middle ${tableStyles.td}`}>
-                      <div className="flex items-center gap-3">
-                        <div className="w-9 h-9 rounded-xl bg-brand-primary/10 flex items-center justify-center flex-shrink-0">
-                          <Store className="w-4 h-4 text-brand-primary" />
-                        </div>
-                        <span className="font-semibold text-text-primary">{group.channelName}</span>
-                      </div>
-                    </td>
-                    <td className={`text-center align-middle ${tableStyles.td}`}>
-                      <span className={`inline-flex items-center rounded font-semibold bg-surface-hover text-text-primary border border-border-subtle ${tableStyles.badge}`}>
-                        {group.defaultCurrency}
-                      </span>
-                    </td>
-                    <td className={`text-center align-middle ${tableStyles.td}`}>
-                      <button onClick={(e) => { e.stopPropagation(); setSelectedChannel(group); }}
-                        className={`inline-flex items-center gap-1.5 rounded-lg font-bold bg-surface-hover text-text-primary border border-border-subtle hover:bg-brand-primary/10 hover:text-brand-primary hover:border-brand-primary/30 transition-all ${tableStyles.badge}`}>
-                        {group.productCount} {group.productCount === 1 ? "producto" : "productos"}
-                      </button>
-                    </td>
-                    <td className={`text-center align-middle ${tableStyles.td}`}>
-                      {group.activeCount > 0 ? (
-                        <span className={`inline-flex items-center gap-1 rounded font-bold bg-emerald-50 text-emerald-700 border border-emerald-200 ${tableStyles.badge}`}>
-                          <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" /> {group.activeCount}
-                        </span>
-                      ) : (
-                        <span className="text-text-muted">0</span>
-                      )}
-                    </td>
-                    <td className={`text-text-muted align-middle ${tableStyles.td}`}>
-                      {formatDateTime(group.lastUpdated)}
-                    </td>
-                    <td className={`text-center align-middle ${tableStyles.td}`}>
-                      {group.isActive ? (
-                        <span className={`inline-flex items-center rounded-lg font-semibold bg-emerald-50 text-emerald-700 border border-emerald-100 ${tableStyles.badge}`}>Activo</span>
-                      ) : (
-                        <span className={`inline-flex items-center rounded-lg font-semibold bg-surface-hover text-text-muted border border-border-subtle ${tableStyles.badge}`}>Inactivo</span>
-                      )}
-                    </td>
-                    <td className={`text-center align-middle ${tableStyles.td}`}>
-                      <button onClick={(e) => { e.stopPropagation(); setSelectedChannel(group); }}
-                        className={`btn-table-action ${tableStyles.button}`}>
-                        Ver <ChevronRight className="w-3.5 h-3.5" />
-                      </button>
-                    </td>
+          <div className="surface-card mt-10 overflow-hidden">
+            <div className="overflow-x-auto">
+              <table className={`w-full ${tableStyles.tableWrapper}`}>
+                <thead style={{ background: "var(--bg-hover)", borderBottom: "0.5px solid var(--border-hair)" }}>
+                  <tr>
+                    <th className={`overline text-left ${tableStyles.th}`}>Canal de Venta</th>
+                    <th className={`overline text-center ${tableStyles.th}`}>Moneda</th>
+                    <th className={`overline text-center ${tableStyles.th}`}>Productos</th>
+                    <th className={`overline text-center ${tableStyles.th}`}>Activos</th>
+                    <th className={`overline text-left ${tableStyles.th}`}>Última Actualización</th>
+                    <th className={`overline text-center ${tableStyles.th}`}>Estado</th>
+                    <th className={`overline text-center w-24 ${tableStyles.th}`}>Acción</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {channelGroups.map((group) => (
+                    <tr key={group.channelId}
+                      className="[border-bottom:0.5px_solid_var(--border-hair)] hover:bg-[color:var(--bg-hover)] transition-colors cursor-pointer group"
+                      onClick={() => setSelectedChannel(group)}>
+                      <td className={`align-middle ${tableStyles.td}`}>
+                        <div className="flex items-center gap-3">
+                          <div className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0"
+                            style={{ background: "var(--info-soft)", color: "var(--blue-green)" }}>
+                            <Store className="w-4 h-4" />
+                          </div>
+                          <span className="font-semibold" style={{ color: "var(--fg-primary)" }}>{group.channelName}</span>
+                        </div>
+                      </td>
+                      <td className={`text-center align-middle ${tableStyles.td}`}>
+                        <span className={`pill ${tableStyles.badge}`}>{group.defaultCurrency}</span>
+                      </td>
+                      <td className={`text-center align-middle ${tableStyles.td}`}>
+                        <button onClick={(e) => { e.stopPropagation(); setSelectedChannel(group); }}
+                          className={`pill hover:opacity-80 transition-opacity ${tableStyles.badge}`}>
+                          {group.productCount} {group.productCount === 1 ? "producto" : "productos"}
+                        </button>
+                      </td>
+                      <td className={`text-center align-middle ${tableStyles.td}`}>
+                        {group.activeCount > 0 ? (
+                          <span className={`pill pill--success ${tableStyles.badge}`}>{group.activeCount}</span>
+                        ) : (
+                          <span style={{ color: "var(--fg-muted)" }}>0</span>
+                        )}
+                      </td>
+                      <td className={`align-middle ${tableStyles.td}`} style={{ color: "var(--fg-muted)" }}>
+                        {formatDateTime(group.lastUpdated)}
+                      </td>
+                      <td className={`text-center align-middle ${tableStyles.td}`}>
+                        {group.isActive ? (
+                          <span className={`pill pill--success ${tableStyles.badge}`}>Activo</span>
+                        ) : (
+                          <span className={`pill ${tableStyles.badge}`}>Inactivo</span>
+                        )}
+                      </td>
+                      <td className={`text-center align-middle ${tableStyles.td}`}>
+                        <button onClick={(e) => { e.stopPropagation(); setSelectedChannel(group); }}
+                          className={`btn btn--ghost ${tableStyles.button}`}>
+                          Ver <ChevronRight className="w-3.5 h-3.5" />
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
         )}
       </div>
@@ -353,34 +350,39 @@ export default function PriceListsPage() {
       {selectedChannel && !editingRow && (
         <div className="fixed inset-0 z-[60] flex items-center justify-center px-6 py-6 lg:px-12">
           <div className="absolute inset-0 bg-slate-900/50 backdrop-blur-sm" onClick={() => { setSelectedChannel(null); setChannelSearch(""); }} />
-          <div className="relative w-full max-w-[1280px] max-h-[85vh] bg-surface-card rounded-2xl shadow-2xl border border-border-subtle flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+          <div className="relative w-full max-w-[1280px] max-h-[85vh] flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200"
+            style={{ background: "var(--bg-card)", borderRadius: "var(--radius-xl)", boxShadow: "var(--shadow-lg)", border: "0.5px solid var(--border-hair)" }}>
             {/* HEADER */}
-            <div className="px-6 py-5 border-b border-border-subtle bg-surface-hover/50 flex items-center justify-between flex-shrink-0 gap-4">
+            <div className="px-6 py-5 flex items-center justify-between flex-shrink-0 gap-4"
+              style={{ borderBottom: "0.5px solid var(--border-hair)", background: "var(--bg-hover)" }}>
               <div className="flex items-center gap-3 min-w-0">
-                <div className="w-10 h-10 rounded-xl bg-brand-primary/10 flex items-center justify-center flex-shrink-0">
-                  <Store className="w-5 h-5 text-brand-primary" />
+                <div className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0"
+                  style={{ background: "var(--info-soft)", color: "var(--blue-green)" }}>
+                  <Store className="w-5 h-5" />
                 </div>
                 <div className="min-w-0">
-                  <h3 className="text-lg font-semibold text-text-primary truncate">
+                  <h3 className="text-lg font-semibold truncate" style={{ color: "var(--fg-primary)" }}>
                     {selectedChannel.channelName}
                   </h3>
-                  <p className="text-xs text-text-muted mt-0.5">
+                  <p className="text-xs mt-0.5" style={{ color: "var(--fg-muted)" }}>
                     {selectedChannel.defaultCurrency} · {selectedChannel.productCount} {selectedChannel.productCount === 1 ? "producto" : "productos"}
                   </p>
                 </div>
               </div>
               <div className="flex items-center gap-3 flex-shrink-0">
                 <div className="relative">
-                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-text-muted" />
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4" style={{ color: "var(--fg-muted)" }} />
                   <input
                     type="text"
                     value={channelSearch}
                     onChange={(e) => setChannelSearch(e.target.value)}
                     placeholder="Buscar producto o SAP..."
-                    className="pl-9 pr-4 py-2 border border-border-subtle rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary transition-all w-64"
+                    className="input w-64"
+                    style={{ paddingLeft: 36 }}
                   />
                 </div>
-                <button onClick={() => { setSelectedChannel(null); setChannelSearch(""); }} className="p-2 text-text-muted hover:text-text-primary hover:bg-surface-hover rounded-xl transition-colors">
+                <button onClick={() => { setSelectedChannel(null); setChannelSearch(""); }}
+                  className="btn btn--ghost p-2">
                   <X className="w-5 h-5" />
                 </button>
               </div>
@@ -398,67 +400,63 @@ export default function PriceListsPage() {
                   <col className="w-[11%]" />
                   <col className="w-[10%]" />
                 </colgroup>
-                <thead className="bg-surface-hover/60 border-b border-border-subtle sticky top-0 z-10">
+                <thead className="sticky top-0 z-10"
+                  style={{ background: "var(--bg-hover)", borderBottom: "0.5px solid var(--border-hair)" }}>
                   <tr>
-                    <th className={`text-left font-semibold text-text-primary uppercase tracking-wider ${tableStyles.th}`}>Producto</th>
-                    <th className={`text-left font-semibold text-text-primary uppercase tracking-wider ${tableStyles.th}`}>Código SAP</th>
-                    <th className={`text-right font-semibold text-text-primary uppercase tracking-wider ${tableStyles.th}`}>Precio</th>
-                    <th className={`text-center font-semibold text-text-primary uppercase tracking-wider ${tableStyles.th}`}>Moneda</th>
-                    <th className={`text-left font-semibold text-text-primary uppercase tracking-wider ${tableStyles.th}`}>Vigencia</th>
-                    <th className={`text-center font-semibold text-text-primary uppercase tracking-wider ${tableStyles.th}`}>Estado</th>
-                    <th className={`text-center font-semibold text-text-primary uppercase tracking-wider ${tableStyles.th}`}>Acción</th>
+                    <th className={`overline text-left ${tableStyles.th}`}>Producto</th>
+                    <th className={`overline text-left ${tableStyles.th}`}>Código SAP</th>
+                    <th className={`overline text-right ${tableStyles.th}`}>Precio</th>
+                    <th className={`overline text-center ${tableStyles.th}`}>Moneda</th>
+                    <th className={`overline text-left ${tableStyles.th}`}>Vigencia</th>
+                    <th className={`overline text-center ${tableStyles.th}`}>Estado</th>
+                    <th className={`overline text-center ${tableStyles.th}`}>Acción</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-border-subtle">
+                <tbody>
                   {filteredChannelPrices.length === 0 ? (
                     <tr>
-                      <td colSpan={7} className={`text-center text-text-muted ${tableStyles.td}`}>
+                      <td colSpan={7} className={`text-center ${tableStyles.td}`} style={{ color: "var(--fg-muted)" }}>
                         No se encontraron productos con "{channelSearch}"
                       </td>
                     </tr>
                   ) : filteredChannelPrices.map((row) => (
-                    <tr key={row.id} className="hover:bg-surface-hover/50 transition-colors">
+                    <tr key={row.id} className="[border-bottom:0.5px_solid_var(--border-hair)] hover:bg-[color:var(--bg-hover)] transition-colors">
                       <td className={`align-middle ${tableStyles.td}`}>
                         <div className="flex items-center gap-2.5">
-                          <Package className="w-4 h-4 text-text-muted/40 flex-shrink-0" />
-                          <span className="font-medium text-text-primary truncate">{row.products?.description || "—"}</span>
+                          <Package className="w-4 h-4 flex-shrink-0" style={{ color: "var(--fg-muted)", opacity: 0.4 }} />
+                          <span className="font-medium truncate" style={{ color: "var(--fg-primary)" }}>{row.products?.description || "—"}</span>
                         </div>
                       </td>
                       <td className={`align-middle ${tableStyles.td}`}>
-                        <span className={`inline-flex items-center rounded font-semibold bg-surface-hover text-text-primary ${tableStyles.badge}`}>
-                          {row.products?.sap_code || "—"}
-                        </span>
+                        <span className={`pill ${tableStyles.badge}`}>{row.products?.sap_code || "—"}</span>
                       </td>
                       <td className={`text-right align-middle ${tableStyles.td}`}>
-                        <span className="font-bold text-text-primary">{formatMoney(row.list_price)}</span>
+                        <span className="font-bold" style={{ color: "var(--fg-primary)" }}>{formatMoney(row.list_price)}</span>
                       </td>
-                      <td className={`text-center align-middle ${tableStyles.td}`}>
-                        <span className="text-text-muted font-medium">{row.currency}</span>
+                      <td className={`text-center align-middle ${tableStyles.td}`} style={{ color: "var(--fg-muted)" }}>
+                        <span className="font-medium">{row.currency}</span>
                       </td>
                       <td className={`align-middle ${tableStyles.td}`}>
-                        <div className="flex items-center gap-1.5 text-text-muted">
+                        <div className="flex items-center gap-1.5" style={{ color: "var(--fg-muted)" }}>
                           <Calendar className="w-3.5 h-3.5 opacity-60" />
                           {row.valid_from && row.valid_to ? (
-                            <span className="font-medium text-text-primary">
-                              {formatDate(row.valid_from)} <span className="text-slate-300 mx-0.5">→</span> {formatDate(row.valid_to)}
+                            <span className="font-medium" style={{ color: "var(--fg-primary)" }}>
+                              {formatDate(row.valid_from)} <span style={{ color: "var(--fg-muted)", margin: "0 2px" }}>→</span> {formatDate(row.valid_to)}
                             </span>
                           ) : (
-                            <span className="italic opacity-70">Ilimitada</span>
+                            <span style={{ fontStyle: "italic", opacity: 0.7 }}>Ilimitada</span>
                           )}
                         </div>
                       </td>
                       <td className={`text-center align-middle ${tableStyles.td}`}>
                         {row.is_active ? (
-                          <span className={`inline-flex items-center gap-1.5 rounded-lg font-semibold bg-emerald-50 text-emerald-700 border border-emerald-100 ${tableStyles.badge}`}>
-                            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" /> Activo
-                          </span>
+                          <span className={`pill pill--success ${tableStyles.badge}`}>Activo</span>
                         ) : (
-                          <span className={`inline-flex items-center rounded-lg font-semibold bg-surface-hover text-text-muted border border-border-subtle ${tableStyles.badge}`}>Inactivo</span>
+                          <span className={`pill ${tableStyles.badge}`}>Inactivo</span>
                         )}
                       </td>
                       <td className={`text-center align-middle ${tableStyles.td}`}>
-                        <button onClick={() => openEditRow(row)}
-                          className={`btn-table-action ${tableStyles.button}`}>
+                        <button onClick={() => openEditRow(row)} className={`btn btn--ghost ${tableStyles.button}`}>
                           <Pencil className="w-3 h-3" /> Editar
                         </button>
                       </td>
@@ -469,12 +467,14 @@ export default function PriceListsPage() {
             </div>
 
             {/* FOOTER */}
-            <div className="px-6 py-4 border-t border-border-subtle bg-surface-hover/50 flex items-center justify-between flex-shrink-0">
+            <div className="px-6 py-4 flex items-center justify-between flex-shrink-0"
+              style={{ borderTop: "0.5px solid var(--border-hair)", background: "var(--bg-hover)" }}>
               <button onClick={() => { setSelectedChannel(null); setChannelSearch(""); setIsModalOpen(true); }}
-                className="inline-flex items-center gap-2 px-4 py-2 btn-primary text-xs font-semibold rounded-xl">
+                className="btn btn--primary">
                 <Plus className="w-3.5 h-3.5" /> Agregar Producto
               </button>
-              <button onClick={() => { setSelectedChannel(null); setChannelSearch(""); }} className="px-4 py-2 text-text-muted hover:text-text-primary text-sm font-medium transition-colors">
+              <button onClick={() => { setSelectedChannel(null); setChannelSearch(""); }}
+                className="btn btn--ghost">
                 Cerrar
               </button>
             </div>
@@ -488,39 +488,46 @@ export default function PriceListsPage() {
       {editingRow && (
         <div className="fixed inset-0 z-[70] flex items-center justify-center p-4 sm:p-6">
           <div className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm" onClick={() => setEditingRow(null)} />
-          <div className="relative w-full max-w-md bg-surface-card rounded-2xl shadow-xl border border-border-subtle flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200">
-            <div className="flex items-center justify-between px-6 py-4 border-b border-border-subtle bg-surface-hover/50">
+          <div className="relative w-full max-w-md flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200"
+            style={{ background: "var(--bg-card)", borderRadius: "var(--radius-xl)", boxShadow: "var(--shadow-lg)", border: "0.5px solid var(--border-hair)" }}>
+            <div className="flex items-center justify-between px-6 py-4"
+              style={{ borderBottom: "0.5px solid var(--border-hair)", background: "var(--bg-hover)" }}>
               <div className="flex items-center gap-3">
-                <div className="p-2 bg-brand-primary/10 text-brand-primary rounded-xl">
+                <div className="p-2 rounded-xl"
+                  style={{ background: "var(--info-soft)", color: "var(--blue-green)" }}>
                   <Pencil className="w-5 h-5" />
                 </div>
                 <div>
-                  <h2 className="text-base font-semibold text-text-primary">Editar Precio</h2>
-                  <p className="text-xs text-text-muted mt-0.5 truncate max-w-[250px]">
+                  <h2 className="text-base font-semibold" style={{ color: "var(--fg-primary)" }}>Editar Precio</h2>
+                  <p className="text-xs mt-0.5 truncate max-w-[250px]" style={{ color: "var(--fg-muted)" }}>
                     {editingRow.products?.sap_code} — {editingRow.products?.description}
                   </p>
                 </div>
               </div>
-              <button onClick={() => setEditingRow(null)} className="p-2 text-text-muted hover:text-text-primary hover:bg-surface-hover rounded-xl transition-colors">
+              <button onClick={() => setEditingRow(null)} className="btn btn--ghost p-2">
                 <X className="w-5 h-5" />
               </button>
             </div>
             <div className="p-6">
               <form id="edit-price-form" onSubmit={handleEditSubmit} className="space-y-4">
                 {editError && (
-                  <div className="p-3 text-sm text-red-600 bg-red-50 border border-red-100 rounded-xl">{editError}</div>
+                  <div className="p-3 text-sm rounded-xl"
+                    style={{ background: "var(--danger-soft)", border: "0.5px solid rgba(178,58,58,0.30)", color: "var(--danger)" }}>
+                    {editError}
+                  </div>
                 )}
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-text-primary mb-1">Precio <span className="text-red-500">*</span></label>
-                    <input type="number" step="any" value={editForm.list_price} onChange={(e) => setEditForm({...editForm, list_price: e.target.value})}
-                      className="w-full border border-border-subtle rounded-xl px-3 py-2 text-right text-sm focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary transition-all"
-                      placeholder="0.00" required />
+                    <label className="field-label block mb-1.5">Precio <span style={{ color: "var(--danger)" }}>*</span></label>
+                    <input type="number" step="any" value={editForm.list_price}
+                      onChange={(e) => setEditForm({...editForm, list_price: e.target.value})}
+                      className="input text-right" placeholder="0.00" required />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-text-primary mb-1">Moneda</label>
-                    <select value={editForm.currency} onChange={(e) => setEditForm({...editForm, currency: e.target.value})}
-                      className="w-full border border-border-subtle bg-surface-card rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary transition-all">
+                    <label className="field-label block mb-1.5">Moneda</label>
+                    <select value={editForm.currency}
+                      onChange={(e) => setEditForm({...editForm, currency: e.target.value})}
+                      className="select">
                       <option value="COP">COP</option>
                       <option value="USD">USD</option>
                     </select>
@@ -528,30 +535,32 @@ export default function PriceListsPage() {
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-text-primary mb-1">Vigencia Inicio</label>
-                    <input type="date" value={editForm.valid_from} onChange={(e) => setEditForm({...editForm, valid_from: e.target.value})}
-                      className="w-full border border-border-subtle rounded-xl px-3 py-2 text-sm text-text-muted focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary transition-all" />
+                    <label className="field-label block mb-1.5">Vigencia Inicio</label>
+                    <input type="date" value={editForm.valid_from}
+                      onChange={(e) => setEditForm({...editForm, valid_from: e.target.value})}
+                      className="input" />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-text-primary mb-1">Vigencia Fin</label>
-                    <input type="date" value={editForm.valid_to} onChange={(e) => setEditForm({...editForm, valid_to: e.target.value})}
-                      className="w-full border border-border-subtle rounded-xl px-3 py-2 text-sm text-text-muted focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary transition-all" />
+                    <label className="field-label block mb-1.5">Vigencia Fin</label>
+                    <input type="date" value={editForm.valid_to}
+                      onChange={(e) => setEditForm({...editForm, valid_to: e.target.value})}
+                      className="input" />
                   </div>
                 </div>
                 <label className="flex items-center gap-2 cursor-pointer">
-                  <input type="checkbox" checked={editForm.is_active} onChange={(e) => setEditForm({...editForm, is_active: e.target.checked})}
-                    className="w-4 h-4 text-brand-primary rounded border-border-subtle focus:ring-brand-primary" />
-                  <span className="text-sm font-medium text-text-primary">Precio Activo</span>
+                  <input type="checkbox" checked={editForm.is_active}
+                    onChange={(e) => setEditForm({...editForm, is_active: e.target.checked})}
+                    className="w-4 h-4 rounded" style={{ accentColor: "var(--navy)" }} />
+                  <span className="text-sm font-medium" style={{ color: "var(--fg-primary)" }}>Precio Activo</span>
                 </label>
               </form>
             </div>
-            <div className="p-4 border-t border-border-subtle bg-surface-hover/50 flex justify-end gap-3 text-sm">
-              <button type="button" onClick={() => setEditingRow(null)}
-                className="px-4 py-2 border border-border-subtle text-text-primary bg-surface-card rounded-xl hover:bg-surface-hover transition-colors">
+            <div className="p-4 flex justify-end gap-3"
+              style={{ borderTop: "0.5px solid var(--border-hair)", background: "var(--bg-hover)" }}>
+              <button type="button" onClick={() => setEditingRow(null)} className="btn btn--secondary">
                 Cancelar
               </button>
-              <button type="submit" form="edit-price-form" disabled={editLoading}
-                className="px-6 py-2 btn-primary font-medium rounded-xl">
+              <button type="submit" form="edit-price-form" disabled={editLoading} className="btn btn--primary disabled:opacity-50">
                 {editLoading ? "Guardando..." : "Guardar Cambios"}
               </button>
             </div>

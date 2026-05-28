@@ -15,7 +15,7 @@ import { useTableDensity } from "@/contexts/TableDensityContext";
 export default function RealCostsPage() {
   const [costs, setCosts] = useState<DBCost[]>([]);
   const [loading, setLoading] = useState(true);
-  
+
   const [searchQuery, setSearchQuery] = useState("");
 
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
@@ -53,109 +53,109 @@ export default function RealCostsPage() {
   }
 
   async function handleRecalculateBom() {
-     setIsRecalculating(true);
-     try {
-       // 1. Fetch bom_products and their components
-       const { data: bomData, error: bomErr } = await supabase
-          .from("bom_products")
-          .select(`
-             id,
-             sap_code,
-             description,
-             recalculated_cost_mp,
-             bom_components (
-                codigo,
-                cantidad,
-                costo_excel_fallback
-             )
-          `);
-       
-       if (bomErr) throw bomErr;
-       if (!bomData || bomData.length === 0) {
-          alert("No hay productos BOM procesados en la base de datos.");
-          setIsRecalculating(false);
-          return;
-       }
+    setIsRecalculating(true);
+    try {
+      // 1. Fetch bom_products and their components
+      const { data: bomData, error: bomErr } = await supabase
+        .from("bom_products")
+        .select(`
+           id,
+           sap_code,
+           description,
+           recalculated_cost_mp,
+           bom_components (
+              codigo,
+              cantidad,
+              costo_excel_fallback
+           )
+        `);
 
-       // 2. Fetch all real component costs into a lookup map
-       const { data: realCostsData, error: costsErr } = await supabase
-          .from("component_costs")
-          .select("codigo, costo_unitario");
-          
-       if (costsErr) throw costsErr;
-
-       const costMap = new Map<string, number>();
-       (realCostsData || []).forEach(c => costMap.set(c.codigo, Number(c.costo_unitario)));
-
-       // 3. Process recalculation
-       const newImpacts: ImpactResult[] = [];
-
-       for (const product of bomData) {
-          const oldCost = Number(product.recalculated_cost_mp || 0);
-          let newCost = 0;
-          const affected: {codigo: string; diff: number}[] = [];
-
-          if (product.bom_components && Array.isArray(product.bom_components)) {
-             for (const comp of product.bom_components) {
-                // Ignore PZ components exactly like BOM importer
-                if (comp.codigo.toUpperCase().startsWith("PZ")) {
-                   continue;
-                }
-
-                const expectedReal = costMap.get(comp.codigo);
-                const effectiveCost = expectedReal !== undefined ? expectedReal : Number(comp.costo_excel_fallback);
-                
-                newCost += (Number(comp.cantidad) * effectiveCost);
-
-                // Add to affected if it was different
-                const originalCost = Number(comp.costo_excel_fallback);
-                if (expectedReal !== undefined && Math.abs(expectedReal - originalCost) > 0.01) {
-                   affected.push({ codigo: comp.codigo, diff: expectedReal - originalCost });
-                }
-             }
-          } else {
-             // If no components exist, cost remains the same.
-             newCost = oldCost;
-          }
-
-          const deltaVal = newCost - oldCost;
-          // Precision threshold for FP exactness (avoid 0.0000000001 diffs showing as changed)
-          if (Math.abs(deltaVal) < 0.01) {
-             newImpacts.push({
-                bom_product_id: product.id,
-                sap_code: product.sap_code,
-                description: product.description,
-                old_cost: oldCost,
-                new_cost: newCost,
-                delta_value: 0,
-                delta_pct: 0,
-                status: "UNCHANGED",
-                affected_components: []
-             });
-          } else {
-             newImpacts.push({
-                bom_product_id: product.id,
-                sap_code: product.sap_code,
-                description: product.description,
-                old_cost: oldCost,
-                new_cost: newCost,
-                delta_value: deltaVal,
-                delta_pct: oldCost > 0 ? (deltaVal / oldCost) : 0,
-                status: deltaVal > 0 ? "INCREASE" : "DECREASE",
-                affected_components: affected
-             });
-          }
-       }
-
-       setImpacts(newImpacts);
-       setIsRecalculateModalOpen(true);
-
-     } catch (err) {
-        console.error("Error running recalculation engine", err);
-        alert("Ocurrió un error al procesar el recálculo.");
-     } finally {
+      if (bomErr) throw bomErr;
+      if (!bomData || bomData.length === 0) {
+        alert("No hay productos BOM procesados en la base de datos.");
         setIsRecalculating(false);
-     }
+        return;
+      }
+
+      // 2. Fetch all real component costs into a lookup map
+      const { data: realCostsData, error: costsErr } = await supabase
+        .from("component_costs")
+        .select("codigo, costo_unitario");
+
+      if (costsErr) throw costsErr;
+
+      const costMap = new Map<string, number>();
+      (realCostsData || []).forEach(c => costMap.set(c.codigo, Number(c.costo_unitario)));
+
+      // 3. Process recalculation
+      const newImpacts: ImpactResult[] = [];
+
+      for (const product of bomData) {
+        const oldCost = Number(product.recalculated_cost_mp || 0);
+        let newCost = 0;
+        const affected: {codigo: string; diff: number}[] = [];
+
+        if (product.bom_components && Array.isArray(product.bom_components)) {
+          for (const comp of product.bom_components) {
+            // Ignore PZ components exactly like BOM importer
+            if (comp.codigo.toUpperCase().startsWith("PZ")) {
+              continue;
+            }
+
+            const expectedReal = costMap.get(comp.codigo);
+            const effectiveCost = expectedReal !== undefined ? expectedReal : Number(comp.costo_excel_fallback);
+
+            newCost += (Number(comp.cantidad) * effectiveCost);
+
+            // Add to affected if it was different
+            const originalCost = Number(comp.costo_excel_fallback);
+            if (expectedReal !== undefined && Math.abs(expectedReal - originalCost) > 0.01) {
+              affected.push({ codigo: comp.codigo, diff: expectedReal - originalCost });
+            }
+          }
+        } else {
+          // If no components exist, cost remains the same.
+          newCost = oldCost;
+        }
+
+        const deltaVal = newCost - oldCost;
+        // Precision threshold for FP exactness (avoid 0.0000000001 diffs showing as changed)
+        if (Math.abs(deltaVal) < 0.01) {
+          newImpacts.push({
+            bom_product_id: product.id,
+            sap_code: product.sap_code,
+            description: product.description,
+            old_cost: oldCost,
+            new_cost: newCost,
+            delta_value: 0,
+            delta_pct: 0,
+            status: "UNCHANGED",
+            affected_components: []
+          });
+        } else {
+          newImpacts.push({
+            bom_product_id: product.id,
+            sap_code: product.sap_code,
+            description: product.description,
+            old_cost: oldCost,
+            new_cost: newCost,
+            delta_value: deltaVal,
+            delta_pct: oldCost > 0 ? (deltaVal / oldCost) : 0,
+            status: deltaVal > 0 ? "INCREASE" : "DECREASE",
+            affected_components: affected
+          });
+        }
+      }
+
+      setImpacts(newImpacts);
+      setIsRecalculateModalOpen(true);
+
+    } catch (err) {
+      console.error("Error running recalculation engine", err);
+      alert("Ocurrió un error al procesar el recálculo.");
+    } finally {
+      setIsRecalculating(false);
+    }
   }
 
   const handleDownloadTemplate = () => {
@@ -194,18 +194,14 @@ export default function RealCostsPage() {
         {/* Page Header */}
         <div className="mt-8 flex flex-col md:flex-row md:items-start justify-between gap-6">
           <div>
-            <Link
-              href="/"
-              className="inline-flex items-center gap-2 text-sm text-[color:var(--muted)] hover:text-[color:var(--text)] transition-colors mb-4"
-            >
-              <ArrowLeft className="h-4 w-4" />
-              Volver al inicio
+            <Link href="/" className="inline-flex items-center gap-2 caption mb-4 hover:opacity-80 transition-opacity">
+              <ArrowLeft className="h-4 w-4" /> Volver al inicio
             </Link>
-            <h1 className="text-3xl font-semibold tracking-tight text-text-primary flex items-center gap-3">
-              <Settings className="w-8 h-8 text-brand-primary" />
+            <h1 className="flex items-center gap-3">
+              <Settings className="w-8 h-8" style={{ color: "var(--blue-green)" }} />
               Costos Reales
             </h1>
-            <p className="mt-2 text-text-muted leading-relaxed max-w-2xl">
+            <p className="lead mt-2">
               Gestión maestra de costos unitarios reales. Las simulaciones priorizarán estos valores sobre los cargados desde BOM.
             </p>
           </div>
@@ -215,138 +211,120 @@ export default function RealCostsPage() {
             <button
               onClick={handleRecalculateBom}
               disabled={isRecalculating}
-              className="inline-flex items-center gap-2 px-5 py-2 bg-slate-900 text-white text-sm font-medium rounded-xl hover:bg-slate-800 transition-all shadow-sm shadow-slate-900/20 hover:-translate-y-0.5 disabled:opacity-50"
+              className="btn btn--primary disabled:opacity-50"
             >
-              {isRecalculating ? (
-                 <RefreshCw className="w-4 h-4 animate-spin" />
-              ) : (
-                 <RefreshCw className="w-4 h-4" />
-              )}
+              <RefreshCw className={`w-4 h-4 ${isRecalculating ? "animate-spin" : ""}`} />
               Recalcular Costos BOM
             </button>
 
-            <div className="w-px h-6 bg-border-subtle mx-2" /> {/* Divider */}
+            <div className="w-px h-6" style={{ background: "var(--border-hair)" }} />
 
-            <button
-              onClick={handleDownloadTemplate}
-              className="inline-flex items-center gap-2 px-4 py-2 border border-border-subtle bg-surface-card text-text-primary text-sm font-medium rounded-xl hover:bg-surface-hover transition-colors shadow-sm"
-            >
-              <Download className="w-4 h-4 text-text-muted" />
-              Plantilla
+            <button onClick={handleDownloadTemplate} className="btn btn--secondary">
+              <Download className="w-4 h-4" /> Plantilla
+            </button>
+            <button onClick={() => setIsUploadModalOpen(true)} className="btn btn--secondary">
+              <Upload className="w-4 h-4" /> Cargar Masivo
             </button>
             <button
-              onClick={() => setIsUploadModalOpen(true)}
-              className="inline-flex items-center gap-2 px-4 py-2 border border-border-subtle bg-surface-card text-text-primary text-sm font-medium rounded-xl hover:bg-surface-hover transition-colors shadow-sm"
+              onClick={() => { setEditingCost(null); setIsCreateModalOpen(true); }}
+              className="btn btn--primary"
             >
-              <Upload className="w-4 h-4 text-text-muted" />
-              Cargar Masivo
-            </button>
-            <button
-              onClick={() => {
-                setEditingCost(null);
-                setIsCreateModalOpen(true);
-              }}
-              className="inline-flex items-center gap-2 px-5 py-2 btn-primary text-sm font-medium rounded-xl hover:-translate-y-0.5"
-            >
-              <Plus className="w-4 h-4" />
-              Crear Manual
+              <Plus className="w-4 h-4" /> Crear Manual
             </button>
           </div>
         </div>
 
         {/* Filters */}
-        <div className="mt-8 flex flex-col sm:flex-row items-center gap-4 bg-surface-card p-4 border border-border-subtle rounded-2xl shadow-sm">
-          <div className="relative w-full sm:max-w-md">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-text-muted" />
+        <div className="surface-card mt-8 p-4 flex flex-col sm:flex-row items-center gap-4">
+          <div className="relative flex-1 w-full">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4" style={{ color: "var(--fg-muted)" }} />
             <input
               type="text"
               placeholder="Buscar por código o descripción..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-9 pr-4 py-2 border border-border-subtle rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary transition-all bg-surface-hover/50"
+              className="input"
+              style={{ paddingLeft: 36 }}
             />
           </div>
-          <div className="w-full sm:w-auto text-sm text-[color:var(--muted)]">
-            Total en sistema: <strong className="text-[color:var(--text)]">{costs.length}</strong>
+          <div className="w-full sm:w-auto text-sm" style={{ color: "var(--fg-muted)" }}>
+            Total en sistema: <strong style={{ color: "var(--fg-primary)" }}>{costs.length}</strong>
           </div>
         </div>
 
         {/* Table Area */}
         {loading ? (
-          <div className="mt-6 py-24 flex flex-col items-center justify-center border border-border-subtle rounded-2xl bg-surface-card shadow-sm">
-             <div className="w-8 h-8 border-2 border-brand-primary border-t-transparent rounded-full animate-spin mb-4" />
-             <p className="text-sm font-medium text-text-muted">Cargando maestro de costos...</p>
+          <div className="surface-card mt-8 py-24 flex flex-col items-center justify-center">
+            <div className="w-8 h-8 border-2 rounded-full animate-spin mb-4"
+              style={{ borderColor: "var(--navy)", borderTopColor: "transparent" }} />
+            <p className="caption">Cargando maestro de costos...</p>
           </div>
         ) : filteredCosts.length === 0 ? (
-          <div className="mt-6 border-2 border-dashed border-border-subtle rounded-3xl py-24 px-6 text-center bg-surface-hover/50 shadow-sm flex flex-col items-center justify-center">
-            <div className="w-16 h-16 bg-surface-card border border-border-subtle rounded-2xl flex items-center justify-center mb-6 shadow-sm">
-              <Settings className="w-8 h-8 text-text-muted/50" />
+          <div className="mt-8 py-24 px-6 text-center flex flex-col items-center justify-center"
+            style={{ border: "0.5px dashed var(--blue-green)", borderRadius: "var(--radius-xl)" }}>
+            <div className="w-16 h-16 rounded-2xl flex items-center justify-center mb-5"
+              style={{ background: "var(--info-soft)", color: "var(--blue-green)" }}>
+              <Settings className="w-8 h-8" />
             </div>
-            <h3 className="text-xl font-semibold text-text-primary mb-2 tracking-tight">
+            <h3 className="mb-2">
               {searchQuery ? "No se encontraron componentes" : "Maestro de costos vacío"}
             </h3>
-            <p className="text-sm text-text-muted max-w-sm mb-6">
-              {searchQuery 
-                ? "Prueba buscar utilizando otros términos." 
-                : "Aún no hay configuraciones de costo. Haz una carga masiva o agrege el primero manualmente."}
+            <p className="caption max-w-sm">
+              {searchQuery
+                ? "Prueba buscar utilizando otros términos."
+                : "Aún no hay configuraciones de costo. Haz una carga masiva o agrega el primero manualmente."}
             </p>
           </div>
         ) : (
-          <div className="mt-6 overflow-x-auto rounded-[var(--radius-lg)] border border-[color:var(--border)] bg-surface-card shadow-sm">
-            <table className={`w-full ${tableStyles.tableWrapper}`}>
-              <thead className="bg-surface-hover/80 border-b border-border-subtle">
-                <tr>
-                  <th className={`text-left font-semibold text-text-primary w-48 ${tableStyles.th}`}>Código Componente</th>
-                  <th className={`text-left font-semibold text-text-primary ${tableStyles.th}`}>Descripción</th>
-                  <th className={`text-right font-semibold text-text-primary w-40 ${tableStyles.th}`}>Costo Base</th>
-                  <th className={`text-center font-semibold text-text-primary w-24 ${tableStyles.th}`}>Acción</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-border-subtle">
-                {filteredCosts.map((c) => (
-                  <tr key={c.id} className="hover:bg-surface-hover/50 transition-colors group">
-                    <td className={`font-semibold text-text-primary align-middle font-mono ${tableStyles.td}`}>
-                      {c.codigo}
-                    </td>
-                    <td className={`align-middle text-text-muted ${tableStyles.td}`}>
-                      {c.description || <span className="italic opacity-60">Sin descripción</span>}
-                    </td>
-                    <td className={`text-right align-middle ${tableStyles.td}`}>
-                      <div className="flex flex-col items-end">
-                        <span className="font-semibold text-text-primary">
-                          {formatMoney(c.costo_unitario, c.moneda)}
-                        </span>
-                        <span className={`font-medium bg-surface-hover rounded border border-border-subtle mt-1 ${tableStyles.badge}`}>
-                          {c.moneda}
-                        </span>
-                      </div>
-                    </td>
-                    <td className={`text-center align-middle ${tableStyles.td}`}>
-                      <button
-                        onClick={() => {
-                          setEditingCost(c);
-                          setIsCreateModalOpen(true);
-                        }}
-                        className={`btn-table-action opacity-0 group-hover:opacity-100 ${tableStyles.button}`}
-                        title="Editar Costo"
-                      >
-                         Editar
-                      </button>
-                    </td>
+          <div className="surface-card mt-8 overflow-hidden">
+            <div className="overflow-x-auto">
+              <table className={`w-full ${tableStyles.tableWrapper}`}>
+                <thead style={{ background: "var(--bg-hover)", borderBottom: "0.5px solid var(--border-hair)" }}>
+                  <tr>
+                    <th className={`overline text-left w-48 ${tableStyles.th}`}>Código Componente</th>
+                    <th className={`overline text-left ${tableStyles.th}`}>Descripción</th>
+                    <th className={`overline text-right w-40 ${tableStyles.th}`}>Costo Base</th>
+                    <th className={`overline text-center w-24 ${tableStyles.th}`}>Acción</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {filteredCosts.map((c) => (
+                    <tr key={c.id} className="[border-bottom:0.5px_solid_var(--border-hair)] hover:bg-[color:var(--bg-hover)] transition-colors group">
+                      <td className={`align-middle font-mono font-semibold ${tableStyles.td}`} style={{ color: "var(--fg-primary)" }}>
+                        {c.codigo}
+                      </td>
+                      <td className={`align-middle ${tableStyles.td}`} style={{ color: "var(--fg-muted)" }}>
+                        {c.description || <span style={{ fontStyle: "italic", opacity: 0.6 }}>Sin descripción</span>}
+                      </td>
+                      <td className={`text-right align-middle ${tableStyles.td}`}>
+                        <div className="flex flex-col items-end">
+                          <span className="font-semibold" style={{ color: "var(--fg-primary)" }}>
+                            {formatMoney(c.costo_unitario, c.moneda)}
+                          </span>
+                          <span className={`pill mt-1 ${tableStyles.badge}`}>{c.moneda}</span>
+                        </div>
+                      </td>
+                      <td className={`text-center align-middle ${tableStyles.td}`}>
+                        <button
+                          onClick={() => { setEditingCost(c); setIsCreateModalOpen(true); }}
+                          className={`btn btn--ghost ${tableStyles.button}`}
+                          title="Editar Costo"
+                        >
+                          Editar
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
         )}
       </div>
 
       <CostModal
         isOpen={isCreateModalOpen}
-        onClose={() => {
-          setIsCreateModalOpen(false);
-          setEditingCost(null);
-        }}
+        onClose={() => { setIsCreateModalOpen(false); setEditingCost(null); }}
         onSuccess={fetchCosts}
         editCost={editingCost}
       />
@@ -361,13 +339,12 @@ export default function RealCostsPage() {
         isOpen={isRecalculateModalOpen}
         onClose={() => setIsRecalculateModalOpen(false)}
         onConfirm={() => {
-           setIsRecalculateModalOpen(false);
-           // Podríamos lanzar notificación o refrescar pero public.bom_products no se expone aquí directamete
-           alert("BOM re-sincronizado exitosamente.");
+          setIsRecalculateModalOpen(false);
+          // Podríamos lanzar notificación o refrescar pero public.bom_products no se expone aquí directamete
+          alert("BOM re-sincronizado exitosamente.");
         }}
         impacts={impacts}
       />
-
     </AppShell>
   );
 }
