@@ -10,6 +10,7 @@ import { CostUploadModal } from "@/components/CostUploadModal";
 import { RecalculateImpactModal, type ImpactResult } from "@/components/RecalculateImpactModal";
 import * as XLSX from "xlsx";
 import { RefreshCw } from "lucide-react";
+import { isPzExcludedFromCost } from "@/lib/bom/pzRule";
 import { useTableDensity } from "@/contexts/TableDensityContext";
 
 export default function RealCostsPage() {
@@ -77,15 +78,21 @@ export default function RealCostsPage() {
         return;
       }
 
-      // 2. Fetch all real component costs into a lookup map
+      // 2. Fetch all real component costs into a lookup map.
+      //    Description is also pulled so the PZ/MAQUILA rule can be applied during
+      //    recalculation (bom_components does not persist component descriptions).
       const { data: realCostsData, error: costsErr } = await supabase
         .from("component_costs")
-        .select("codigo, costo_unitario");
+        .select("codigo, costo_unitario, description");
 
       if (costsErr) throw costsErr;
 
       const costMap = new Map<string, number>();
-      (realCostsData || []).forEach(c => costMap.set(c.codigo, Number(c.costo_unitario)));
+      const descMap = new Map<string, string>();
+      (realCostsData || []).forEach(c => {
+        costMap.set(c.codigo, Number(c.costo_unitario));
+        descMap.set(c.codigo, c.description || "");
+      });
 
       // 3. Process recalculation
       const newImpacts: ImpactResult[] = [];
@@ -97,8 +104,10 @@ export default function RealCostsPage() {
 
         if (product.bom_components && Array.isArray(product.bom_components)) {
           for (const comp of product.bom_components) {
-            // Ignore PZ components exactly like BOM importer
-            if (comp.codigo.toUpperCase().startsWith("PZ")) {
+            // PZ components are excluded from MP cost except when description contains MAQUILA,
+            // because SPA outsourced maquila components must be included as material cost.
+            // bom_components has no description column, so we resolve it from component_costs.
+            if (isPzExcludedFromCost(comp.codigo, descMap.get(comp.codigo) || "")) {
               continue;
             }
 
