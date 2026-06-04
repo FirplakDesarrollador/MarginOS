@@ -10,6 +10,7 @@ import {
 import { AppShell } from "@/components/AppShell";
 import { createClient } from "@/lib/supabase/client";
 import { useTableDensity } from "@/contexts/TableDensityContext";
+import { isPzExcludedFromCost } from "@/lib/bom/pzRule";
 
 // =============================================
 // TYPES
@@ -177,7 +178,17 @@ export default function ImportBOMPage() {
 
       const rows: RowSAP[] = rowsRaw.filter((r) => !isHeaderRow(r));
 
-      const uniqueComponentCodes = Array.from(new Set(rows.map(r => normalizeText(r.Codigo)).filter(c => c && !c.toUpperCase().startsWith("PZ"))));
+      // PZ components are excluded from MP cost except when description contains MAQUILA,
+      // because SPA outsourced maquila components must be included as material cost.
+      // (Gather codes whose real cost must be looked up — i.e. components that DO count.)
+      const uniqueComponentCodes = Array.from(new Set(
+        rows
+          .filter(r => {
+            const code = normalizeText(r.Codigo);
+            return code && !isPzExcludedFromCost(code, normalizeText(r.Descripcion));
+          })
+          .map(r => normalizeText(r.Codigo))
+      ));
       const costMap = new Map<string, number>();
 
       for (let i = 0; i < uniqueComponentCodes.length; i += 200) {
@@ -243,7 +254,9 @@ export default function ImportBOMPage() {
 
           componentList.push({ codigo, cantidad, costo_excel_fallback: costoUnit, nivel, parent_codigo });
 
-          if (codigo.toUpperCase().startsWith("PZ")) { pzExcluded += 1; continue; }
+          // PZ components are excluded from MP cost except when description contains MAQUILA,
+          // because SPA outsourced maquila components must be included as material cost.
+          if (isPzExcludedFromCost(codigo, desc)) { pzExcluded += 1; continue; }
 
           let effectiveCost = costoUnit || 0;
           if (costMap.has(codigo)) { effectiveCost = costMap.get(codigo)!; realCostCount += 1; }
