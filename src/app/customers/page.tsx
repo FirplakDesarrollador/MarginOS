@@ -375,18 +375,18 @@ export default function CustomersPage() {
         </div>
 
         {/* SEARCH & FILTERS */}
-        <div className="surface-card mt-8 p-4 flex flex-col sm:flex-row gap-3">
-          <div className="relative flex-1">
+        <div className="surface-card mt-8 p-4 flex flex-row items-center" style={{ gap: 8 }}>
+          <div className="relative" style={{ flex: 1, minWidth: 250 }}>
             <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4" style={{ color: "var(--fg-muted)" }} />
             <input type="text" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Buscar por nombre o NIT..."
               className="input" style={{ paddingLeft: 38 }} />
           </div>
-          <select value={filterChannel} onChange={(e) => setFilterChannel(e.target.value)} className="select sm:w-52">
+          <select value={filterChannel} onChange={(e) => setFilterChannel(e.target.value)} className="select" style={{ width: 200, flexShrink: 0, fontSize: 13, textOverflow: "ellipsis", overflow: "hidden", whiteSpace: "nowrap" }}>
             <option value="">Todos los canales</option>
             {channels.map(ch => <option key={ch.id} value={ch.id}>{ch.name}</option>)}
           </select>
-          <select value={filterStatus} onChange={(e) => setFilterStatus(e.target.value)} className="select sm:w-52">
+          <select value={filterStatus} onChange={(e) => setFilterStatus(e.target.value)} className="select" style={{ width: 180, flexShrink: 0, fontSize: 13, textOverflow: "ellipsis", overflow: "hidden", whiteSpace: "nowrap" }}>
             <option value="">Todos los estados</option>
             <option value="VIGENTE">Vigente</option>
             <option value="VENCIDO">Vencido</option>
