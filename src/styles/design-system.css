@@ -370,6 +370,25 @@ input[type="checkbox"] {
   margin-top: var(--space-2);
 }
 
+/* ── Density-responsive field card ───────────────────────────
+   Scopes font-size to the Compacto/Normal/Cómodo density mode via the
+   --card-field-fs / --card-label-fs custom properties set inline.
+   Used by Simulador → "Datos del Cliente y Proyecto". */
+.density-fields .field-label {
+  font-size: var(--card-label-fs, var(--fs-small)) !important;
+}
+.density-fields .input,
+.density-fields .select,
+.density-fields .textarea {
+  font-size: var(--card-field-fs, var(--fs-body)) !important;
+}
+.density-fields .overline {
+  font-size: var(--card-label-fs, var(--fs-overline)) !important;
+}
+.density-fields .caption {
+  font-size: var(--card-label-fs, var(--fs-caption)) !important;
+}
+
 .input,
 .select,
 .textarea {

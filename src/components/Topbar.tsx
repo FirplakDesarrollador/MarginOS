@@ -47,17 +47,24 @@ export function Topbar({ title, subtitle }: { title?: string; subtitle?: string 
   const logoSrc = isDark ? "/brand/firplak-logo-dark.png" : "/brand/firplak-logo-light.png";
 
   useEffect(() => {
+    // Cleanup flag — prevents state updates after unmount and silences the
+    // Supabase auth-lock race that fires when a concurrent getUser() steals the lock.
+    let isMounted = true;
+
     const fetchUser = async () => {
       try {
         const {
           data: { user },
         } = await supabase.auth.getUser();
+        if (!isMounted) return;
         if (user) {
           const { data } = await supabase
             .from("Usuarios_MarginOS")
             .select("nombre")
             .eq("uuid", user.id)
             .single();
+
+          if (!isMounted) return;
 
           let name = user.email ?? null;
           if (data && data.nombre) {
@@ -70,12 +77,24 @@ export function Topbar({ title, subtitle }: { title?: string; subtitle?: string 
           }
         }
       } catch (err: any) {
-        // Supabase auth lock race condition — another concurrent request took the lock; ignore silently
-        if (err?.name === "AbortError" || err?.message?.includes("Lock was released")) return;
+        if (!isMounted) return;
+        // Supabase auth lock race condition (or aborted request on unmount) — another
+        // concurrent request took the lock; ignore silently, it is not an app error.
+        if (
+          err?.name === "AbortError" ||
+          err?.message?.includes("Lock was released") ||
+          err?.message?.includes("lock")
+        ) {
+          return;
+        }
         console.error("Topbar fetchUser error:", err);
       }
     };
     fetchUser();
+
+    return () => {
+      isMounted = false;
+    };
   }, [supabase.auth]);
 
   const handleLogout = async () => {

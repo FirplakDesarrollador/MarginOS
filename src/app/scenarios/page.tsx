@@ -91,13 +91,26 @@ export default function ScenariosPage() {
           )
           .order("created_at", { ascending: false });
 
-        if (error) throw error;
-
-        if (isMounted && data) {
-          setSimulations(data);
+        // Supabase errors are non-enumerable, so console.error(error) logs "{}".
+        // Surface the real fields (message / details / hint / code) explicitly.
+        if (error) {
+          console.error("Error fetching scenarios:", {
+            message: error.message,
+            details: error.details,
+            hint: error.hint,
+            code: error.code,
+          });
+          if (isMounted) setSimulations([]);
+          return;
         }
-      } catch (err) {
-        console.error("Error fetching scenarios:", err);
+
+        // Gracefully handle a null/undefined payload (no rows or RLS-filtered).
+        if (isMounted) {
+          setSimulations(data ?? []);
+        }
+      } catch (err: any) {
+        console.error("Error fetching scenarios:", err?.message || err);
+        if (isMounted) setSimulations([]);
       } finally {
         if (isMounted) setLoading(false);
       }

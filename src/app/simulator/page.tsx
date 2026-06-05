@@ -39,8 +39,14 @@ function SimulatorContent() {
   const [originalSimulation, setOriginalSimulation] = useState<any>(null);
   const [versionTypeDisplay, setVersionTypeDisplay] = useState<{type: string, originalId: string} | null>(null);
   const [isLoadingEdit, setIsLoadingEdit] = useState(false);
-  const { getTableClasses } = useTableDensity();
+  const { getTableClasses, density } = useTableDensity();
   const tableStyles = getTableClasses();
+
+  // Density-responsive font sizes for the "Datos del Cliente y Proyecto" card,
+  // mirroring how the product table scales with Compacto / Normal / Cómodo.
+  const cardFieldFs = density === "compact" ? "12px" : density === "comodo" ? "16px" : "14px";
+  const cardLabelFs = density === "compact" ? "11px" : density === "comodo" ? "14px" : "12px";
+  const cardNameFs  = density === "compact" ? "15px" : density === "comodo" ? "20px" : "18px";
   
   // ==========================================
   // ESTADOS DE SIMULADOR
@@ -943,20 +949,23 @@ function SimulatorContent() {
           </div>
         </div>
         
-        <div className="p-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        <div
+          className="density-fields p-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
+          style={{ ["--card-field-fs" as any]: cardFieldFs, ["--card-label-fs" as any]: cardLabelFs }}
+        >
           {/* Fila 1 - Cliente */}
           <div className="col-span-1 md:col-span-2 lg:col-span-2 xl:col-span-2 rounded-xl p-4 [border:0.5px_solid_var(--border-hair)]" style={{ background: "var(--bg-hover)" }}>
             <span className="overline block mb-3">Cliente Seleccionado</span>
             {customer ? (
               <div className="flex flex-col gap-1.5">
-                <span className="text-lg font-semibold text-text-primary leading-tight">{customer.name}</span>
-                <div className="flex flex-wrap gap-x-4 gap-y-1 text-sm text-text-muted">
+                <span className="font-semibold text-text-primary leading-tight" style={{ fontSize: cardNameFs }}>{customer.name}</span>
+                <div className="flex flex-wrap gap-x-4 gap-y-1 text-text-muted" style={{ fontSize: cardFieldFs }}>
                   {customer.nit && <span className="flex items-center gap-1.5">NIT: {customer.nit}</span>}
                   {customer.contact_name && <span className="flex items-center gap-1.5"><UserPlus className="w-3.5 h-3.5"/> {customer.contact_name}</span>}
                 </div>
               </div>
             ) : (
-              <div className="flex flex-col items-center justify-center h-[72px] text-text-muted/60 text-sm">
+              <div className="flex flex-col items-center justify-center h-[72px] text-text-muted/60" style={{ fontSize: cardFieldFs }}>
                 Ningún cliente seleccionado
               </div>
             )}
