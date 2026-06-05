@@ -630,6 +630,7 @@ export default function PricingManagerPage() {
                                 onChange={e => updatePricingRow(row.channel_id, "target_margin_pct", Number(e.target.value))}
                                 disabled={!row.applies}
                                 className={`input text-center disabled:opacity-50 ${tableStyles.input}`}
+                                style={{ minWidth: "64px", fontSize: "13px", paddingLeft: "8px", paddingRight: "8px", textOverflow: "clip" }}
                               />
                             </td>
                             <td className={`text-right align-middle font-medium ${tableStyles.td}`}
