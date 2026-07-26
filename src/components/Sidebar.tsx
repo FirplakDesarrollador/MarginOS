@@ -89,7 +89,7 @@ export function Sidebar() {
           </div>
           {isExpanded && (
             <div className="text-[10px] text-text-muted mt-1 opacity-60 font-medium pl-1">
-              MarginOS v2.0
+              MarginOS v{process.env.NEXT_PUBLIC_APP_VERSION}
             </div>
           )}
         </div>
