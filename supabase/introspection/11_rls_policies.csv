@@ -1,0 +1,208 @@
+schemaname,tablename,policyname,permissive,roles,cmd,qual,with_check
+public,Articulos,Allow public read,PERMISSIVE,{public},SELECT,true,null
+public,CRM_Actividades,Coordinadores access activities of assigned users,PERMISSIVE,{authenticated},SELECT,is_coordinator_of_owner(created_by),null
+public,CRM_Actividades,Owners can see their own activities,PERMISSIVE,{authenticated},SELECT,(auth.uid() = created_by),null
+public,CRM_Actividades,Permissive All,PERMISSIVE,{authenticated},ALL,true,true
+public,CRM_Activity_Clasificacion,Enable insert for authenticated users,PERMISSIVE,{authenticated},INSERT,null,true
+public,CRM_Activity_Clasificacion,Enable read access for authenticated users,PERMISSIVE,{authenticated},SELECT,true,null
+public,CRM_Activity_Clasificacion,Enable update for authenticated users,PERMISSIVE,{authenticated},UPDATE,true,null
+public,CRM_Activity_Subclasificacion,Enable insert for authenticated users,PERMISSIVE,{authenticated},INSERT,null,true
+public,CRM_Activity_Subclasificacion,Enable read access for authenticated users,PERMISSIVE,{authenticated},SELECT,true,null
+public,CRM_Activity_Subclasificacion,Enable update for authenticated users,PERMISSIVE,{authenticated},UPDATE,true,null
+public,CRM_Audit_Cuentas,Policy with security definer functions,PERMISSIVE,{authenticated},ALL,true,null
+public,CRM_CLIENTESecommerce(dani),Policy with security definer functions,PERMISSIVE,"{anon,authenticated}",ALL,true,null
+public,CRM_Canales,Policy with security definer functions,PERMISSIVE,{authenticated},ALL,true,null
+public,CRM_Canales_Vendedores,Policy with security definer functions,PERMISSIVE,{authenticated},ALL,true,true
+public,CRM_Ciudades,Public read access for ciudades,PERMISSIVE,{authenticated},SELECT,true,null
+public,CRM_ComisionCategorias,Admin delete categories,PERMISSIVE,{authenticated},DELETE,is_crm_admin(),null
+public,CRM_ComisionCategorias,Admin update categories,PERMISSIVE,{authenticated},UPDATE,is_crm_admin(),is_crm_admin()
+public,CRM_ComisionCategorias,Admin write categories,PERMISSIVE,{authenticated},INSERT,null,is_crm_admin()
+public,CRM_ComisionCategorias,Authenticated read categories,PERMISSIVE,{authenticated},SELECT,true,null
+public,CRM_ComisionLedger,Admin/Coord insert ledger,PERMISSIVE,{authenticated},INSERT,null,is_crm_admin_or_coord()
+public,CRM_ComisionLedger,Read own or all commissions,PERMISSIVE,{authenticated},SELECT,((vendedor_id = auth.uid()) OR is_crm_admin_or_coord()),null
+public,CRM_ComisionLedger,Service role full access,PERMISSIVE,{service_role},ALL,true,true
+public,CRM_ComisionReglas,Admin/Coord insert rules,PERMISSIVE,{authenticated},INSERT,null,is_crm_admin_or_coord()
+public,CRM_ComisionReglas,Admin/Coord update rules,PERMISSIVE,{authenticated},UPDATE,is_crm_admin_or_coord(),is_crm_admin_or_coord()
+public,CRM_ComisionReglas,Authenticated read rules,PERMISSIVE,{authenticated},SELECT,true,null
+public,CRM_Configuracion,Enable read access for all users,PERMISSIVE,{public},SELECT,(auth.role() = 'authenticated'::text),null
+public,CRM_Configuracion,Enable write access for admins,PERMISSIVE,{public},ALL,(auth.uid() = '5f203417-b89b-4ac8-a95e-8b3823e5ca7b'::uuid),null
+public,CRM_Contactos,Owners can see their own contacts,PERMISSIVE,{authenticated},SELECT,(auth.uid() = created_by),null
+public,CRM_Contactos,Policy with security definer functions,PERMISSIVE,{authenticated},ALL,true,null
+public,CRM_CotizacionItems,Policy with security definer functions,PERMISSIVE,{public},ALL,true,null
+public,CRM_Cotizaciones,Owners can see their own quotes,PERMISSIVE,{authenticated},SELECT,(auth.uid() = created_by),null
+public,CRM_Cotizaciones,Permissive All,PERMISSIVE,{authenticated},ALL,true,true
+public,CRM_Cuentas,Coordinadores access accounts of assigned users,PERMISSIVE,{authenticated},SELECT,is_coordinator_of_owner(owner_user_id),null
+public,CRM_Cuentas,Owners can see their own accounts,PERMISSIVE,{authenticated},SELECT,(auth.uid() = owner_user_id),null
+public,CRM_Cuentas,Permissive All,PERMISSIVE,{authenticated},ALL,true,true
+public,CRM_Currencies,Policy with security definer functions,PERMISSIVE,{authenticated},ALL,true,null
+public,CRM_Departamentos,Public read access for departamentos,PERMISSIVE,{authenticated},SELECT,true,null
+public,CRM_EstadosOportunidad,Policy with security definer functions,PERMISSIVE,{authenticated},ALL,true,null
+public,CRM_ExchangeRates,Policy with security definer functions,PERMISSIVE,{authenticated},ALL,true,null
+public,CRM_FasesOportunidad,Allow authenticated users to read phases,PERMISSIVE,{authenticated},SELECT,true,null
+public,CRM_Files,Policy with security definer functions,PERMISSIVE,{authenticated},ALL,true,null
+public,CRM_InventarioMovimientoAuditoria,Auditoria inventario visible para admin,PERMISSIVE,{authenticated},SELECT,"(EXISTS ( SELECT 1
+   FROM ""CRM_Usuarios"" u
+  WHERE ((u.id = auth.uid()) AND ((u.role)::text = 'ADMIN'::text) AND (u.is_active = true))))",null
+public,CRM_InventarioMovimientos,Inventario administrable por admin,PERMISSIVE,{authenticated},ALL,"(EXISTS ( SELECT 1
+   FROM ""CRM_Usuarios"" u
+  WHERE ((u.id = auth.uid()) AND ((u.role)::text = 'ADMIN'::text) AND (u.is_active = true))))","(EXISTS ( SELECT 1
+   FROM ""CRM_Usuarios"" u
+  WHERE ((u.id = auth.uid()) AND ((u.role)::text = 'ADMIN'::text) AND (u.is_active = true))))"
+public,CRM_InventarioMovimientos,Inventario visible para admin,PERMISSIVE,{authenticated},SELECT,"(EXISTS ( SELECT 1
+   FROM ""CRM_Usuarios"" u
+  WHERE ((u.id = auth.uid()) AND ((u.role)::text = 'ADMIN'::text) AND (u.is_active = true))))",null
+public,CRM_ListaDePrecios,Allow read access to all users,PERMISSIVE,{public},SELECT,true,null
+public,CRM_ListaDePrecios,ListaDePrecios gestionable por admin,PERMISSIVE,{authenticated},ALL,"(EXISTS ( SELECT 1
+   FROM ""CRM_Usuarios"" u
+  WHERE ((u.id = auth.uid()) AND ((u.role)::text = 'ADMIN'::text) AND (u.is_active = true))))","(EXISTS ( SELECT 1
+   FROM ""CRM_Usuarios"" u
+  WHERE ((u.id = auth.uid()) AND ((u.role)::text = 'ADMIN'::text) AND (u.is_active = true))))"
+public,CRM_ListaDePrecios,ListaDePrecios visible para autenticados,PERMISSIVE,{authenticated},SELECT,true,null
+public,CRM_Log,Authenticated users can read CRM_Log,PERMISSIVE,{authenticated},SELECT,true,null
+public,CRM_Metas,Permissive All,PERMISSIVE,{authenticated},ALL,true,true
+public,CRM_MicrosoftTokens,Users can manage their own Microsoft tokens,PERMISSIVE,{authenticated},ALL,(auth.uid() = user_id),(auth.uid() = user_id)
+public,CRM_MicrosoftTokens,Users can only manage their own tokens,PERMISSIVE,{authenticated},ALL,(auth.uid() = user_id),(auth.uid() = user_id)
+public,CRM_NotificationRules,Manage Rules,PERMISSIVE,{authenticated},ALL,"(EXISTS ( SELECT 1
+   FROM ""CRM_Usuarios""
+  WHERE ((""CRM_Usuarios"".id = auth.uid()) AND ((""CRM_Usuarios"".role)::text = ANY ((ARRAY['ADMIN'::character varying, 'COORDINADOR'::character varying])::text[])))))",null
+public,CRM_NotificationRules,Read Rules,PERMISSIVE,{authenticated},SELECT,true,null
+public,CRM_Notifications,System/Admin insert notifications,PERMISSIVE,{authenticated},INSERT,null,true
+public,CRM_Notifications,Users see own notifications,PERMISSIVE,{authenticated},SELECT,(user_id = auth.uid()),null
+public,CRM_Notifications,Users update own notifications,PERMISSIVE,{authenticated},UPDATE,(user_id = auth.uid()),null
+public,CRM_OportunidadColaboradores,Policy with security definer functions,PERMISSIVE,{authenticated},ALL,true,null
+public,CRM_Oportunidades,Coordinadores access opportunities of assigned users,PERMISSIVE,{authenticated},SELECT,is_coordinator_of_owner(owner_user_id),null
+public,CRM_Oportunidades,Owners can see their own opportunities,PERMISSIVE,{authenticated},SELECT,(auth.uid() = owner_user_id),null
+public,CRM_Oportunidades,Permissive All,PERMISSIVE,{authenticated},ALL,true,true
+public,CRM_Oportunidades_Colaboradores,Allow delete access to authenticated users,PERMISSIVE,{authenticated},DELETE,true,null
+public,CRM_Oportunidades_Colaboradores,Allow read access to authenticated users,PERMISSIVE,{authenticated},SELECT,true,null
+public,CRM_Oportunidades_Colaboradores,Allow update access to authenticated users,PERMISSIVE,{authenticated},UPDATE,true,null
+public,CRM_Oportunidades_Colaboradores,Allow write access to authenticated users,PERMISSIVE,{authenticated},INSERT,null,true
+public,CRM_OrigenesOportunidad,Origenes administrables por admin,PERMISSIVE,{authenticated},ALL,"(EXISTS ( SELECT 1
+   FROM ""CRM_Usuarios"" u
+  WHERE ((u.id = auth.uid()) AND ((u.role)::text = 'ADMIN'::text) AND (u.is_active = true))))","(EXISTS ( SELECT 1
+   FROM ""CRM_Usuarios"" u
+  WHERE ((u.id = auth.uid()) AND ((u.role)::text = 'ADMIN'::text) AND (u.is_active = true))))"
+public,CRM_OrigenesOportunidad,Origenes visibles para autenticados,PERMISSIVE,{authenticated},SELECT,true,null
+public,CRM_Pagos,Authenticated insert pagos,PERMISSIVE,{authenticated},INSERT,null,true
+public,CRM_Pagos,Authenticated read pagos,PERMISSIVE,{authenticated},SELECT,true,null
+public,CRM_Parameters,Policy with security definer functions,PERMISSIVE,{authenticated},ALL,true,null
+public,CRM_PedidoItems,Allow all actions for authenticated users,PERMISSIVE,{authenticated},ALL,true,true
+public,CRM_Pedidos,Permissive All,PERMISSIVE,{authenticated},ALL,true,true
+public,CRM_Productos,Policy with security definer functions,PERMISSIVE,{authenticated},ALL,true,null
+public,CRM_RazonesPerdida,Policy with security definer functions,PERMISSIVE,{authenticated},ALL,true,null
+public,CRM_ReglasBono,Admin/Coord delete bonus rules,PERMISSIVE,{authenticated},DELETE,is_crm_admin_or_coord(),null
+public,CRM_ReglasBono,Admin/Coord insert bonus rules,PERMISSIVE,{authenticated},INSERT,null,is_crm_admin_or_coord()
+public,CRM_ReglasBono,Admin/Coord update bonus rules,PERMISSIVE,{authenticated},UPDATE,is_crm_admin_or_coord(),is_crm_admin_or_coord()
+public,CRM_ReglasBono,Authenticated read bonus rules,PERMISSIVE,{authenticated},SELECT,true,null
+public,CRM_SapIntegrationQueue,Policy with security definer functions,PERMISSIVE,{authenticated},ALL,true,null
+public,CRM_Segmentos,Policy with security definer functions,PERMISSIVE,{authenticated},ALL,true,null
+public,CRM_Subclasificacion,Policy with security definer functions,PERMISSIVE,{authenticated},ALL,true,null
+public,CRM_TiposActividad,Policy with security definer functions,PERMISSIVE,{authenticated},ALL,true,null
+public,CRM_TiposCuenta,Policy with security definer functions,PERMISSIVE,{authenticated},ALL,true,null
+public,CRM_TransferenciasOportunidad,Policy with security definer functions,PERMISSIVE,{authenticated},ALL,true,null
+public,CRM_Usuarios,Coordinadores see assigned users,PERMISSIVE,{authenticated},SELECT,(auth.uid() = ANY (coordinadores)),null
+public,CRM_Usuarios,Policy with security definer functions,PERMISSIVE,{authenticated},ALL,true,null
+public,Ciudades,all for auth user,PERMISSIVE,{authenticated},ALL,true,null
+public,Ciudades,anon can read ciudades,PERMISSIVE,{anon},SELECT,true,null
+public,Clientes,All for auth users,PERMISSIVE,{authenticated},ALL,true,null
+public,Comentarios,todo,PERMISSIVE,{authenticated},ALL,true,null
+public,Comentarios_RegistroMAC,Permitir inserción a usuarios autenticados,PERMISSIVE,{authenticated},INSERT,null,true
+public,Comentarios_RegistroMAC,Permitir lectura a usuarios autenticados,PERMISSIVE,{authenticated},SELECT,true,null
+public,Consumidores,Permitir leer a usuarios autenticados,PERMISSIVE,{authenticated},SELECT,true,null
+public,Consumidores,Update for auth users,PERMISSIVE,{public},UPDATE,true,null
+public,Consumidores,insert for auth users,PERMISSIVE,{authenticated},INSERT,null,true
+public,Defectos,All for auth users,PERMISSIVE,{authenticated},ALL,true,null
+public,Eliminados,INSERT para usuarios autenticados,PERMISSIVE,{authenticated},INSERT,null,true
+public,Eliminados,SELECT para usuarios autenticados,PERMISSIVE,{authenticated},SELECT,true,null
+public,KT_ProgramacionDia,Allow all for authenticated users,PERMISSIVE,{authenticated},ALL,true,true
+public,KT_ProgramacionProducto,Allow all for authenticated users,PERMISSIVE,{authenticated},ALL,true,true
+public,Neg_base,Policy with security definer functions,PERMISSIVE,{authenticated},ALL,true,null
+public,Neg_historial_precios,Acceso total a historial,PERMISSIVE,{public},ALL,true,null
+public,Neg_mci_data,Permitir todo a usuarios autenticados,PERMISSIVE,{authenticated},ALL,true,true
+public,Neg_productos,Acceso total a productos,PERMISSIVE,{public},ALL,true,null
+public,Productos,todo,PERMISSIVE,{authenticated},ALL,true,null
+public,Proveedores_con_Responsable,Allow anon read access,PERMISSIVE,{anon},SELECT,true,null
+public,Proveedores_con_Responsable,Policy with security definer functions,PERMISSIVE,{authenticated},ALL,true,null
+public,Repuestos,Todo usuarios autenticados,PERMISSIVE,{authenticated},ALL,true,null
+public,Repuestos_Servicios,all for auth users,PERMISSIVE,{authenticated},ALL,true,null
+public,Roles,Policy with security definer functions,PERMISSIVE,{public},ALL,true,null
+public,Servicios,Permitir lectura anonima,PERMISSIVE,{public},SELECT,true,null
+public,Servicios,Permitir todo para usuarios autenticados,PERMISSIVE,{authenticated},ALL,true,null
+public,Servicios_Defectos,Todo,PERMISSIVE,{authenticated},ALL,true,null
+public,Servicios_Distribuidor,Enable all for anyone,PERMISSIVE,"{anon,authenticated}",ALL,true,true
+public,Tipo_Solicitud,Policy with security definer functions,PERMISSIVE,{authenticated},ALL,true,null
+public,Ubicaciones,all for auth users,PERMISSIVE,{authenticated},ALL,true,null
+public,Usuarios,Actualizar fila usuarios autenticados,PERMISSIVE,{authenticated},UPDATE,true,null
+public,Usuarios,Permitir leer a usuario autenticados,PERMISSIVE,{authenticated},SELECT,true,null
+public,Usuarios,Policy with security definer functions,PERMISSIVE,"{anon,authenticated}",ALL,true,null
+public,Usuarios_MarginOS,Users can view own data,PERMISSIVE,{authenticated},SELECT,(auth.uid() = uuid),null
+public,VISOR,Policy with security definer functions,PERMISSIVE,{authenticated},ALL,true,null
+public,Visitas,Todo para usuarios autenticados,PERMISSIVE,{authenticated},ALL,true,null
+public,Visitas,prrrr,PERMISSIVE,{anon},SELECT,true,null
+public,Zonas,All for auth users,PERMISSIVE,{authenticated},ALL,true,null
+public,ayudas,select for auth user,PERMISSIVE,{authenticated},SELECT,true,null
+public,bom_components,Policy with security definer functions,PERMISSIVE,"{anon,authenticated}",ALL,true,null
+public,bom_imports,Policy with security definer functions,PERMISSIVE,"{anon,authenticated}",ALL,true,null
+public,bom_products,Policy with security definer functions,PERMISSIVE,"{anon,authenticated}",ALL,true,null
+public,budget_fact,temp_budget_full_access,PERMISSIVE,"{anon,authenticated}",ALL,true,true
+public,cities_delivery_rules,temp_cities_full_access,PERMISSIVE,"{anon,authenticated}",ALL,true,true
+public,comentariossolicitudes,Policy with security definer functions,PERMISSIVE,{authenticated},ALL,true,null
+public,component_costs,Policy with security definer functions,PERMISSIVE,"{anon,authenticated}",ALL,true,null
+public,customers,Policy with security definer functions,PERMISSIVE,"{anon,authenticated}",ALL,true,null
+public,deliveries_fact,temp_deliveries_full_access,PERMISSIVE,"{anon,authenticated}",ALL,true,true
+public,evaluacion_servicio,Allow anonymous insert,PERMISSIVE,{anon},INSERT,null,true
+public,evaluacion_servicio,Policy with security definer functions,PERMISSIVE,{authenticated},ALL,true,null
+public,fir_kpi_users,Users can read own FIR KPI profile,PERMISSIVE,{authenticated},SELECT,(auth.uid() = id),null
+public,fir_kpi_users,Users can read own profile,PERMISSIVE,{authenticated},SELECT,(auth.uid() = id),null
+public,firmas_digitales,Policy with security definer functions,PERMISSIVE,{authenticated},ALL,true,null
+public,holidays_calendar,temp_holidays_full_access,PERMISSIVE,"{anon,authenticated}",ALL,true,true
+public,inventario_almacenes,All for auth users,PERMISSIVE,{public},ALL,true,null
+public,movimientos_inventario,All for auth users,PERMISSIVE,{public},ALL,true,null
+public,operations,Allow all,PERMISSIVE,{public},ALL,true,true
+public,operations,Allow full access,PERMISSIVE,{public},ALL,true,true
+public,orders_fact,temp_orders_full_access,PERMISSIVE,"{anon,authenticated}",ALL,true,true
+public,precioszonas,Policy with security definer functions,PERMISSIVE,"{anon,authenticated}",ALL,true,null
+public,price_lists,Policy with security definer functions,PERMISSIVE,"{anon,authenticated}",ALL,true,null
+public,product_costs,Policy with security definer functions,PERMISSIVE,"{anon,authenticated}",ALL,true,null
+public,productos_defectos,All for auth users,PERMISSIVE,{authenticated},ALL,true,null
+public,productos_servicios,todo,PERMISSIVE,{authenticated},ALL,true,null
+public,productos_ubicaciones,All for auth users,PERMISSIVE,{authenticated},ALL,true,null
+public,products,Policy with security definer functions,PERMISSIVE,"{anon,authenticated}",ALL,true,null
+public,projection_history,temp_projection_history_full_access,PERMISSIVE,{authenticated},ALL,true,true
+public,projects,Policy with security definer functions,PERMISSIVE,{public},ALL,true,null
+public,queja,Policy with security definer functions,PERMISSIVE,{authenticated},ALL,true,null
+public,razones_queja,All for auth users,PERMISSIVE,{authenticated},ALL,true,null
+public,razones_queja,Policy with security definer functions,PERMISSIVE,{authenticated},ALL,true,null
+public,refrigerios,Enable insert for authenticated users only,PERMISSIVE,{anon},INSERT,null,true
+public,refrigerios,Policy with security definer functions,PERMISSIVE,{authenticated},ALL,true,null
+public,registro_solicitudes,Actualización para usuarios autenticados,PERMISSIVE,{authenticated},UPDATE,true,true
+public,registro_solicitudes,Inserción para usuarios autenticados,PERMISSIVE,{authenticated},INSERT,null,true
+public,registro_solicitudes,Lectura para usuarios autenticados,PERMISSIVE,{authenticated},SELECT,true,null
+public,responsable_queja,All for auth users,PERMISSIVE,{authenticated},ALL,true,null
+public,sales_channels,Policy with security definer functions,PERMISSIVE,"{anon,authenticated}",ALL,true,null
+public,sales_fact,temp_sales_full_access,PERMISSIVE,"{anon,authenticated}",ALL,true,true
+public,sellers_dim,temp_sellers_full_access,PERMISSIVE,{authenticated},ALL,true,true
+public,servicios_eliminados,Insert for auth users,PERMISSIVE,{authenticated},INSERT,null,true
+public,simulation_lines,Policy with security definer functions,PERMISSIVE,"{anon,authenticated}",ALL,true,null
+public,simulation_versions,Policy with security definer functions,PERMISSIVE,"{anon,authenticated}",ALL,true,null
+public,simulations,Policy with security definer functions,PERMISSIVE,"{anon,authenticated}",ALL,true,null
+public,solicitudes_clientes,Policy with security definer functions,PERMISSIVE,"{anon,authenticated}",ALL,true,null
+public,solicitudes_viaje,Enable insert for authenticated users only,PERMISSIVE,{anon},INSERT,null,true
+public,solicitudes_viaje,Policy with security definer functions,PERMISSIVE,{authenticated},ALL,true,null
+public,soliciturepuestosservice,Policy with security definer functions,PERMISSIVE,{authenticated},ALL,true,null
+public,ticket_comentarios,Permitir insercion comentarios a autenticados,PERMISSIVE,{authenticated},INSERT,null,true
+public,ticket_comentarios,Permitir seleccion comentarios a autenticados,PERMISSIVE,{authenticated},SELECT,true,null
+public,tickets_tiendas,Permitir actualizar estado a daniela,PERMISSIVE,{authenticated},UPDATE,((auth.jwt() ->> 'email'::text) = '[redacted-email]'::text),((auth.jwt() ->> 'email'::text) = '[redacted-email]'::text)
+public,tickets_tiendas,Permitir insercion a autenticados,PERMISSIVE,{authenticated},INSERT,null,true
+public,tickets_tiendas,Permitir seleccion tickets_tiendas,PERMISSIVE,{authenticated},SELECT,"(((auth.jwt() ->> 'email'::text) = '[redacted-email]'::text) OR (usuario_id IN ( SELECT ""Usuarios"".id
+   FROM ""Usuarios""
+  WHERE (""Usuarios"".user_id = auth.uid()))))",null
+public,whatsapp_chats,Enable all for authenticated users,PERMISSIVE,{authenticated},ALL,true,true
+public,whatsapp_chats,Enable insert for anon,PERMISSIVE,{anon},INSERT,null,true
+public,whatsapp_chats,Enable select for anon,PERMISSIVE,{anon},SELECT,true,null
+public,whatsapp_chats,Enable update for anon,PERMISSIVE,{anon},UPDATE,true,null
+public,whatsapp_messages,Enable all for authenticated users,PERMISSIVE,{authenticated},ALL,true,true
+public,whatsapp_messages,Enable insert for anon,PERMISSIVE,{anon},INSERT,null,true
+public,whatsapp_messages,Enable select for anon,PERMISSIVE,{anon},SELECT,true,null
+public,whatsapp_messages,Enable update for anon,PERMISSIVE,{anon},UPDATE,true,null
+public,zonas_medidas,Policy with security definer functions,PERMISSIVE,"{anon,authenticated}",ALL,true,null

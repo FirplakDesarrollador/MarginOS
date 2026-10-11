@@ -1,0 +1,36 @@
+table_name,constraint_name,definition
+"""CRM_Actividades""",check_prioridad,"CHECK ((prioridad = ANY (ARRAY['Alta'::text, 'Media'::text, 'Baja'::text])))"
+"""CRM_Actividades""",check_tipo_actividad,"CHECK ((tipo_actividad = ANY (ARRAY['EVENTO'::text, 'TAREA'::text])))"
+"""CRM_Activity_Clasificacion""",CRM_Activity_Clasificacion_tipo_actividad_check,"CHECK (((tipo_actividad)::text = ANY ((ARRAY['EVENTO'::character varying, 'TAREA'::character varying])::text[])))"
+"""CRM_Clientes_Premium""",crm_clientes_premium_nivel_check,"CHECK ((nivel_premium = ANY (ARRAY['PREMIUM'::text, 'DESTACADO'::text, 'ACTIVO'::text])))"
+"""CRM_ComisionLedger""",CRM_ComisionLedger_tipo_evento_check,"CHECK (((tipo_evento)::text = ANY ((ARRAY['DEVENGADA'::character varying, 'PAGADA'::character varying, 'AJUSTE'::character varying, 'REVERSO'::character varying])::text[])))"
+"""CRM_ComisionReglas""",CRM_ComisionReglas_porcentaje_comision_check,CHECK (((porcentaje_comision >= (0)::numeric) AND (porcentaje_comision <= (100)::numeric)))
+"""CRM_Cuentas""",CRM_Cuentas_nivel_premium_check,"CHECK ((nivel_premium = ANY (ARRAY['PREMIUM'::text, 'DESTACADO'::text, 'ACTIVO'::text])))"
+"""CRM_InventarioMovimientoAuditoria""",CRM_InventarioMovimientoAuditoria_accion_check,"CHECK (((accion)::text = ANY ((ARRAY['ACTUALIZACION'::character varying, 'ELIMINACION'::character varying])::text[])))"
+"""CRM_InventarioMovimientos""",CRM_InventarioMovimientos_cantidad_check,CHECK ((cantidad > (0)::numeric))
+"""CRM_InventarioMovimientos""",CRM_InventarioMovimientos_estado_check,"CHECK (((estado)::text = ANY ((ARRAY['ACTIVO'::character varying, 'CANCELADO'::character varying])::text[])))"
+"""CRM_InventarioMovimientos""",CRM_InventarioMovimientos_operacion_check,"CHECK (((operacion)::text = ANY ((ARRAY['ENTRADA'::character varying, 'SALIDA'::character varying, 'RESERVA'::character varying])::text[])))"
+"""CRM_Metas""",CRM_Metas_goal_type_check,"CHECK (((goal_type)::text = ANY ((ARRAY['SPECIFIC_OPPORTUNITY'::character varying, 'WON_COUNT'::character varying, 'CONTACT_COUNT'::character varying, 'TOTAL_OPPORTUNITIES'::character varying])::text[])))"
+"""CRM_Metas""",CRM_Metas_status_check,"CHECK (((status)::text = ANY ((ARRAY['En Proceso'::character varying, 'Terminado'::character varying, 'Fracasada'::character varying])::text[])))"
+"""CRM_NotificationRules""",CRM_NotificationRules_type_check,"CHECK (((type)::text = ANY ((ARRAY['INACTIVE_CLIENT'::character varying, 'BUDGET_MISS'::character varying, 'NEW_ACCOUNT'::character varying, 'NEW_OPPORTUNITY'::character varying, 'ACTIVITY_OVERDUE'::character varying])::text[])))"
+"""CRM_Oportunidades_Colaboradores""",CRM_Oportunidades_Colaboradores_porcentaje_check,CHECK (((porcentaje > (0)::numeric) AND (porcentaje <= (100)::numeric)))
+"""CRM_ReglasBono""",CRM_ReglasBono_periodo_check,"CHECK (((periodo)::text = ANY ((ARRAY['MENSUAL'::character varying, 'TRIMESTRAL'::character varying, 'ANUAL'::character varying])::text[])))"
+"""Visitas""",fecha_inicio_menor_igual_fecha_fin,CHECK ((fecha_hora_inicio <= fecha_hora_fin))
+-,content_type_check,CHECK ((VALUE ~ '^\S+\/\S+'::text))
+chat_history,chat_history_role_check,"CHECK ((role = ANY (ARRAY['user'::text, 'assistant'::text])))"
+inventario_almacenes,inventario_almacenes_cantidad_check,CHECK ((cantidad >= 0))
+kitchen_furniture,kitchen_furniture_quantity_check,CHECK ((quantity > 0))
+kitchen_segments,kitchen_segments_orientation_check,"CHECK ((orientation = ANY (ARRAY['horizontal'::text, 'vertical'::text])))"
+kitchens,kitchens_type_check,"CHECK ((type = ANY (ARRAY['lineal'::text, 'L'::text, 'U'::text, 'barra'::text, 'mixta'::text])))"
+refrigerios,refrigerios_estado_check,"CHECK ((estado = ANY (ARRAY['Pendiente'::text, 'Aprobado'::text, 'Rechazado'::text])))"
+registro_solicitudes,registro_solicitudes_estado_check,"CHECK ((estado = ANY (ARRAY['Abierto'::text, 'Cerrado'::text])))"
+registro_solicitudes,registro_solicitudes_prioridad_check,"CHECK ((prioridad = ANY (ARRAY['Alta'::text, 'Media'::text, 'Baja'::text])))"
+registro_solicitudes,registro_solicitudes_tipo_solicitud_check,"CHECK ((tipo_solicitud = ANY (ARRAY['Garantía'::text, 'Documento Sagrilaft'::text, 'Reclamo'::text, 'Atención'::text, 'Venta'::text])))"
+simulations,simulations_simulation_type_check,"CHECK ((simulation_type = ANY (ARRAY['PRICE_LIST'::text, 'PROJECT_PROMO'::text])))"
+simulations,simulations_status_check,"CHECK ((status = ANY (ARRAY['DRAFT'::text, 'VIGENTE'::text, 'VENCIDO'::text, 'RENOVADA'::text, 'RECHAZADA'::text])))"
+solicitudes_viaje,solicitudes_viaje_estado_check,"CHECK ((estado = ANY (ARRAY['Pendiente'::text, 'Aprobado'::text, 'Rechazado'::text])))"
+solicitudes_viaje,solicitudes_viaje_tipo_viaje_check,"CHECK ((tipo_viaje = ANY (ARRAY['Nacional'::text, 'Exterior'::text])))"
+tickets_tiendas,tickets_tiendas_prioridad_check,"CHECK ((prioridad = ANY (ARRAY['baja'::text, 'media'::text, 'alta'::text])))"
+tickets_tiendas,tickets_tiendas_tienda_check,"CHECK ((tienda = ANY (ARRAY['bogota'::text, 'medellin'::text, 'cali'::text, 'ecomerce'::text])))"
+tickets_tiendas,tickets_tiendas_tipo_solicitud_check,"CHECK ((tipo_solicitud = ANY (ARRAY['infraestructura'::text, 'marketing'::text, 'comercial'::text, 'otros'::text])))"
+whatsapp_messages,whatsapp_messages_sender_check,"CHECK (((sender)::text = ANY ((ARRAY['me'::character varying, 'them'::character varying])::text[])))"

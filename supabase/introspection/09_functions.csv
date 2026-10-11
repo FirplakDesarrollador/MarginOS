@@ -1,0 +1,144 @@
+function_name,arguments,returns,language,security_definer,volatility
+_post_servicio,"url text, p_servicio_id bigint",void,plpgsql,false,v
+_sp_build_payload,"evento text, r record",jsonb,plpgsql,false,v
+_sp_enqueue_pa,"evento text, newrow record",void,plpgsql,false,v
+_sp_enqueue_pa,"p_evento text, p_soliciturepuestos_id bigint, p_servicio_id bigint",void,plpgsql,false,v
+admin_upsert_commission_categories,p_categories jsonb,jsonb,plpgsql,true,v
+admin_upsert_commission_rules,p_rules jsonb,jsonb,plpgsql,true,v
+admin_upsert_price_list,prices jsonb,void,plpgsql,true,v
+audit_account_changes,,trigger,plpgsql,false,v
+auditar_movimiento_inventario,,trigger,plpgsql,true,v
+auto_create_contact_for_propio_account,,trigger,plpgsql,false,v
+backup_servicio_eliminado,,trigger,plpgsql,true,v
+buscar_servicio,"busqueda text, usuario_id integer",json,plpgsql,false,v
+bytea_to_text,data bytea,text,c,false,i
+calculate_devengada,"p_oportunidad_id uuid, p_triggered_by uuid",jsonb,plpgsql,true,v
+check_overdue_activities,,void,plpgsql,true,v
+create_service_with_details,payload jsonb,jsonb,plpgsql,false,v
+delete_solicitud_on_service_create,,trigger,plpgsql,true,v
+enforce_children_ownership_on_insert,,trigger,plpgsql,false,v
+fn_build_servicio_payload,p_servicio_id bigint,jsonb,plpgsql,false,v
+fn_calcular_campos_negociacion,,trigger,plpgsql,false,v
+fn_crear_productos_negociacion,"p_id_negociacion bigint, p_codigo_proveedor text",void,plpgsql,false,v
+fn_inactivo_por_edad,,trigger,plpgsql,false,v
+fn_set_precio_negociado,,trigger,plpgsql,false,v
+fn_set_proveedor_negociacion,,trigger,plpgsql,false,v
+furniture_current,p_entity_id uuid,SETOF furniture,plpgsql,false,s
+generate_nit_sufijo,,trigger,plpgsql,false,v
+get_base_price,"p_numero_articulo text, p_canal_id character varying",numeric,plpgsql,true,v
+get_category_prefix,p_numero_articulo text,character varying,sql,false,i
+get_cron_job_status,,"TABLE(jobid bigint, schedule text, command text, nodename text, nodeport integer, database text, username text, active boolean, jobname text)",plpgsql,true,v
+get_default_modules_for_role,role_name text,jsonb,plpgsql,false,v
+get_discount_pct_from_json,"p_numero_articulo text, p_canal_id character varying, p_qty integer",numeric,plpgsql,false,s
+get_email_from_user_id,user_id bigint,"TABLE(id uuid, email character varying)",sql,true,v
+get_estados_servicio_public,p_consecutivo text,SETOF query_servicios_info_cliente,sql,true,v
+get_fases_para_cuenta,p_account_id uuid,"TABLE(id integer, nombre character varying, orden integer, canal_id character varying)",plpgsql,false,v
+get_furniture_parts_current,p_furniture_entity_id uuid,SETOF parts,plpgsql,false,s
+get_problem_accounts,,"TABLE(id uuid, nombre character varying, nit_base character varying)",plpgsql,true,v
+get_product_category_id,p_producto_id uuid,integer,plpgsql,false,s
+get_producto_precio_canal,"p_producto_id uuid, p_canal_id character varying",numeric,plpgsql,false,v
+get_recommended_pricing,"p_numero_articulo text, p_canal_id character varying, p_qty integer",jsonb,plpgsql,true,v
+get_sales_funnel,"p_user_id uuid, p_role text","TABLE(fase_id integer, fase_nombre text, orden integer, total_amount numeric, count bigint, color text)",plpgsql,true,v
+get_sales_funnel_data,"p_user_id uuid, p_user_role text, p_canal_id text, p_advisor_id uuid, p_subclasificacion_id integer, p_nivel_premium text, p_search_query text, p_date_from date, p_date_to date","TABLE(fase_id integer, fase_nombre text, orden integer, total_amount numeric, count bigint, color text)",plpgsql,true,v
+get_user_id_from_email,email character varying,"TABLE(id uuid, email character varying)",sql,true,v
+get_user_id_from_email,param json,TABLE(id uuid),sql,false,v
+gin_extract_query_trgm,"text, internal, smallint, internal, internal, internal, internal",internal,c,false,i
+gin_extract_value_trgm,"text, internal",internal,c,false,i
+gin_trgm_consistent,"internal, smallint, text, integer, internal, internal, internal, internal",boolean,c,false,i
+gin_trgm_triconsistent,"internal, smallint, text, integer, internal, internal, internal","""char""",c,false,i
+gtrgm_compress,internal,internal,c,false,i
+gtrgm_consistent,"internal, text, smallint, oid, internal",boolean,c,false,i
+gtrgm_decompress,internal,internal,c,false,i
+gtrgm_distance,"internal, text, smallint, oid, internal",double precision,c,false,i
+gtrgm_in,cstring,gtrgm,c,false,i
+gtrgm_options,internal,void,c,false,i
+gtrgm_out,gtrgm,cstring,c,false,i
+gtrgm_penalty,"internal, internal, internal",internal,c,false,i
+gtrgm_picksplit,"internal, internal",internal,c,false,i
+gtrgm_same,"gtrgm, gtrgm, internal",internal,c,false,i
+gtrgm_union,"internal, internal",gtrgm,c,false,i
+handle_new_account_assignment,,trigger,plpgsql,true,v
+handle_new_opportunity_assignment,,trigger,plpgsql,true,v
+handle_new_user,,trigger,plpgsql,true,v
+handle_user_role_change,,trigger,plpgsql,false,v
+http,request http_request,http_response,c,false,v
+http_delete,uri character varying,http_response,sql,false,v
+http_delete,"uri character varying, content character varying, content_type character varying",http_response,sql,false,v
+http_get,uri character varying,http_response,sql,false,v
+http_get,"uri character varying, data jsonb",http_response,sql,false,v
+http_head,uri character varying,http_response,sql,false,v
+http_header,"field character varying, value character varying",http_header,sql,false,v
+http_list_curlopt,,"TABLE(curlopt text, value text)",c,false,v
+http_patch,"uri character varying, content character varying, content_type character varying",http_response,sql,false,v
+http_post,"uri character varying, content character varying, content_type character varying",http_response,sql,false,v
+http_post,"uri character varying, data jsonb",http_response,sql,false,v
+http_put,"uri character varying, content character varying, content_type character varying",http_response,sql,false,v
+http_reset_curlopt,,boolean,c,false,v
+http_set_curlopt,"curlopt character varying, value character varying",boolean,c,false,v
+insert_servicio,"p_consecutivo text, p_numero_de_pedido text, p_comercial_id bigint, p_consumidor_id bigint, p_ubicacion_id bigint, p_coordinador_id bigint, p_decision_cliente client_choice, p_tipo_de_servicio service_type, p_canal_de_venta channel, p_facturado boolean, p_creado_desde app_type, p_asesor_mac_id bigint, p_service_parent_id bigint, p_soportes_pago text[], p_productos jsonb, p_repuestos jsonb, p_contenido_comentario text, p_documentos text[], p_usuario_id bigint, p_visita_id bigint",jsonb,plpgsql,false,v
+is_coordinator_of_owner,record_owner_id uuid,boolean,plpgsql,true,v
+is_crm_admin,,boolean,plpgsql,true,v
+is_crm_admin_or_coord,,boolean,plpgsql,true,v
+log_opportunity_changes,,trigger,plpgsql,true,v
+materials_current,p_entity_id uuid,SETOF materials,plpgsql,false,s
+parse_date_dmy_immutable,date_str text,date,plpgsql,false,i
+parts_current,p_entity_id uuid,SETOF parts,plpgsql,false,s
+prevent_duplicate_oportunidades,,trigger,plpgsql,false,v
+prevent_ledger_mutation,,trigger,plpgsql,false,v
+process_field_updates,"p_table_name text, p_updates jsonb, p_user_id uuid",jsonb,plpgsql,true,v
+query_servicios_info_cliente_public,,"TABLE(id bigint, created_at timestamp with time zone, consecutivo text, numero_de_pedido text, comercial_id bigint, consumidor_id bigint, estado text, ubicacion_id bigint, consecutivo_sap text, fecha_cierre timestamp with time zone, coordinador_id bigint, pedido_digitado boolean, orden_de_venta text, actividad_mac text, decision_cliente text, sharepoint_uid text, tipo_de_servicio text, canal_de_venta text, cerrado_por bigint, facturado boolean, creado_desde text, aprobacion_director jsonb, aprobacion_logistica jsonb, aprobacion_mac jsonb, aplica_tecnico boolean, asesor_mac_id bigint, service_parent_id bigint, soportes_pago jsonb, ubicacion_contacto text, ubicacion_telefono text, ubicacion_nombre text, ubicacion_nit text, ubicacion_direccion text, ubicacion_ciudad text, ubicacion_zona text, ubicacion_pais text, ubicacion_departamento text, coordinador_nombre text, coordinador_correo text, administrador_nombre text, cliente_nombre text, consumidor_cedula text, consumidor_contacto text, consumidor_telefono text, consumidor_direccion text, consumidor_descripcion_direccion text, consumidor_ciudad text, consumidor_pais text, consumidor_departamento text, consumidor_zona text, consumidor_correo text, asesor_nombre text, asesor_correo text, tecnico_nombre text, tecnico_cedula text, tecnico_correo text, visita_fecha_hora_inicio timestamp with time zone, visita_fecha_hora_fin timestamp with time zone, visita_estado boolean, visita_ocurriendo boolean, visita_parcial boolean, visita_reagendada boolean, nombre_cerrado_por text, asesor_mac_nombre text, estado_visita text)",sql,true,v
+record_commission_adjustment,"p_entrada_referencia_id uuid, p_monto_ajuste numeric, p_motivo text, p_adjusted_by uuid",jsonb,plpgsql,true,v
+record_commission_pagada,"p_oportunidad_id uuid, p_sap_payment_ref character varying, p_recorded_by uuid",jsonb,plpgsql,true,v
+record_commission_reversal,"p_entrada_referencia_id uuid, p_motivo text, p_reversed_by uuid",jsonb,plpgsql,true,v
+reservar_inventario_feria,"p_items jsonb, p_opportunity_id uuid",void,plpgsql,true,v
+resolve_commission_rule,"p_vendedor_id uuid, p_cuenta_id uuid, p_categoria_id integer, p_canal_id character varying, p_fecha date","TABLE(rule_id uuid, porcentaje_comision numeric, priority_score integer, rule_snapshot jsonb)",plpgsql,true,s
+rpc_enviar_soliciturepuestos_devolucion_v1,p_soliciturepuestos_id bigint,bigint,plpgsql,true,v
+rpc_enviar_soliciturepuestos_powerautomate,p_soliciturepuestos_id bigint,"TABLE(status integer, headers jsonb, body text)",plpgsql,true,v
+rpc_enviar_soliciturepuestos_powerautomate_http,p_soliciturepuestos_id bigint,"TABLE(status integer, content_type text, body text)",plpgsql,true,v
+rpc_enviar_soliciturepuestos_powerautomate_net,p_soliciturepuestos_id bigint,bigint,plpgsql,true,v
+rpc_enviar_soliciturepuestos_powerautomate_sf,p_soliciturepuestos_id bigint,void,plpgsql,true,v
+rpc_send_test_email,,json,plpgsql,true,v
+rpc_soliciturepuestos_queue_drain,p_limit integer,void,plpgsql,true,v
+search_global,"p_query text, p_limit integer","TABLE(entity_type text, id uuid, title text, subtitle text, metadata jsonb)",plpgsql,true,v
+search_services,search_pattern character varying,"TABLE(id bigint, distance integer)",plpgsql,false,v
+set_account_owner_default,,trigger,plpgsql,false,v
+set_limit,real,real,c,false,v
+set_updated_at,,trigger,plpgsql,false,v
+show_limit,,real,c,false,s
+show_trgm,text,text[],c,false,i
+similarity,"text, text",real,c,false,i
+similarity_dist,"text, text",real,c,false,i
+similarity_op,"text, text",boolean,c,false,s
+strict_word_similarity,"text, text",real,c,false,i
+strict_word_similarity_commutator_op,"text, text",boolean,c,false,s
+strict_word_similarity_dist_commutator_op,"text, text",real,c,false,i
+strict_word_similarity_dist_op,"text, text",real,c,false,i
+strict_word_similarity_op,"text, text",boolean,c,false,s
+sync_account_deletion_to_children,,trigger,plpgsql,false,v
+sync_account_ownership_to_children,,trigger,plpgsql,false,v
+sync_users_permissions_on_role_update,,trigger,plpgsql,false,v
+text_to_bytea,data text,bytea,c,false,i
+trg_ai_neg_productos_negociacion,,trigger,plpgsql,false,v
+trg_aiu_soliciturepuestosservice,,trigger,plpgsql,false,v
+trg_auto_devengada,,trigger,plpgsql,true,v
+trg_auto_devengada_on_quote_win,,trigger,plpgsql,false,v
+trg_srs_after_webhooks,,trigger,plpgsql,false,v
+trg_srs_before_normalize,,trigger,plpgsql,false,v
+try_parse_date,p_text text,date,plpgsql,false,v
+unaccent,"regdictionary, text",text,c,false,s
+unaccent,text,text,c,false,s
+unaccent_init,internal,internal,c,false,v
+unaccent_lexize,"internal, internal, internal, internal",internal,c,false,v
+update_nits,data jsonb,void,plpgsql,true,v
+update_opportunity_probability,,trigger,plpgsql,false,v
+upsert_consumidor_with_return,"p_cedula text, p_contacto text, p_telefono text, p_direccion text, p_correo_electronico text, p_ciudad_id bigint, p_barrio text, p_descripcion_direccion text",bigint,plpgsql,true,v
+urlencode,data jsonb,text,c,false,i
+urlencode,string bytea,text,c,false,i
+urlencode,string character varying,text,c,false,i
+validar_saldo_inventario,,trigger,plpgsql,true,v
+validate_descuentos_volumen,,trigger,plpgsql,false,v
+word_similarity,"text, text",real,c,false,i
+word_similarity_commutator_op,"text, text",boolean,c,false,s
+word_similarity_dist_commutator_op,"text, text",real,c,false,i
+word_similarity_dist_op,"text, text",real,c,false,i
+word_similarity_op,"text, text",boolean,c,false,s
