@@ -1,0 +1,312 @@
+schemaname,tablename,indexname,indexdef
+public,Articulos,Articulos_AcctCode_key,"CREATE UNIQUE INDEX ""Articulos_AcctCode_key"" ON public.""Articulos"" USING btree (""AcctCode"")"
+public,Articulos,Articulos_pkey,"CREATE UNIQUE INDEX ""Articulos_pkey"" ON public.""Articulos"" USING btree (id)"
+public,CRM_Actividades,CRM_Actividades_pkey,"CREATE UNIQUE INDEX ""CRM_Actividades_pkey"" ON public.""CRM_Actividades"" USING btree (id)"
+public,CRM_Activity_Clasificacion,CRM_Activity_Clasificacion_nombre_tipo_actividad_key,"CREATE UNIQUE INDEX ""CRM_Activity_Clasificacion_nombre_tipo_actividad_key"" ON public.""CRM_Activity_Clasificacion"" USING btree (nombre, tipo_actividad)"
+public,CRM_Activity_Clasificacion,CRM_Activity_Clasificacion_pkey,"CREATE UNIQUE INDEX ""CRM_Activity_Clasificacion_pkey"" ON public.""CRM_Activity_Clasificacion"" USING btree (id)"
+public,CRM_Activity_Subclasificacion,CRM_Activity_Subclasificacion_nombre_clasificacion_id_key,"CREATE UNIQUE INDEX ""CRM_Activity_Subclasificacion_nombre_clasificacion_id_key"" ON public.""CRM_Activity_Subclasificacion"" USING btree (nombre, clasificacion_id)"
+public,CRM_Activity_Subclasificacion,CRM_Activity_Subclasificacion_pkey,"CREATE UNIQUE INDEX ""CRM_Activity_Subclasificacion_pkey"" ON public.""CRM_Activity_Subclasificacion"" USING btree (id)"
+public,CRM_Audit_Cuentas,CRM_Audit_Cuentas_pkey,"CREATE UNIQUE INDEX ""CRM_Audit_Cuentas_pkey"" ON public.""CRM_Audit_Cuentas"" USING btree (id)"
+public,CRM_Canales,CRM_Canales_pkey,"CREATE UNIQUE INDEX ""CRM_Canales_pkey"" ON public.""CRM_Canales"" USING btree (id)"
+public,CRM_Canales_Vendedores,CRM_Canales_Vendedores_pkey,"CREATE UNIQUE INDEX ""CRM_Canales_Vendedores_pkey"" ON public.""CRM_Canales_Vendedores"" USING btree (id)"
+public,CRM_Canales_Vendedores,CRM_Canales_Vendedores_unique_pair,"CREATE UNIQUE INDEX ""CRM_Canales_Vendedores_unique_pair"" ON public.""CRM_Canales_Vendedores"" USING btree (vendedor_id, canal_id)"
+public,CRM_Categoria_Interes,Categoria_interes_pkey,"CREATE UNIQUE INDEX ""Categoria_interes_pkey"" ON public.""CRM_Categoria_Interes"" USING btree (id)"
+public,CRM_Ciudades,CRM_Ciudades_departamento_id_nombre_key,"CREATE UNIQUE INDEX ""CRM_Ciudades_departamento_id_nombre_key"" ON public.""CRM_Ciudades"" USING btree (departamento_id, nombre)"
+public,CRM_Ciudades,CRM_Ciudades_pkey,"CREATE UNIQUE INDEX ""CRM_Ciudades_pkey"" ON public.""CRM_Ciudades"" USING btree (id)"
+public,CRM_Clientes_Premium,crm_clientes_premium_cuenta_id_key,"CREATE UNIQUE INDEX crm_clientes_premium_cuenta_id_key ON public.""CRM_Clientes_Premium"" USING btree (cuenta_id)"
+public,CRM_Clientes_Premium,crm_clientes_premium_pkey,"CREATE UNIQUE INDEX crm_clientes_premium_pkey ON public.""CRM_Clientes_Premium"" USING btree (id)"
+public,CRM_Clientes_Premium,idx_crm_clientes_premium_cuenta_id,"CREATE INDEX idx_crm_clientes_premium_cuenta_id ON public.""CRM_Clientes_Premium"" USING btree (cuenta_id)"
+public,CRM_Clientes_Premium,idx_crm_clientes_premium_nit_base,"CREATE INDEX idx_crm_clientes_premium_nit_base ON public.""CRM_Clientes_Premium"" USING btree (nit_base)"
+public,CRM_Clientes_Premium,idx_crm_clientes_premium_nivel,"CREATE INDEX idx_crm_clientes_premium_nivel ON public.""CRM_Clientes_Premium"" USING btree (nivel_premium)"
+public,CRM_Clientes_Premium,idx_crm_clientes_premium_owner,"CREATE INDEX idx_crm_clientes_premium_owner ON public.""CRM_Clientes_Premium"" USING btree (owner_user_id)"
+public,CRM_ComisionCategorias,CRM_ComisionCategorias_pkey,"CREATE UNIQUE INDEX ""CRM_ComisionCategorias_pkey"" ON public.""CRM_ComisionCategorias"" USING btree (id)"
+public,CRM_ComisionCategorias,CRM_ComisionCategorias_prefijo_key,"CREATE UNIQUE INDEX ""CRM_ComisionCategorias_prefijo_key"" ON public.""CRM_ComisionCategorias"" USING btree (prefijo)"
+public,CRM_ComisionCategorias,idx_comision_cat_active,"CREATE INDEX idx_comision_cat_active ON public.""CRM_ComisionCategorias"" USING btree (is_active)"
+public,CRM_ComisionCategorias,idx_comision_cat_prefijo,"CREATE INDEX idx_comision_cat_prefijo ON public.""CRM_ComisionCategorias"" USING btree (prefijo)"
+public,CRM_ComisionLedger,CRM_ComisionLedger_pkey,"CREATE UNIQUE INDEX ""CRM_ComisionLedger_pkey"" ON public.""CRM_ComisionLedger"" USING btree (id)"
+public,CRM_ComisionLedger,idx_ledger_canal,"CREATE INDEX idx_ledger_canal ON public.""CRM_ComisionLedger"" USING btree (canal_id)"
+public,CRM_ComisionLedger,idx_ledger_created,"CREATE INDEX idx_ledger_created ON public.""CRM_ComisionLedger"" USING btree (created_at DESC)"
+public,CRM_ComisionLedger,idx_ledger_cuenta,"CREATE INDEX idx_ledger_cuenta ON public.""CRM_ComisionLedger"" USING btree (cuenta_id)"
+public,CRM_ComisionLedger,idx_ledger_oportunidad,"CREATE INDEX idx_ledger_oportunidad ON public.""CRM_ComisionLedger"" USING btree (oportunidad_id)"
+public,CRM_ComisionLedger,idx_ledger_referencia,"CREATE INDEX idx_ledger_referencia ON public.""CRM_ComisionLedger"" USING btree (entrada_referencia_id)"
+public,CRM_ComisionLedger,idx_ledger_tipo,"CREATE INDEX idx_ledger_tipo ON public.""CRM_ComisionLedger"" USING btree (tipo_evento)"
+public,CRM_ComisionLedger,idx_ledger_vendedor,"CREATE INDEX idx_ledger_vendedor ON public.""CRM_ComisionLedger"" USING btree (vendedor_id)"
+public,CRM_ComisionLedger,idx_ledger_vendedor_tipo,"CREATE INDEX idx_ledger_vendedor_tipo ON public.""CRM_ComisionLedger"" USING btree (vendedor_id, tipo_evento)"
+public,CRM_ComisionReglas,CRM_ComisionReglas_pkey,"CREATE UNIQUE INDEX ""CRM_ComisionReglas_pkey"" ON public.""CRM_ComisionReglas"" USING btree (id)"
+public,CRM_ComisionReglas,idx_comision_reglas_active,"CREATE INDEX idx_comision_reglas_active ON public.""CRM_ComisionReglas"" USING btree (is_active, vigencia_desde, vigencia_hasta)"
+public,CRM_ComisionReglas,idx_comision_reglas_canal,"CREATE INDEX idx_comision_reglas_canal ON public.""CRM_ComisionReglas"" USING btree (canal_id)"
+public,CRM_ComisionReglas,idx_comision_reglas_categoria,"CREATE INDEX idx_comision_reglas_categoria ON public.""CRM_ComisionReglas"" USING btree (categoria_id)"
+public,CRM_ComisionReglas,idx_comision_reglas_cuenta,"CREATE INDEX idx_comision_reglas_cuenta ON public.""CRM_ComisionReglas"" USING btree (cuenta_id)"
+public,CRM_ComisionReglas,idx_comision_reglas_cuentas_ids,"CREATE INDEX idx_comision_reglas_cuentas_ids ON public.""CRM_ComisionReglas"" USING gin (cuentas_ids)"
+public,CRM_ComisionReglas,idx_comision_reglas_vendedor,"CREATE INDEX idx_comision_reglas_vendedor ON public.""CRM_ComisionReglas"" USING btree (vendedor_id)"
+public,CRM_Configuracion,CRM_Configuracion_pkey,"CREATE UNIQUE INDEX ""CRM_Configuracion_pkey"" ON public.""CRM_Configuracion"" USING btree (key)"
+public,CRM_Contactos,CRM_Contactos_pkey,"CREATE UNIQUE INDEX ""CRM_Contactos_pkey"" ON public.""CRM_Contactos"" USING btree (id)"
+public,CRM_Contactos,idx_contactos_account,"CREATE INDEX idx_contactos_account ON public.""CRM_Contactos"" USING btree (account_id)"
+public,CRM_Contactos,idx_contactos_email,"CREATE INDEX idx_contactos_email ON public.""CRM_Contactos"" USING btree (email)"
+public,CRM_Contactos,unique_active_contact_phone,"CREATE UNIQUE INDEX unique_active_contact_phone ON public.""CRM_Contactos"" USING btree (account_id, telefono) WHERE ((is_deleted = false) AND (telefono IS NOT NULL) AND ((telefono)::text <> ''::text))"
+public,CRM_CotizacionItems,CRM_CotizacionItems_pkey,"CREATE UNIQUE INDEX ""CRM_CotizacionItems_pkey"" ON public.""CRM_CotizacionItems"" USING btree (id)"
+public,CRM_Cotizaciones,CRM_Cotizaciones_pkey,"CREATE UNIQUE INDEX ""CRM_Cotizaciones_pkey"" ON public.""CRM_Cotizaciones"" USING btree (id)"
+public,CRM_Cuentas,CRM_Cuentas_pkey,"CREATE UNIQUE INDEX ""CRM_Cuentas_pkey"" ON public.""CRM_Cuentas"" USING btree (id)"
+public,CRM_Cuentas,idx_crm_cuentas_owner,"CREATE INDEX idx_crm_cuentas_owner ON public.""CRM_Cuentas"" USING btree (owner_user_id)"
+public,CRM_Cuentas,idx_crmcuentas_nit_base_root,"CREATE UNIQUE INDEX idx_crmcuentas_nit_base_root ON public.""CRM_Cuentas"" USING btree (nit_base) WHERE (id_cuenta_principal IS NULL)"
+public,CRM_Cuentas,idx_crmcuentas_parent_suffix,"CREATE UNIQUE INDEX idx_crmcuentas_parent_suffix ON public.""CRM_Cuentas"" USING btree (id_cuenta_principal, nit_sufijo)"
+public,CRM_Cuentas,idx_cuentas_nombre,"CREATE INDEX idx_cuentas_nombre ON public.""CRM_Cuentas"" USING btree (nombre)"
+public,CRM_Cuentas,unique_active_nit,"CREATE UNIQUE INDEX unique_active_nit ON public.""CRM_Cuentas"" USING btree (nit_base) WHERE ((is_deleted = false) AND (nit_base IS NOT NULL) AND ((nit_base)::text <> ''::text))"
+public,CRM_Currencies,CRM_Currencies_pkey,"CREATE UNIQUE INDEX ""CRM_Currencies_pkey"" ON public.""CRM_Currencies"" USING btree (code)"
+public,CRM_Departamentos,CRM_Departamentos_nombre_key,"CREATE UNIQUE INDEX ""CRM_Departamentos_nombre_key"" ON public.""CRM_Departamentos"" USING btree (nombre)"
+public,CRM_Departamentos,CRM_Departamentos_pkey,"CREATE UNIQUE INDEX ""CRM_Departamentos_pkey"" ON public.""CRM_Departamentos"" USING btree (id)"
+public,CRM_EstadosOportunidad,CRM_EstadosOportunidad_pkey,"CREATE UNIQUE INDEX ""CRM_EstadosOportunidad_pkey"" ON public.""CRM_EstadosOportunidad"" USING btree (id)"
+public,CRM_ExchangeRates,CRM_ExchangeRates_pkey,"CREATE UNIQUE INDEX ""CRM_ExchangeRates_pkey"" ON public.""CRM_ExchangeRates"" USING btree (id)"
+public,CRM_FasesOportunidad,CRM_FasesOportunidad_pkey,"CREATE UNIQUE INDEX ""CRM_FasesOportunidad_pkey"" ON public.""CRM_FasesOportunidad"" USING btree (id)"
+public,CRM_Files,CRM_Files_pkey,"CREATE UNIQUE INDEX ""CRM_Files_pkey"" ON public.""CRM_Files"" USING btree (id)"
+public,CRM_InventarioMovimientoAuditoria,CRM_InventarioMovimientoAuditoria_pkey,"CREATE UNIQUE INDEX ""CRM_InventarioMovimientoAuditoria_pkey"" ON public.""CRM_InventarioMovimientoAuditoria"" USING btree (id)"
+public,CRM_InventarioMovimientos,CRM_InventarioMovimientos_pkey,"CREATE UNIQUE INDEX ""CRM_InventarioMovimientos_pkey"" ON public.""CRM_InventarioMovimientos"" USING btree (id)"
+public,CRM_InventarioMovimientos,idx_inventario_movimientos_fecha,"CREATE INDEX idx_inventario_movimientos_fecha ON public.""CRM_InventarioMovimientos"" USING btree (created_at DESC)"
+public,CRM_InventarioMovimientos,idx_inventario_movimientos_producto,"CREATE INDEX idx_inventario_movimientos_producto ON public.""CRM_InventarioMovimientos"" USING btree (producto_id, estado, operacion)"
+public,CRM_ListaDePrecios,CRM_ListaDePrecios_numero_articulo_key,"CREATE UNIQUE INDEX ""CRM_ListaDePrecios_numero_articulo_key"" ON public.""CRM_ListaDePrecios"" USING btree (numero_articulo)"
+public,CRM_ListaDePrecios,CRM_ListaDePrecios_pkey,"CREATE UNIQUE INDEX ""CRM_ListaDePrecios_pkey"" ON public.""CRM_ListaDePrecios"" USING btree (id)"
+public,CRM_ListaDePrecios,idx_crm_listaprecios_familia,"CREATE INDEX idx_crm_listaprecios_familia ON public.""CRM_ListaDePrecios"" USING btree (familia)"
+public,CRM_ListaDePrecios,idx_crm_listaprecios_planta,"CREATE INDEX idx_crm_listaprecios_planta ON public.""CRM_ListaDePrecios"" USING btree (planta)"
+public,CRM_ListaDePrecios,idx_lista_precios_articulo,"CREATE INDEX idx_lista_precios_articulo ON public.""CRM_ListaDePrecios"" USING btree (numero_articulo)"
+public,CRM_ListaDePrecios,idx_lista_precios_descripcion,"CREATE INDEX idx_lista_precios_descripcion ON public.""CRM_ListaDePrecios"" USING gin (to_tsvector('spanish'::regconfig, descripcion))"
+public,CRM_Llamadas,CRM_Llamadas_pkey,"CREATE UNIQUE INDEX ""CRM_Llamadas_pkey"" ON public.""CRM_Llamadas"" USING btree (id)"
+public,CRM_Log,CRM_Log_pkey,"CREATE UNIQUE INDEX ""CRM_Log_pkey"" ON public.""CRM_Log"" USING btree (id)"
+public,CRM_Log,idx_crm_log_changed_at,"CREATE INDEX idx_crm_log_changed_at ON public.""CRM_Log"" USING btree (changed_at)"
+public,CRM_Log,idx_crm_log_field_changed,"CREATE INDEX idx_crm_log_field_changed ON public.""CRM_Log"" USING btree (field_changed)"
+public,CRM_Log,idx_crm_log_opportunity_id,"CREATE INDEX idx_crm_log_opportunity_id ON public.""CRM_Log"" USING btree (opportunity_id)"
+public,CRM_Metas,CRM_Metas_pkey,"CREATE UNIQUE INDEX ""CRM_Metas_pkey"" ON public.""CRM_Metas"" USING btree (id)"
+public,CRM_MicrosoftTokens,CRM_MicrosoftTokens_pkey,"CREATE UNIQUE INDEX ""CRM_MicrosoftTokens_pkey"" ON public.""CRM_MicrosoftTokens"" USING btree (user_id)"
+public,CRM_NotificationRules,CRM_NotificationRules_pkey,"CREATE UNIQUE INDEX ""CRM_NotificationRules_pkey"" ON public.""CRM_NotificationRules"" USING btree (id)"
+public,CRM_Notifications,CRM_Notifications_pkey,"CREATE UNIQUE INDEX ""CRM_Notifications_pkey"" ON public.""CRM_Notifications"" USING btree (id)"
+public,CRM_OportunidadColaboradores,CRM_OportunidadColaboradores_pkey,"CREATE UNIQUE INDEX ""CRM_OportunidadColaboradores_pkey"" ON public.""CRM_OportunidadColaboradores"" USING btree (opportunity_id, user_id)"
+public,CRM_Oportunidades,CRM_Oportunidades_pkey,"CREATE UNIQUE INDEX ""CRM_Oportunidades_pkey"" ON public.""CRM_Oportunidades"" USING btree (id)"
+public,CRM_Oportunidades,idx_oportunidades_account,"CREATE INDEX idx_oportunidades_account ON public.""CRM_Oportunidades"" USING btree (account_id)"
+public,CRM_Oportunidades,idx_oportunidades_fase,"CREATE INDEX idx_oportunidades_fase ON public.""CRM_Oportunidades"" USING btree (fase_id)"
+public,CRM_Oportunidades,idx_oportunidades_owner,"CREATE INDEX idx_oportunidades_owner ON public.""CRM_Oportunidades"" USING btree (owner_user_id)"
+public,CRM_Oportunidades,idx_oportunidades_razon_perdida,"CREATE INDEX idx_oportunidades_razon_perdida ON public.""CRM_Oportunidades"" USING btree (razon_perdida_id)"
+public,CRM_Oportunidades,idx_oportunidades_updated_at,"CREATE INDEX idx_oportunidades_updated_at ON public.""CRM_Oportunidades"" USING btree (updated_at DESC)"
+public,CRM_Oportunidades_Colaboradores,CRM_Oportunidades_Colaboradores_pkey,"CREATE UNIQUE INDEX ""CRM_Oportunidades_Colaboradores_pkey"" ON public.""CRM_Oportunidades_Colaboradores"" USING btree (id)"
+public,CRM_Oportunidades_Colaboradores,idx_opp_collab_opp,"CREATE INDEX idx_opp_collab_opp ON public.""CRM_Oportunidades_Colaboradores"" USING btree (oportunidad_id)"
+public,CRM_Oportunidades_Colaboradores,idx_opp_collab_user,"CREATE INDEX idx_opp_collab_user ON public.""CRM_Oportunidades_Colaboradores"" USING btree (usuario_id)"
+public,CRM_OrigenesOportunidad,CRM_OrigenesOportunidad_codigo_key,"CREATE UNIQUE INDEX ""CRM_OrigenesOportunidad_codigo_key"" ON public.""CRM_OrigenesOportunidad"" USING btree (codigo)"
+public,CRM_OrigenesOportunidad,CRM_OrigenesOportunidad_pkey,"CREATE UNIQUE INDEX ""CRM_OrigenesOportunidad_pkey"" ON public.""CRM_OrigenesOportunidad"" USING btree (id)"
+public,CRM_Pagos,CRM_Pagos_pkey,"CREATE UNIQUE INDEX ""CRM_Pagos_pkey"" ON public.""CRM_Pagos"" USING btree (id)"
+public,CRM_Paises,CRM_Paises_pkey,"CREATE UNIQUE INDEX ""CRM_Paises_pkey"" ON public.""CRM_Paises"" USING btree (id)"
+public,CRM_Parameters,CRM_Parameters_pkey,"CREATE UNIQUE INDEX ""CRM_Parameters_pkey"" ON public.""CRM_Parameters"" USING btree (key)"
+public,CRM_PedidoItems,CRM_PedidoItems_pkey,"CREATE UNIQUE INDEX ""CRM_PedidoItems_pkey"" ON public.""CRM_PedidoItems"" USING btree (id)"
+public,CRM_Pedidos,CRM_Pedidos_uuid_generado_key,"CREATE UNIQUE INDEX ""CRM_Pedidos_uuid_generado_key"" ON public.""CRM_Pedidos"" USING btree (uuid_generado)"
+public,CRM_Productos,CRM_Productos_pkey,"CREATE UNIQUE INDEX ""CRM_Productos_pkey"" ON public.""CRM_Productos"" USING btree (id)"
+public,CRM_Productos,CRM_Productos_sku_key,"CREATE UNIQUE INDEX ""CRM_Productos_sku_key"" ON public.""CRM_Productos"" USING btree (sku)"
+public,CRM_Productos,idx_crm_productos_familia,"CREATE INDEX idx_crm_productos_familia ON public.""CRM_Productos"" USING btree (familia)"
+public,CRM_Productos,idx_crm_productos_planta,"CREATE INDEX idx_crm_productos_planta ON public.""CRM_Productos"" USING btree (planta)"
+public,CRM_RazonesPerdida,CRM_RazonesPerdida_pkey,"CREATE UNIQUE INDEX ""CRM_RazonesPerdida_pkey"" ON public.""CRM_RazonesPerdida"" USING btree (id)"
+public,CRM_ReglasBono,CRM_ReglasBono_pkey,"CREATE UNIQUE INDEX ""CRM_ReglasBono_pkey"" ON public.""CRM_ReglasBono"" USING btree (id)"
+public,CRM_SapIntegrationQueue,CRM_SapIntegrationQueue_pkey,"CREATE UNIQUE INDEX ""CRM_SapIntegrationQueue_pkey"" ON public.""CRM_SapIntegrationQueue"" USING btree (id)"
+public,CRM_Segmentos,CRM_Segmentos_nombre_subclasificacion_id_key,"CREATE UNIQUE INDEX ""CRM_Segmentos_nombre_subclasificacion_id_key"" ON public.""CRM_Segmentos"" USING btree (nombre, subclasificacion_id)"
+public,CRM_Segmentos,CRM_Segmentos_pkey,"CREATE UNIQUE INDEX ""CRM_Segmentos_pkey"" ON public.""CRM_Segmentos"" USING btree (id)"
+public,CRM_Subclasificacion,CRM_Subclasificacion_nombre_canal_id_key,"CREATE UNIQUE INDEX ""CRM_Subclasificacion_nombre_canal_id_key"" ON public.""CRM_Subclasificacion"" USING btree (nombre, canal_id)"
+public,CRM_Subclasificacion,CRM_Subclasificacion_pkey,"CREATE UNIQUE INDEX ""CRM_Subclasificacion_pkey"" ON public.""CRM_Subclasificacion"" USING btree (id)"
+public,CRM_TiposActividad,CRM_TiposActividad_pkey,"CREATE UNIQUE INDEX ""CRM_TiposActividad_pkey"" ON public.""CRM_TiposActividad"" USING btree (id)"
+public,CRM_TiposCuenta,CRM_TiposCuenta_pkey,"CREATE UNIQUE INDEX ""CRM_TiposCuenta_pkey"" ON public.""CRM_TiposCuenta"" USING btree (id)"
+public,CRM_TransferenciasOportunidad,CRM_TransferenciasOportunidad_pkey,"CREATE UNIQUE INDEX ""CRM_TransferenciasOportunidad_pkey"" ON public.""CRM_TransferenciasOportunidad"" USING btree (id)"
+public,CRM_Usuarios,CRM_Usuarios_pkey,"CREATE UNIQUE INDEX ""CRM_Usuarios_pkey"" ON public.""CRM_Usuarios"" USING btree (id)"
+public,Ciudades,Ciudades_ciudad_key,"CREATE UNIQUE INDEX ""Ciudades_ciudad_key"" ON public.""Ciudades"" USING btree (ciudad)"
+public,Ciudades,Ciudades_pkey,"CREATE UNIQUE INDEX ""Ciudades_pkey"" ON public.""Ciudades"" USING btree (id)"
+public,Clientes,Cliente_pkey,"CREATE UNIQUE INDEX ""Cliente_pkey"" ON public.""Clientes"" USING btree (id)"
+public,Clientes,Clientes_nit_key,"CREATE UNIQUE INDEX ""Clientes_nit_key"" ON public.""Clientes"" USING btree (nit)"
+public,Clientes,Clientes_nombre_key,"CREATE UNIQUE INDEX ""Clientes_nombre_key"" ON public.""Clientes"" USING btree (nombre)"
+public,Comentarios,Comentarios_pkey,"CREATE UNIQUE INDEX ""Comentarios_pkey"" ON public.""Comentarios"" USING btree (id)"
+public,Comentarios,idx_unico_comentarios,"CREATE UNIQUE INDEX idx_unico_comentarios ON public.""Comentarios"" USING btree (servicio_id, usuario_id, visita_id, tipo, contenido)"
+public,Comentarios_RegistroMAC,Comentarios_RegistroMAC_pkey,"CREATE UNIQUE INDEX ""Comentarios_RegistroMAC_pkey"" ON public.""Comentarios_RegistroMAC"" USING btree (id)"
+public,Consumidores,Consumidor_pkey,"CREATE UNIQUE INDEX ""Consumidor_pkey"" ON public.""Consumidores"" USING btree (id)"
+public,Consumidores,uq_cedula_contacto,"CREATE UNIQUE INDEX uq_cedula_contacto ON public.""Consumidores"" USING btree (cedula, contacto, telefono, direccion)"
+public,Defectos,Defectos_pkey,"CREATE UNIQUE INDEX ""Defectos_pkey"" ON public.""Defectos"" USING btree (id)"
+public,Eliminados,Acciones_pkey,"CREATE UNIQUE INDEX ""Acciones_pkey"" ON public.""Eliminados"" USING btree (id)"
+public,KT_ProgramacionDia,KT_ProgramacionDia_pkey,"CREATE UNIQUE INDEX ""KT_ProgramacionDia_pkey"" ON public.""KT_ProgramacionDia"" USING btree (id)"
+public,KT_ProgramacionProducto,KT_ProgramacionProducto_pkey,"CREATE UNIQUE INDEX ""KT_ProgramacionProducto_pkey"" ON public.""KT_ProgramacionProducto"" USING btree (id)"
+public,Modulos,Modulos_nombre_key,"CREATE UNIQUE INDEX ""Modulos_nombre_key"" ON public.""Modulos"" USING btree (nombre)"
+public,Modulos,Modulos_pkey,"CREATE UNIQUE INDEX ""Modulos_pkey"" ON public.""Modulos"" USING btree (id)"
+public,Modulos,Modulos_ruta_key,"CREATE UNIQUE INDEX ""Modulos_ruta_key"" ON public.""Modulos"" USING btree (ruta)"
+public,Neg_base,Neg_base_pkey,"CREATE UNIQUE INDEX ""Neg_base_pkey"" ON public.""Neg_base"" USING btree (""Id"")"
+public,Neg_base,neg_base_codigo_articulo_key,"CREATE UNIQUE INDEX neg_base_codigo_articulo_key ON public.""Neg_base"" USING btree (""Codigo_Articulo"")"
+public,Neg_historial_precios,Neg_historial_precios_pkey,"CREATE UNIQUE INDEX ""Neg_historial_precios_pkey"" ON public.""Neg_historial_precios"" USING btree (id)"
+public,Neg_mci_data,Neg_mci_data_pkey,"CREATE UNIQUE INDEX ""Neg_mci_data_pkey"" ON public.""Neg_mci_data"" USING btree (key)"
+public,Neg_productos,Neg_productos_pkey,"CREATE UNIQUE INDEX ""Neg_productos_pkey"" ON public.""Neg_productos"" USING btree (id)"
+public,Neg_productos,unique_product_per_supplier,"CREATE UNIQUE INDEX unique_product_per_supplier ON public.""Neg_productos"" USING btree (base_id, supplier_id)"
+public,Permisos,Permisos_pkey,"CREATE UNIQUE INDEX ""Permisos_pkey"" ON public.""Permisos"" USING btree (id)"
+public,Permisos,Permisos_rol_modulo_id_key,"CREATE UNIQUE INDEX ""Permisos_rol_modulo_id_key"" ON public.""Permisos"" USING btree (rol, modulo_id)"
+public,Productos,Productos_nombre_idx,"CREATE INDEX ""Productos_nombre_idx"" ON public.""Productos"" USING btree (nombre)"
+public,Productos,Productos_pkey,"CREATE UNIQUE INDEX ""Productos_pkey"" ON public.""Productos"" USING btree (id)"
+public,Productos,Productos_sku_key,"CREATE UNIQUE INDEX ""Productos_sku_key"" ON public.""Productos"" USING btree (sku)"
+public,Proveedores_con_Responsable,Proveedores_con_Responsable_pkey,"CREATE UNIQUE INDEX ""Proveedores_con_Responsable_pkey"" ON public.""Proveedores_con_Responsable"" USING btree (id)"
+public,Repuestos,Repuestos_pkey,"CREATE UNIQUE INDEX ""Repuestos_pkey"" ON public.""Repuestos"" USING btree (id)"
+public,Repuestos_Servicios,Repuestos_Servicios_pkey,"CREATE UNIQUE INDEX ""Repuestos_Servicios_pkey"" ON public.""Repuestos_Servicios"" USING btree (id)"
+public,Repuestos_Servicios,uk_repuesto_servicio,"CREATE UNIQUE INDEX uk_repuesto_servicio ON public.""Repuestos_Servicios"" USING btree (repuesto_id, servicio_id)"
+public,Roles,Roles_nombre_rol_key,"CREATE UNIQUE INDEX ""Roles_nombre_rol_key"" ON public.""Roles"" USING btree (nombre_rol)"
+public,Roles,Roles_pkey,"CREATE UNIQUE INDEX ""Roles_pkey"" ON public.""Roles"" USING btree (id)"
+public,Servicios,Servicios_consecutivo_key,"CREATE UNIQUE INDEX ""Servicios_consecutivo_key"" ON public.""Servicios"" USING btree (consecutivo)"
+public,Servicios,Servicios_pkey,"CREATE UNIQUE INDEX ""Servicios_pkey"" ON public.""Servicios"" USING btree (id)"
+public,Servicios,Servicios_sharepoint_uid_key,"CREATE UNIQUE INDEX ""Servicios_sharepoint_uid_key"" ON public.""Servicios"" USING btree (sharepoint_uid)"
+public,Servicios_Defectos,Servicios_Defectos_pkey,"CREATE UNIQUE INDEX ""Servicios_Defectos_pkey"" ON public.""Servicios_Defectos"" USING btree (id)"
+public,Servicios_Defectos,unique_servicio_defecto_visita,"CREATE UNIQUE INDEX unique_servicio_defecto_visita ON public.""Servicios_Defectos"" USING btree (servicio_id, defecto_id, visita_id)"
+public,Servicios_Distribuidor,Servicios_Distribuidor_pkey,"CREATE UNIQUE INDEX ""Servicios_Distribuidor_pkey"" ON public.""Servicios_Distribuidor"" USING btree (id)"
+public,Tipo_Solicitud,tipo_solicitud_nombre_unique,"CREATE UNIQUE INDEX tipo_solicitud_nombre_unique ON public.""Tipo_Solicitud"" USING btree (""TipoSolicitud"")"
+public,Tipo_Solicitud,tipo_solicitud_pkey,"CREATE UNIQUE INDEX tipo_solicitud_pkey ON public.""Tipo_Solicitud"" USING btree (id)"
+public,Ubicaciones,Almacen_pkey,"CREATE UNIQUE INDEX ""Almacen_pkey"" ON public.""Ubicaciones"" USING btree (id)"
+public,Ubicaciones,Ubicaciones_nombre_key,"CREATE UNIQUE INDEX ""Ubicaciones_nombre_key"" ON public.""Ubicaciones"" USING btree (nombre)"
+public,Ubicaciones,Ubicaciones_sharepoint_id_key,"CREATE UNIQUE INDEX ""Ubicaciones_sharepoint_id_key"" ON public.""Ubicaciones"" USING btree (sharepoint_id)"
+public,Usuarios,Usuario_pkey,"CREATE UNIQUE INDEX ""Usuario_pkey"" ON public.""Usuarios"" USING btree (id)"
+public,Usuarios,Usuario_user_id_key,"CREATE UNIQUE INDEX ""Usuario_user_id_key"" ON public.""Usuarios"" USING btree (user_id)"
+public,Usuarios,Usuarios_cedula_key,"CREATE UNIQUE INDEX ""Usuarios_cedula_key"" ON public.""Usuarios"" USING btree (cedula)"
+public,Usuarios,Usuarios_correo_key,"CREATE UNIQUE INDEX ""Usuarios_correo_key"" ON public.""Usuarios"" USING btree (correo)"
+public,Usuarios,Usuarios_url_foto_key,"CREATE UNIQUE INDEX ""Usuarios_url_foto_key"" ON public.""Usuarios"" USING btree (url_foto)"
+public,Usuarios_MarginOS,Usuarios_MarginOS_pkey,"CREATE UNIQUE INDEX ""Usuarios_MarginOS_pkey"" ON public.""Usuarios_MarginOS"" USING btree (id)"
+public,Usuarios_MarginOS,Usuarios_MarginOS_uuid_key,"CREATE UNIQUE INDEX ""Usuarios_MarginOS_uuid_key"" ON public.""Usuarios_MarginOS"" USING btree (uuid)"
+public,VISOR,VISOR_pkey,"CREATE UNIQUE INDEX ""VISOR_pkey"" ON public.""VISOR"" USING btree (""#"")"
+public,VISOR,idx_visor_fecha_ingreso_parsed,"CREATE INDEX idx_visor_fecha_ingreso_parsed ON public.""VISOR"" USING btree (parse_date_dmy_immutable(""Fecha de ingreso""))"
+public,Visitas,Agenda_pkey,"CREATE UNIQUE INDEX ""Agenda_pkey"" ON public.""Visitas"" USING btree (id)"
+public,Zonas,Zonas_pkey,"CREATE UNIQUE INDEX ""Zonas_pkey"" ON public.""Zonas"" USING btree (id)"
+public,Zonas,Zonas_zona_key,"CREATE UNIQUE INDEX ""Zonas_zona_key"" ON public.""Zonas"" USING btree (zona)"
+public,Zonas_tecnicos,Zonas_tecnicos_pkey,"CREATE UNIQUE INDEX ""Zonas_tecnicos_pkey"" ON public.""Zonas_tecnicos"" USING btree (id)"
+public,ayudas,ayudas_pkey,CREATE UNIQUE INDEX ayudas_pkey ON public.ayudas USING btree (id)
+public,bom_components,bom_components_pkey,CREATE UNIQUE INDEX bom_components_pkey ON public.bom_components USING btree (id)
+public,bom_components,idx_bom_components_bom_product,CREATE INDEX idx_bom_components_bom_product ON public.bom_components USING btree (bom_product_id)
+public,bom_components,idx_bom_components_codigo,CREATE INDEX idx_bom_components_codigo ON public.bom_components USING btree (codigo)
+public,bom_imports,bom_imports_pkey,CREATE UNIQUE INDEX bom_imports_pkey ON public.bom_imports USING btree (id)
+public,bom_products,bom_products_pkey,CREATE UNIQUE INDEX bom_products_pkey ON public.bom_products USING btree (id)
+public,bom_products,idx_bom_products_import_id,CREATE INDEX idx_bom_products_import_id ON public.bom_products USING btree (bom_import_id)
+public,bom_products,idx_bom_products_sap_code,CREATE INDEX idx_bom_products_sap_code ON public.bom_products USING btree (sap_code)
+public,bot_config,bot_config_pkey,CREATE UNIQUE INDEX bot_config_pkey ON public.bot_config USING btree (key)
+public,budget_fact,budget_fact_pkey,CREATE UNIQUE INDEX budget_fact_pkey ON public.budget_fact USING btree (id)
+public,budget_fact,budget_fact_year_idx,CREATE INDEX budget_fact_year_idx ON public.budget_fact USING btree (year)
+public,budget_fact,budget_fact_year_month_idx,"CREATE INDEX budget_fact_year_month_idx ON public.budget_fact USING btree (year, month)"
+public,budget_fact,idx_budget_fact_date,CREATE INDEX idx_budget_fact_date ON public.budget_fact USING btree (budget_date)
+public,budget_fact,idx_budget_fact_seller,CREATE INDEX idx_budget_fact_seller ON public.budget_fact USING btree (senior_seller)
+public,chat_history,chat_history_phone_number_idx,CREATE INDEX chat_history_phone_number_idx ON public.chat_history USING btree (phone_number)
+public,chat_history,chat_history_pkey,CREATE UNIQUE INDEX chat_history_pkey ON public.chat_history USING btree (id)
+public,cities_delivery_rules,cities_delivery_rules_city_key,CREATE UNIQUE INDEX cities_delivery_rules_city_key ON public.cities_delivery_rules USING btree (city)
+public,cities_delivery_rules,cities_delivery_rules_pkey,CREATE UNIQUE INDEX cities_delivery_rules_pkey ON public.cities_delivery_rules USING btree (id)
+public,clase_esteban,clase_esteban_pkey,CREATE UNIQUE INDEX clase_esteban_pkey ON public.clase_esteban USING btree (id)
+public,clientes_feria,clientes_feria_pkey,CREATE UNIQUE INDEX clientes_feria_pkey ON public.clientes_feria USING btree (id)
+public,comentariossolicitudes,comentariossolicitudes_pkey,CREATE UNIQUE INDEX comentariossolicitudes_pkey ON public.comentariossolicitudes USING btree (id)
+public,component_costs,component_costs_codigo_key,CREATE UNIQUE INDEX component_costs_codigo_key ON public.component_costs USING btree (codigo)
+public,component_costs,component_costs_pkey,CREATE UNIQUE INDEX component_costs_pkey ON public.component_costs USING btree (id)
+public,component_costs,idx_component_costs_codigo,CREATE INDEX idx_component_costs_codigo ON public.component_costs USING btree (codigo)
+public,crm_oportunidades_vtiger,crm_oportunidades_vtiger_pkey,CREATE UNIQUE INDEX crm_oportunidades_vtiger_pkey ON public.crm_oportunidades_vtiger USING btree (id)
+public,customers,customers_pkey,CREATE UNIQUE INDEX customers_pkey ON public.customers USING btree (id)
+public,customers,idx_customers_name,CREATE INDEX idx_customers_name ON public.customers USING btree (name)
+public,customers,idx_customers_nit,CREATE INDEX idx_customers_nit ON public.customers USING btree (nit)
+public,deliveries_fact,deliveries_fact_pkey,CREATE UNIQUE INDEX deliveries_fact_pkey ON public.deliveries_fact USING btree (id)
+public,deliveries_fact,idx_deliveries_fact_date,CREATE INDEX idx_deliveries_fact_date ON public.deliveries_fact USING btree (delivery_date)
+public,deliveries_fact,idx_deliveries_fact_seller,CREATE INDEX idx_deliveries_fact_seller ON public.deliveries_fact USING btree (seller_name)
+public,deliveries_fact,idx_deliveries_fact_status,CREATE INDEX idx_deliveries_fact_status ON public.deliveries_fact USING btree (item_status)
+public,evaluacion_servicio,evaluacion_servicio_pkey,CREATE UNIQUE INDEX evaluacion_servicio_pkey ON public.evaluacion_servicio USING btree (id)
+public,fir_kpi_users,fir_kpi_users_email_key,CREATE UNIQUE INDEX fir_kpi_users_email_key ON public.fir_kpi_users USING btree (email)
+public,fir_kpi_users,fir_kpi_users_pkey,CREATE UNIQUE INDEX fir_kpi_users_pkey ON public.fir_kpi_users USING btree (id)
+public,firmas_digitales,firmas_digitales_pkey,CREATE UNIQUE INDEX firmas_digitales_pkey ON public.firmas_digitales USING btree (id)
+public,firmas_digitales,firmas_digitales_visita_id_key,CREATE UNIQUE INDEX firmas_digitales_visita_id_key ON public.firmas_digitales USING btree (visita_id)
+public,furniture,furniture_current_idx,CREATE UNIQUE INDEX furniture_current_idx ON public.furniture USING btree (entity_id) WHERE (is_current = true)
+public,furniture,furniture_entity_id_version_key,"CREATE UNIQUE INDEX furniture_entity_id_version_key ON public.furniture USING btree (entity_id, version)"
+public,furniture,furniture_lookup_idx,"CREATE INDEX furniture_lookup_idx ON public.furniture USING btree (entity_id, is_current)"
+public,furniture,furniture_pkey,CREATE UNIQUE INDEX furniture_pkey ON public.furniture USING btree (id)
+public,furniture_hardware,furniture_hardware_pkey,CREATE UNIQUE INDEX furniture_hardware_pkey ON public.furniture_hardware USING btree (id)
+public,hardware,hardware_pkey,CREATE UNIQUE INDEX hardware_pkey ON public.hardware USING btree (id)
+public,holidays_calendar,holidays_calendar_holiday_date_key,CREATE UNIQUE INDEX holidays_calendar_holiday_date_key ON public.holidays_calendar USING btree (holiday_date)
+public,holidays_calendar,holidays_calendar_pkey,CREATE UNIQUE INDEX holidays_calendar_pkey ON public.holidays_calendar USING btree (id)
+public,inventario_almacenes,inventario_almacenes_pkey,CREATE UNIQUE INDEX inventario_almacenes_pkey ON public.inventario_almacenes USING btree (id)
+public,inventario_almacenes,uq_producto_ubicacion,"CREATE UNIQUE INDEX uq_producto_ubicacion ON public.inventario_almacenes USING btree (producto_id, ubicacion_id)"
+public,kitchen_furniture,kitchen_furniture_kitchen_id_segment_id_order_index_key,"CREATE UNIQUE INDEX kitchen_furniture_kitchen_id_segment_id_order_index_key ON public.kitchen_furniture USING btree (kitchen_id, segment_id, order_index)"
+public,kitchen_furniture,kitchen_furniture_pkey,CREATE UNIQUE INDEX kitchen_furniture_pkey ON public.kitchen_furniture USING btree (id)
+public,kitchen_segments,kitchen_segments_kitchen_id_code_key,"CREATE UNIQUE INDEX kitchen_segments_kitchen_id_code_key ON public.kitchen_segments USING btree (kitchen_id, code)"
+public,kitchen_segments,kitchen_segments_pkey,CREATE UNIQUE INDEX kitchen_segments_pkey ON public.kitchen_segments USING btree (id)
+public,kitchens,kitchens_pkey,CREATE UNIQUE INDEX kitchens_pkey ON public.kitchens USING btree (id)
+public,ledsaaa,ledsaaa_pkey,CREATE UNIQUE INDEX ledsaaa_pkey ON public.ledsaaa USING btree (id)
+public,materials,materials_current_idx,CREATE UNIQUE INDEX materials_current_idx ON public.materials USING btree (entity_id) WHERE (is_current = true)
+public,materials,materials_entity_id_version_key,"CREATE UNIQUE INDEX materials_entity_id_version_key ON public.materials USING btree (entity_id, version)"
+public,materials,materials_lookup_idx,"CREATE INDEX materials_lookup_idx ON public.materials USING btree (entity_id, is_current)"
+public,materials,materials_pkey,CREATE UNIQUE INDEX materials_pkey ON public.materials USING btree (id)
+public,movimientos_inventario,movimientos_inventario_almacenes_pkey,CREATE UNIQUE INDEX movimientos_inventario_almacenes_pkey ON public.movimientos_inventario USING btree (id)
+public,operations,operations_pkey,CREATE UNIQUE INDEX operations_pkey ON public.operations USING btree (id)
+public,ordene_de_venta_sap,ordene_de_venta_sap_pkey,CREATE UNIQUE INDEX ordene_de_venta_sap_pkey ON public.ordene_de_venta_sap USING btree (id)
+public,orders_fact,idx_orders_fact_customer,CREATE INDEX idx_orders_fact_customer ON public.orders_fact USING btree (customer_code)
+public,orders_fact,idx_orders_fact_dispatch,CREATE INDEX idx_orders_fact_dispatch ON public.orders_fact USING btree (planned_dispatch_start_date)
+public,orders_fact,idx_orders_fact_seller,CREATE INDEX idx_orders_fact_seller ON public.orders_fact USING btree (seller_name)
+public,orders_fact,orders_fact_pkey,CREATE UNIQUE INDEX orders_fact_pkey ON public.orders_fact USING btree (id)
+public,orders_fact,orders_fact_sales_order_line_key,"CREATE UNIQUE INDEX orders_fact_sales_order_line_key ON public.orders_fact USING btree (sales_order_number, line_number)"
+public,parts,parts_current_idx,CREATE UNIQUE INDEX parts_current_idx ON public.parts USING btree (entity_id) WHERE (is_current = true)
+public,parts,parts_entity_id_version_key,"CREATE UNIQUE INDEX parts_entity_id_version_key ON public.parts USING btree (entity_id, version)"
+public,parts,parts_lookup_idx,"CREATE INDEX parts_lookup_idx ON public.parts USING btree (furniture_entity_id, is_current)"
+public,parts,parts_pkey,CREATE UNIQUE INDEX parts_pkey ON public.parts USING btree (id)
+public,pdf_quotes,pdf_quotes_pkey,CREATE UNIQUE INDEX pdf_quotes_pkey ON public.pdf_quotes USING btree (id)
+public,permisosmodulos,permisosmodulos_pkey,CREATE UNIQUE INDEX permisosmodulos_pkey ON public.permisosmodulos USING btree (id)
+public,permisosmodulos,permisosmodulos_rol_nombre_modulo_key,"CREATE UNIQUE INDEX permisosmodulos_rol_nombre_modulo_key ON public.permisosmodulos USING btree (rol, nombre_modulo)"
+public,precioszonas,precioszonas_pkey,CREATE UNIQUE INDEX precioszonas_pkey ON public.precioszonas USING btree (id)
+public,price_lists,idx_price_lists_channel_id,CREATE INDEX idx_price_lists_channel_id ON public.price_lists USING btree (channel_id)
+public,price_lists,idx_price_lists_product_id,CREATE INDEX idx_price_lists_product_id ON public.price_lists USING btree (product_id)
+public,price_lists,price_lists_pkey,CREATE UNIQUE INDEX price_lists_pkey ON public.price_lists USING btree (id)
+public,price_lists,uq_price_list_channel_product,"CREATE UNIQUE INDEX uq_price_list_channel_product ON public.price_lists USING btree (channel_id, product_id, currency, valid_from)"
+public,price_lists,uq_price_lists_product_channel,"CREATE UNIQUE INDEX uq_price_lists_product_channel ON public.price_lists USING btree (product_id, channel_id)"
+public,product_costs,idx_product_costs_product_id,CREATE INDEX idx_product_costs_product_id ON public.product_costs USING btree (product_id)
+public,product_costs,product_costs_pkey,CREATE UNIQUE INDEX product_costs_pkey ON public.product_costs USING btree (id)
+public,producto repuesto,producto repuesto_pkey,"CREATE UNIQUE INDEX ""producto repuesto_pkey"" ON public.""producto repuesto"" USING btree (id)"
+public,productos_base,productos_base_pkey,CREATE UNIQUE INDEX productos_base_pkey ON public.productos_base USING btree (id)
+public,productos_base,productos_base_sku_base_key,CREATE UNIQUE INDEX productos_base_sku_base_key ON public.productos_base USING btree (sku_base)
+public,productos_defectos,productos_defectos_pkey,CREATE UNIQUE INDEX productos_defectos_pkey ON public.productos_defectos USING btree (id)
+public,productos_servicios,productos_servicios_pkey,CREATE UNIQUE INDEX productos_servicios_pkey ON public.productos_servicios USING btree (id)
+public,productos_ubicaciones,exhibiciones_pkey,CREATE UNIQUE INDEX exhibiciones_pkey ON public.productos_ubicaciones USING btree (id)
+public,productos_ubicaciones,unique_producto_ubicacion,"CREATE UNIQUE INDEX unique_producto_ubicacion ON public.productos_ubicaciones USING btree (producto_id, ubicacion_id)"
+public,products,idx_products_description,CREATE INDEX idx_products_description ON public.products USING btree (description)
+public,products,idx_products_sap_code,CREATE INDEX idx_products_sap_code ON public.products USING btree (sap_code)
+public,products,products_pkey,CREATE UNIQUE INDEX products_pkey ON public.products USING btree (id)
+public,products,products_sap_code_key,CREATE UNIQUE INDEX products_sap_code_key ON public.products USING btree (sap_code)
+public,projection_history,projection_history_pkey,CREATE UNIQUE INDEX projection_history_pkey ON public.projection_history USING btree (id)
+public,projects,projects_pkey,CREATE UNIQUE INDEX projects_pkey ON public.projects USING btree (id)
+public,prueba_1,prueba_1_pkey,CREATE UNIQUE INDEX prueba_1_pkey ON public.prueba_1 USING btree (id)
+public,pruebaesteban2,pruebaesteban2_pkey,CREATE UNIQUE INDEX pruebaesteban2_pkey ON public.pruebaesteban2 USING btree (id)
+public,purebaesteban123,idx_purebaesteban123_card_code,CREATE INDEX idx_purebaesteban123_card_code ON public.purebaesteban123 USING btree (card_code)
+public,purebaesteban123,idx_purebaesteban123_doc_date,CREATE INDEX idx_purebaesteban123_doc_date ON public.purebaesteban123 USING btree (doc_date)
+public,purebaesteban123,purebaesteban123_pkey,CREATE UNIQUE INDEX purebaesteban123_pkey ON public.purebaesteban123 USING btree (doc_entry)
+public,queja,queja_servicios_pkey,CREATE UNIQUE INDEX queja_servicios_pkey ON public.queja USING btree (id)
+public,razones_queja,razones_queja_pkey,CREATE UNIQUE INDEX razones_queja_pkey ON public.razones_queja USING btree (id)
+public,razones_queja,razones_queja_razon_key,CREATE UNIQUE INDEX razones_queja_razon_key ON public.razones_queja USING btree (razon)
+public,refrigerios,refrigerios_pkey,CREATE UNIQUE INDEX refrigerios_pkey ON public.refrigerios USING btree (id)
+public,registro_clientes,registro_clientes_pkey,CREATE UNIQUE INDEX registro_clientes_pkey ON public.registro_clientes USING btree (id)
+public,registro_solicitudes,registro_solicitudes_consecutivo_key,CREATE UNIQUE INDEX registro_solicitudes_consecutivo_key ON public.registro_solicitudes USING btree (consecutivo)
+public,registro_solicitudes,registro_solicitudes_pkey,CREATE UNIQUE INDEX registro_solicitudes_pkey ON public.registro_solicitudes USING btree (id)
+public,responsable_queja,responsable_queja_pkey,CREATE UNIQUE INDEX responsable_queja_pkey ON public.responsable_queja USING btree (id)
+public,responsable_queja,responsable_queja_responsable_key,CREATE UNIQUE INDEX responsable_queja_responsable_key ON public.responsable_queja USING btree (responsable)
+public,sales_channels,sales_channels_name_key,CREATE UNIQUE INDEX sales_channels_name_key ON public.sales_channels USING btree (name)
+public,sales_channels,sales_channels_pkey,CREATE UNIQUE INDEX sales_channels_pkey ON public.sales_channels USING btree (id)
+public,sales_fact,idx_sales_fact_customer,CREATE INDEX idx_sales_fact_customer ON public.sales_fact USING btree (customer_code)
+public,sales_fact,idx_sales_fact_date,CREATE INDEX idx_sales_fact_date ON public.sales_fact USING btree (document_date)
+public,sales_fact,idx_sales_fact_family,CREATE INDEX idx_sales_fact_family ON public.sales_fact USING btree (product_family)
+public,sales_fact,idx_sales_fact_seller,CREATE INDEX idx_sales_fact_seller ON public.sales_fact USING btree (senior_seller)
+public,sales_fact,sales_fact_document_date_idx,CREATE INDEX sales_fact_document_date_idx ON public.sales_fact USING btree (document_date)
+public,sales_fact,sales_fact_pkey,CREATE UNIQUE INDEX sales_fact_pkey ON public.sales_fact USING btree (id)
+public,sellers_dim,sellers_dim_pkey,CREATE UNIQUE INDEX sellers_dim_pkey ON public.sellers_dim USING btree (id)
+public,sellers_dim,sellers_dim_seller_name_key,CREATE UNIQUE INDEX sellers_dim_seller_name_key ON public.sellers_dim USING btree (seller_name)
+public,servicios_eliminados,servicios_eliminados_pkey,CREATE UNIQUE INDEX servicios_eliminados_pkey ON public.servicios_eliminados USING btree (id)
+public,simulation_lines,idx_simulation_lines_product_id,CREATE INDEX idx_simulation_lines_product_id ON public.simulation_lines USING btree (product_id)
+public,simulation_lines,idx_simulation_lines_sap_code,CREATE INDEX idx_simulation_lines_sap_code ON public.simulation_lines USING btree (sap_code)
+public,simulation_lines,idx_simulation_lines_simulation_id,CREATE INDEX idx_simulation_lines_simulation_id ON public.simulation_lines USING btree (simulation_id)
+public,simulation_lines,simulation_lines_pkey,CREATE UNIQUE INDEX simulation_lines_pkey ON public.simulation_lines USING btree (id)
+public,simulation_versions,idx_simulation_versions_original,CREATE INDEX idx_simulation_versions_original ON public.simulation_versions USING btree (original_simulation_id)
+public,simulation_versions,idx_simulation_versions_renewed,CREATE INDEX idx_simulation_versions_renewed ON public.simulation_versions USING btree (renewed_simulation_id)
+public,simulation_versions,simulation_versions_pkey,CREATE UNIQUE INDEX simulation_versions_pkey ON public.simulation_versions USING btree (id)
+public,simulations,idx_simulations_channel_id,CREATE INDEX idx_simulations_channel_id ON public.simulations USING btree (channel_id)
+public,simulations,idx_simulations_customer_id,CREATE INDEX idx_simulations_customer_id ON public.simulations USING btree (customer_id)
+public,simulations,idx_simulations_status,CREATE INDEX idx_simulations_status ON public.simulations USING btree (status)
+public,simulations,idx_simulations_type,CREATE INDEX idx_simulations_type ON public.simulations USING btree (simulation_type)
+public,simulations,simulations_pkey,CREATE UNIQUE INDEX simulations_pkey ON public.simulations USING btree (id)
+public,solicitudes_clientes,solicitudes_clientes_pkey,CREATE UNIQUE INDEX solicitudes_clientes_pkey ON public.solicitudes_clientes USING btree (id)
+public,solicitudes_viaje,solicitudes_viaje_pkey,CREATE UNIQUE INDEX solicitudes_viaje_pkey ON public.solicitudes_viaje USING btree (id)
+public,soliciturepuestosservice,soliciturepuestosservice_pkey,CREATE UNIQUE INDEX soliciturepuestosservice_pkey ON public.soliciturepuestosservice USING btree (id)
+public,tecnicos_repuestos,seguimiento_repuestos_pkey,CREATE UNIQUE INDEX seguimiento_repuestos_pkey ON public.tecnicos_repuestos USING btree (id)
+public,ticket_comentarios,ticket_comentarios_pkey,CREATE UNIQUE INDEX ticket_comentarios_pkey ON public.ticket_comentarios USING btree (id)
+public,tickets_tiendas,tickets_tiendas_pkey,CREATE UNIQUE INDEX tickets_tiendas_pkey ON public.tickets_tiendas USING btree (id)
+public,webhook_send_log,webhook_send_log_pkey,"CREATE UNIQUE INDEX webhook_send_log_pkey ON public.webhook_send_log USING btree (table_name, row_id, event, txid)"
+public,whatsapp_chats,whatsapp_chats_phone_number_key,CREATE UNIQUE INDEX whatsapp_chats_phone_number_key ON public.whatsapp_chats USING btree (phone_number)
+public,whatsapp_chats,whatsapp_chats_pkey,CREATE UNIQUE INDEX whatsapp_chats_pkey ON public.whatsapp_chats USING btree (id)
+public,whatsapp_messages,whatsapp_messages_pkey,CREATE UNIQUE INDEX whatsapp_messages_pkey ON public.whatsapp_messages USING btree (id)
+public,whatsapp_messages,whatsapp_messages_wam_id_key,CREATE UNIQUE INDEX whatsapp_messages_wam_id_key ON public.whatsapp_messages USING btree (wam_id)
+public,zonas_medidas,zonas_medidas_pkey,CREATE UNIQUE INDEX zonas_medidas_pkey ON public.zonas_medidas USING btree (id)

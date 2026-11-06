@@ -1,0 +1,58 @@
+table_name,trigger_name,action_timing,event_manipulation,action_orientation,action_statement
+CRM_ComisionLedger,trg_prevent_ledger_delete,BEFORE,DELETE,ROW,EXECUTE FUNCTION prevent_ledger_mutation()
+CRM_ComisionLedger,trg_prevent_ledger_update,BEFORE,UPDATE,ROW,EXECUTE FUNCTION prevent_ledger_mutation()
+CRM_Contactos,trigger_enforce_contact_ownership,BEFORE,INSERT,ROW,EXECUTE FUNCTION enforce_children_ownership_on_insert()
+CRM_Cotizaciones,on_quote_winner_devengada,AFTER,UPDATE,ROW,EXECUTE FUNCTION trg_auto_devengada_on_quote_win()
+CRM_Cuentas,trg_audit_account_changes,AFTER,UPDATE,ROW,EXECUTE FUNCTION audit_account_changes()
+CRM_Cuentas,trg_auto_create_contact_for_propio_account,AFTER,INSERT,ROW,EXECUTE FUNCTION auto_create_contact_for_propio_account()
+CRM_Cuentas,trg_generate_nit_sufijo,BEFORE,INSERT,ROW,EXECUTE FUNCTION generate_nit_sufijo()
+CRM_Cuentas,trg_notify_account_assignment,AFTER,INSERT,ROW,EXECUTE FUNCTION handle_new_account_assignment()
+CRM_Cuentas,trg_notify_account_assignment,AFTER,UPDATE,ROW,EXECUTE FUNCTION handle_new_account_assignment()
+CRM_Cuentas,trg_set_account_owner,BEFORE,INSERT,ROW,EXECUTE FUNCTION set_account_owner_default()
+CRM_Cuentas,trigger_sync_account_deletion,AFTER,UPDATE,ROW,EXECUTE FUNCTION sync_account_deletion_to_children()
+CRM_Cuentas,trigger_sync_account_ownership_to_children,AFTER,UPDATE,ROW,EXECUTE FUNCTION sync_account_ownership_to_children()
+CRM_InventarioMovimientos,trg_auditar_movimiento_inventario,AFTER,DELETE,ROW,EXECUTE FUNCTION auditar_movimiento_inventario()
+CRM_InventarioMovimientos,trg_auditar_movimiento_inventario,AFTER,UPDATE,ROW,EXECUTE FUNCTION auditar_movimiento_inventario()
+CRM_InventarioMovimientos,trg_validar_saldo_inventario,BEFORE,INSERT,ROW,EXECUTE FUNCTION validar_saldo_inventario()
+CRM_InventarioMovimientos,trg_validar_saldo_inventario,BEFORE,UPDATE,ROW,EXECUTE FUNCTION validar_saldo_inventario()
+CRM_ListaDePrecios,trg_validate_descuentos,BEFORE,INSERT,ROW,EXECUTE FUNCTION validate_descuentos_volumen()
+CRM_ListaDePrecios,trg_validate_descuentos,BEFORE,UPDATE,ROW,EXECUTE FUNCTION validate_descuentos_volumen()
+CRM_Oportunidades,Notificacion Teams,AFTER,INSERT,ROW,"EXECUTE FUNCTION supabase_functions.http_request('https://desarrolladorfirplak.app.n8n.cloud/webhook-test/supabase-new-record', 'POST', '{""Content-type"":""application/json""}', '{}', '5000')"
+CRM_Oportunidades,trg_crm_log_opp_changes,AFTER,UPDATE,ROW,EXECUTE FUNCTION log_opportunity_changes()
+CRM_Oportunidades,trg_notify_opportunity_assignment,AFTER,INSERT,ROW,EXECUTE FUNCTION handle_new_opportunity_assignment()
+CRM_Oportunidades,trg_notify_opportunity_assignment,AFTER,UPDATE,ROW,EXECUTE FUNCTION handle_new_opportunity_assignment()
+CRM_Oportunidades,trg_opp_devengada,AFTER,UPDATE,ROW,EXECUTE FUNCTION trg_auto_devengada()
+CRM_Oportunidades,trg_update_opportunity_probability,BEFORE,INSERT,ROW,EXECUTE FUNCTION update_opportunity_probability()
+CRM_Oportunidades,trg_update_opportunity_probability,BEFORE,UPDATE,ROW,EXECUTE FUNCTION update_opportunity_probability()
+CRM_Oportunidades,trigger_enforce_opportunity_ownership,BEFORE,INSERT,ROW,EXECUTE FUNCTION enforce_children_ownership_on_insert()
+CRM_Oportunidades,trigger_prevent_duplicate_oportunidades,BEFORE,INSERT,ROW,EXECUTE FUNCTION prevent_duplicate_oportunidades()
+Comentarios,sincronizar-comentarios,AFTER,INSERT,ROW,"EXECUTE FUNCTION supabase_functions.http_request('https://prod-127.westus.logic.azure.com:443/workflows/a372e0dbe1044800bacd92b8a217b6fc/triggers/manual/paths/invoke?api-version=2016-06-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=pG78IrGtpTGRQPGtot4N-mshd30si-P1v-l_FaeRcr0', 'POST', '{""Content-type"":""application/json""}', '{}', '5000')"
+Roles,tr_sync_role_permissions,AFTER,UPDATE,ROW,EXECUTE FUNCTION sync_users_permissions_on_role_update()
+Servicios,Notificar cambio de tipo de servicio,AFTER,UPDATE,ROW,"EXECUTE FUNCTION supabase_functions.http_request('https://prod-30.westus.logic.azure.com:443/workflows/d5b655720b374c91a3dbe17478e50dcc/triggers/manual/paths/invoke?api-version=2016-06-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=7JAjx3DvBiznl2PizzRKrXoQI4FnDQ_MORVOJ8ipRic', 'POST', '{""Content-type"":""application/json""}', '{}', '5000')"
+Servicios,cerrar_servicio_sharepoint,AFTER,UPDATE,ROW,"EXECUTE FUNCTION supabase_functions.http_request('https://prod-97.westus.logic.azure.com:443/workflows/db1044b381c14027bcd2f93f527e6dec/triggers/manual/paths/invoke?api-version=2016-06-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=jgLOcT4qEsJcgiYHvjyCvmWH0Ou7p_LKSUzT2Ch9PbM', 'POST', '{""Content-type"":""application/json""}', '{}', '5000')"
+Servicios,notificar_aprobaciones,AFTER,UPDATE,ROW,"EXECUTE FUNCTION supabase_functions.http_request('https://prod-127.westus.logic.azure.com:443/workflows/4d67cdd9f22e4990867832e38744cc3c/triggers/manual/paths/invoke?api-version=2016-06-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=espVktINSI01aTObmQ8NGij9rsxy9GHIjp7c3KgbHF0', 'POST', '{""Content-type"":""application/json""}', '{}', '5000')"
+Servicios,nuevo_servicio,AFTER,INSERT,ROW,"EXECUTE FUNCTION supabase_functions.http_request('https://8c18912a4169ec67aa9b39bdfb7cc3.10.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/47af19aceed340ea83bf16511d2b02f4/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=Yb_ejgxxEIlSiAvjMr2tLHGuBxnxd06W1zgWiR3GwrM', 'POST', '{""Content-type"":""application/json""}', '{}', '5000')"
+Servicios,tr_delete_solicitud_after_service,AFTER,INSERT,ROW,EXECUTE FUNCTION delete_solicitud_on_service_create()
+Servicios,trigger_backup_servicio_eliminado,BEFORE,DELETE,ROW,EXECUTE FUNCTION backup_servicio_eliminado()
+Ubicaciones,actualizar_ubicacion,AFTER,UPDATE,ROW,"EXECUTE FUNCTION supabase_functions.http_request('https://prod-148.westus.logic.azure.com:443/workflows/19852debacd44ab68e064d949e35a990/triggers/manual/paths/invoke?api-version=2016-06-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=KqEk3e8fWLrsZnz_6KtxQ2P07ocSxIj9gvZtjAambRU', 'POST', '{""Content-type"":""application/json""}', '{}', '5000')"
+Ubicaciones,sincronizar_ubicaciones,AFTER,INSERT,ROW,"EXECUTE FUNCTION supabase_functions.http_request('https://prod-44.westus.logic.azure.com:443/workflows/c692d181e107440c822a915dce4a6c42/triggers/manual/paths/invoke?api-version=2016-06-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=Xhytom6FHDeU0FSg90sE-uQTyEz2HrDCU2KImrNYOhI', 'POST', '{""Content-type"":""application/json""}', '{}', '5000')"
+Usuarios,tr_user_role_change,BEFORE,INSERT,ROW,EXECUTE FUNCTION handle_user_role_change()
+Usuarios,tr_user_role_change,BEFORE,UPDATE,ROW,EXECUTE FUNCTION handle_user_role_change()
+Visitas,notificaciones_visitas,AFTER,INSERT,ROW,"EXECUTE FUNCTION supabase_functions.http_request('https://prod-17.westus.logic.azure.com:443/workflows/9c8f3f72783d4014bac8536c550e8dd6/triggers/manual/paths/invoke?api-version=2016-06-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=wdUGV-jsHML4oQsCMN7qNBtNU-dfhixlNDxlYarbiAA', 'POST', '{""Content-type"":""application/json""}', '{}', '5000')"
+Visitas,notificaciones_visitas,AFTER,UPDATE,ROW,"EXECUTE FUNCTION supabase_functions.http_request('https://prod-17.westus.logic.azure.com:443/workflows/9c8f3f72783d4014bac8536c550e8dd6/triggers/manual/paths/invoke?api-version=2016-06-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=wdUGV-jsHML4oQsCMN7qNBtNU-dfhixlNDxlYarbiAA', 'POST', '{""Content-type"":""application/json""}', '{}', '5000')"
+Visitas,sincronizar_visitas,AFTER,INSERT,ROW,"EXECUTE FUNCTION supabase_functions.http_request('https://prod-120.westus.logic.azure.com:443/workflows/3be9f3825b564bc99098348cdeaeb98e/triggers/manual/paths/invoke?api-version=2016-06-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=HhzgQHm2TZ0H2W3BVLaKL8djfsmx64LaJvAqBc2S5rs', 'POST', '{""Content-type"":""application/json""}', '{}', '5000')"
+clase_esteban,trg_inactivo_por_edad,BEFORE,UPDATE,ROW,EXECUTE FUNCTION fn_inactivo_por_edad()
+component_costs,trg_component_costs_updated_at,BEFORE,UPDATE,ROW,EXECUTE FUNCTION set_updated_at()
+customers,trg_customers_updated_at,BEFORE,UPDATE,ROW,EXECUTE FUNCTION set_updated_at()
+price_lists,trg_price_lists_updated_at,BEFORE,UPDATE,ROW,EXECUTE FUNCTION set_updated_at()
+product_costs,trg_product_costs_updated_at,BEFORE,UPDATE,ROW,EXECUTE FUNCTION set_updated_at()
+products,trg_products_updated_at,BEFORE,UPDATE,ROW,EXECUTE FUNCTION set_updated_at()
+sales_channels,trg_sales_channels_updated_at,BEFORE,UPDATE,ROW,EXECUTE FUNCTION set_updated_at()
+simulation_lines,trg_simulation_lines_updated_at,BEFORE,UPDATE,ROW,EXECUTE FUNCTION set_updated_at()
+simulations,trg_simulations_updated_at,BEFORE,UPDATE,ROW,EXECUTE FUNCTION set_updated_at()
+soliciturepuestosservice,trg_aiu_soliciturepuestosservice,AFTER,INSERT,ROW,EXECUTE FUNCTION trg_aiu_soliciturepuestosservice()
+soliciturepuestosservice,trg_aiu_soliciturepuestosservice,AFTER,UPDATE,ROW,EXECUTE FUNCTION trg_aiu_soliciturepuestosservice()
+soliciturepuestosservice,trg_srs_after_hooks,AFTER,INSERT,ROW,EXECUTE FUNCTION trg_srs_after_webhooks()
+soliciturepuestosservice,trg_srs_after_hooks,AFTER,UPDATE,ROW,EXECUTE FUNCTION trg_srs_after_webhooks()
+soliciturepuestosservice,trg_srs_before_norm,BEFORE,INSERT,ROW,EXECUTE FUNCTION trg_srs_before_normalize()
+soliciturepuestosservice,trg_srs_before_norm,BEFORE,UPDATE,ROW,EXECUTE FUNCTION trg_srs_before_normalize()

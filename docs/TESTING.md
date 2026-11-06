@@ -42,7 +42,7 @@ tests (§7). Source locations are given for each.
 
 > **Current coverage status:** Only the **PZ / MAQUILA rule** has automated tests at the time of
 > writing. The remaining items are protected but **not yet covered** — see §6 and the project
-> handover ([`docs/MarginOS_Project_Handover.md`](./MarginOS_Project_Handover.md)) for the
+> handover ([`docs/07_Roadmap/MarginOS_Project_Handover.md`](./07_Roadmap/MarginOS_Project_Handover.md)) for the
 > recommended order of work. Absence of a test today does **not** lower the protection bar: new
 > changes to these areas must add tests (§7).
 

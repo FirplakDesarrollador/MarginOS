@@ -1,0 +1,176 @@
+table_name,constraint_name,definition,referenced_table
+"""CRM_Actividades""",CRM_Actividades_account_id_fkey,"FOREIGN KEY (account_id) REFERENCES ""CRM_Cuentas""(id) ON DELETE SET NULL","""CRM_Cuentas"""
+"""CRM_Actividades""",fk_activity_clasificacion,"FOREIGN KEY (clasificacion_id) REFERENCES ""CRM_Activity_Clasificacion""(id)","""CRM_Activity_Clasificacion"""
+"""CRM_Actividades""",fk_activity_subclasificacion,"FOREIGN KEY (subclasificacion_id) REFERENCES ""CRM_Activity_Subclasificacion""(id)","""CRM_Activity_Subclasificacion"""
+"""CRM_Actividades""",fk_crmact_opp,"FOREIGN KEY (opportunity_id) REFERENCES ""CRM_Oportunidades""(id)","""CRM_Oportunidades"""
+"""CRM_Actividades""",fk_crmact_tipo,"FOREIGN KEY (tipo_actividad_id) REFERENCES ""CRM_TiposActividad""(id)","""CRM_TiposActividad"""
+"""CRM_Actividades""",fk_crmact_user,"FOREIGN KEY (user_id) REFERENCES ""CRM_Usuarios""(id)","""CRM_Usuarios"""
+"""CRM_Activity_Subclasificacion""",CRM_Activity_Subclasificacion_clasificacion_id_fkey,"FOREIGN KEY (clasificacion_id) REFERENCES ""CRM_Activity_Clasificacion""(id) ON DELETE CASCADE","""CRM_Activity_Clasificacion"""
+"""CRM_Canales_Vendedores""",CRM_Canales_Vendedores_canal_id_fkey,"FOREIGN KEY (canal_id) REFERENCES ""CRM_Canales""(id) ON DELETE CASCADE","""CRM_Canales"""
+"""CRM_Canales_Vendedores""",CRM_Canales_Vendedores_vendedor_id_fkey,"FOREIGN KEY (vendedor_id) REFERENCES ""CRM_Usuarios""(id) ON DELETE CASCADE","""CRM_Usuarios"""
+"""CRM_Ciudades""",CRM_Ciudades_departamento_id_fkey,"FOREIGN KEY (departamento_id) REFERENCES ""CRM_Departamentos""(id)","""CRM_Departamentos"""
+"""CRM_Clientes_Premium""",crm_clientes_premium_cuenta_id_fkey,"FOREIGN KEY (cuenta_id) REFERENCES ""CRM_Cuentas""(id) ON UPDATE CASCADE ON DELETE CASCADE","""CRM_Cuentas"""
+"""CRM_ComisionLedger""",CRM_ComisionLedger_canal_id_fkey,"FOREIGN KEY (canal_id) REFERENCES ""CRM_Canales""(id)","""CRM_Canales"""
+"""CRM_ComisionLedger""",CRM_ComisionLedger_categoria_id_fkey,"FOREIGN KEY (categoria_id) REFERENCES ""CRM_ComisionCategorias""(id)","""CRM_ComisionCategorias"""
+"""CRM_ComisionLedger""",CRM_ComisionLedger_cotizacion_id_fkey,"FOREIGN KEY (cotizacion_id) REFERENCES ""CRM_Cotizaciones""(id)","""CRM_Cotizaciones"""
+"""CRM_ComisionLedger""",CRM_ComisionLedger_cuenta_id_fkey,"FOREIGN KEY (cuenta_id) REFERENCES ""CRM_Cuentas""(id)","""CRM_Cuentas"""
+"""CRM_ComisionLedger""",CRM_ComisionLedger_entrada_referencia_id_fkey,"FOREIGN KEY (entrada_referencia_id) REFERENCES ""CRM_ComisionLedger""(id)","""CRM_ComisionLedger"""
+"""CRM_ComisionLedger""",CRM_ComisionLedger_oportunidad_id_fkey,"FOREIGN KEY (oportunidad_id) REFERENCES ""CRM_Oportunidades""(id) ON DELETE CASCADE","""CRM_Oportunidades"""
+"""CRM_ComisionLedger""",CRM_ComisionLedger_vendedor_id_fkey,"FOREIGN KEY (vendedor_id) REFERENCES ""CRM_Usuarios""(id)","""CRM_Usuarios"""
+"""CRM_ComisionReglas""",CRM_ComisionReglas_canal_id_fkey,"FOREIGN KEY (canal_id) REFERENCES ""CRM_Canales""(id)","""CRM_Canales"""
+"""CRM_ComisionReglas""",CRM_ComisionReglas_categoria_id_fkey,"FOREIGN KEY (categoria_id) REFERENCES ""CRM_ComisionCategorias""(id)","""CRM_ComisionCategorias"""
+"""CRM_ComisionReglas""",CRM_ComisionReglas_cuenta_id_fkey,"FOREIGN KEY (cuenta_id) REFERENCES ""CRM_Cuentas""(id)","""CRM_Cuentas"""
+"""CRM_ComisionReglas""",CRM_ComisionReglas_vendedor_id_fkey,"FOREIGN KEY (vendedor_id) REFERENCES ""CRM_Usuarios""(id)","""CRM_Usuarios"""
+"""CRM_Contactos""",fk_crmcontactos_account,"FOREIGN KEY (account_id) REFERENCES ""CRM_Cuentas""(id)","""CRM_Cuentas"""
+"""CRM_CotizacionItems""",fk_crmitem_prod,"FOREIGN KEY (producto_id) REFERENCES ""CRM_ListaDePrecios""(id)","""CRM_ListaDePrecios"""
+"""CRM_CotizacionItems""",fk_crmitem_quote,"FOREIGN KEY (cotizacion_id) REFERENCES ""CRM_Cotizaciones""(id)","""CRM_Cotizaciones"""
+"""CRM_Cotizaciones""",fk_crmcotizaciones_segmento,"FOREIGN KEY (segmento_id) REFERENCES ""CRM_Segmentos""(id)","""CRM_Segmentos"""
+"""CRM_Cotizaciones""",fk_crmquote_curr,"FOREIGN KEY (currency_id) REFERENCES ""CRM_Currencies""(code)","""CRM_Currencies"""
+"""CRM_Cotizaciones""",fk_crmquote_opp,"FOREIGN KEY (opportunity_id) REFERENCES ""CRM_Oportunidades""(id)","""CRM_Oportunidades"""
+"""CRM_Cuentas""",CRM_Cuentas_ciudad_id_fkey,"FOREIGN KEY (ciudad_id) REFERENCES ""CRM_Ciudades""(id)","""CRM_Ciudades"""
+"""CRM_Cuentas""",CRM_Cuentas_departamento_id_fkey,"FOREIGN KEY (departamento_id) REFERENCES ""CRM_Departamentos""(id)","""CRM_Departamentos"""
+"""CRM_Cuentas""",CRM_Cuentas_owner_user_id_fkey,FOREIGN KEY (owner_user_id) REFERENCES auth.users(id),auth.users
+"""CRM_Cuentas""",CRM_Cuentas_pais_id_fkey,"FOREIGN KEY (pais_id) REFERENCES ""CRM_Paises""(id)","""CRM_Paises"""
+"""CRM_Cuentas""",CRM_Cuentas_tipo_id_fkey,"FOREIGN KEY (tipo_id) REFERENCES ""CRM_TiposCuenta""(id)","""CRM_TiposCuenta"""
+"""CRM_Cuentas""",fk_crmcuentas_canal,"FOREIGN KEY (canal_id) REFERENCES ""CRM_Canales""(id)","""CRM_Canales"""
+"""CRM_Cuentas""",fk_crmcuentas_parent,"FOREIGN KEY (id_cuenta_principal) REFERENCES ""CRM_Cuentas""(id)","""CRM_Cuentas"""
+"""CRM_Cuentas""",fk_crmcuentas_subclasificacion,"FOREIGN KEY (subclasificacion_id) REFERENCES ""CRM_Subclasificacion""(id)","""CRM_Subclasificacion"""
+"""CRM_Departamentos""",CRM_Departamentos_pais_id_fkey,"FOREIGN KEY (pais_id) REFERENCES ""CRM_Paises""(id)","""CRM_Paises"""
+"""CRM_FasesOportunidad""",fk_crmfases_canal,"FOREIGN KEY (canal_id) REFERENCES ""CRM_Canales""(id)","""CRM_Canales"""
+"""CRM_InventarioMovimientos""",CRM_InventarioMovimientos_producto_id_fkey,"FOREIGN KEY (producto_id) REFERENCES ""CRM_ListaDePrecios""(id) ON DELETE RESTRICT","""CRM_ListaDePrecios"""
+"""CRM_Llamadas""",CRM_Llamadas_contacto_id_fkey,"FOREIGN KEY (contacto_id) REFERENCES ""CRM_Contactos""(id)","""CRM_Contactos"""
+"""CRM_Llamadas""",CRM_Llamadas_cuenta_id_fkey,"FOREIGN KEY (cuenta_id) REFERENCES ""CRM_Cuentas""(id)","""CRM_Cuentas"""
+"""CRM_Llamadas""",CRM_Llamadas_usuario_id_fkey,"FOREIGN KEY (usuario_id) REFERENCES ""CRM_Usuarios""(id)","""CRM_Usuarios"""
+"""CRM_Log""",CRM_Log_opportunity_id_fkey,"FOREIGN KEY (opportunity_id) REFERENCES ""CRM_Oportunidades""(id) ON DELETE CASCADE","""CRM_Oportunidades"""
+"""CRM_Metas""",CRM_Metas_opportunity_id_fkey,"FOREIGN KEY (opportunity_id) REFERENCES ""CRM_Oportunidades""(id) ON DELETE SET NULL","""CRM_Oportunidades"""
+"""CRM_Metas""",CRM_Metas_user_id_fkey,"FOREIGN KEY (user_id) REFERENCES ""CRM_Usuarios""(id) ON DELETE CASCADE","""CRM_Usuarios"""
+"""CRM_MicrosoftTokens""",CRM_MicrosoftTokens_user_id_fkey,FOREIGN KEY (user_id) REFERENCES auth.users(id) ON DELETE CASCADE,auth.users
+"""CRM_NotificationRules""",CRM_NotificationRules_created_by_fkey,FOREIGN KEY (created_by) REFERENCES auth.users(id),auth.users
+"""CRM_Notifications""",CRM_Notifications_user_id_fkey,FOREIGN KEY (user_id) REFERENCES auth.users(id),auth.users
+"""CRM_OportunidadColaboradores""",fk_crmcollab_opp,"FOREIGN KEY (opportunity_id) REFERENCES ""CRM_Oportunidades""(id)","""CRM_Oportunidades"""
+"""CRM_OportunidadColaboradores""",fk_crmcollab_user,"FOREIGN KEY (user_id) REFERENCES ""CRM_Usuarios""(id)","""CRM_Usuarios"""
+"""CRM_Oportunidades""",CRM_Oportunidades_ciudad_id_fkey,"FOREIGN KEY (ciudad_id) REFERENCES ""CRM_Ciudades""(id)","""CRM_Ciudades"""
+"""CRM_Oportunidades""",CRM_Oportunidades_departamento_id_fkey,"FOREIGN KEY (departamento_id) REFERENCES ""CRM_Departamentos""(id)","""CRM_Departamentos"""
+"""CRM_Oportunidades""",CRM_Oportunidades_pais_id_fkey,"FOREIGN KEY (pais_id) REFERENCES ""CRM_Paises""(id)","""CRM_Paises"""
+"""CRM_Oportunidades""",CRM_Oportunidades_razon_perdida_id_fkey,"FOREIGN KEY (razon_perdida_id) REFERENCES ""CRM_RazonesPerdida""(id)","""CRM_RazonesPerdida"""
+"""CRM_Oportunidades""",fk_crmoportunidades_segmento,"FOREIGN KEY (segmento_id) REFERENCES ""CRM_Segmentos""(id)","""CRM_Segmentos"""
+"""CRM_Oportunidades""",fk_crmopp_account,"FOREIGN KEY (account_id) REFERENCES ""CRM_Cuentas""(id)","""CRM_Cuentas"""
+"""CRM_Oportunidades""",fk_crmopp_currency,"FOREIGN KEY (currency_id) REFERENCES ""CRM_Currencies""(code)","""CRM_Currencies"""
+"""CRM_Oportunidades""",fk_crmopp_estado,"FOREIGN KEY (estado_id) REFERENCES ""CRM_EstadosOportunidad""(id)","""CRM_EstadosOportunidad"""
+"""CRM_Oportunidades""",fk_crmopp_fase,"FOREIGN KEY (fase_id) REFERENCES ""CRM_FasesOportunidad""(id)","""CRM_FasesOportunidad"""
+"""CRM_Oportunidades""",fk_crmopp_owner,"FOREIGN KEY (owner_user_id) REFERENCES ""CRM_Usuarios""(id)","""CRM_Usuarios"""
+"""CRM_Oportunidades_Colaboradores""",CRM_Oportunidades_Colaboradores_created_by_fkey,FOREIGN KEY (created_by) REFERENCES auth.users(id),auth.users
+"""CRM_Oportunidades_Colaboradores""",CRM_Oportunidades_Colaboradores_oportunidad_id_fkey,"FOREIGN KEY (oportunidad_id) REFERENCES ""CRM_Oportunidades""(id) ON DELETE CASCADE","""CRM_Oportunidades"""
+"""CRM_Oportunidades_Colaboradores""",CRM_Oportunidades_Colaboradores_usuario_id_fkey,"FOREIGN KEY (usuario_id) REFERENCES ""CRM_Usuarios""(id)","""CRM_Usuarios"""
+"""CRM_Pagos""",CRM_Pagos_created_by_fkey,FOREIGN KEY (created_by) REFERENCES auth.users(id),auth.users
+"""CRM_Pagos""",CRM_Pagos_oportunidad_id_fkey,"FOREIGN KEY (oportunidad_id) REFERENCES ""CRM_Oportunidades""(id)","""CRM_Oportunidades"""
+"""CRM_PedidoItems""",CRM_PedidoItems_pedido_uuid_fkey,"FOREIGN KEY (pedido_uuid) REFERENCES ""CRM_Pedidos""(uuid_generado) ON DELETE CASCADE","""CRM_Pedidos"""
+"""CRM_PedidoItems""",CRM_PedidoItems_producto_id_fkey,"FOREIGN KEY (producto_id) REFERENCES ""CRM_Productos""(id)","""CRM_Productos"""
+"""CRM_Pedidos""",CRM_Pedidos_cotizacion_id_fkey,"FOREIGN KEY (cotizacion_id) REFERENCES ""CRM_Cotizaciones""(id) ON DELETE CASCADE","""CRM_Cotizaciones"""
+"""CRM_Pedidos""",CRM_Pedidos_opportunity_id_fkey,"FOREIGN KEY (opportunity_id) REFERENCES ""CRM_Oportunidades""(id) ON DELETE SET NULL","""CRM_Oportunidades"""
+"""CRM_ReglasBono""",CRM_ReglasBono_created_by_fkey,FOREIGN KEY (created_by) REFERENCES auth.users(id),auth.users
+"""CRM_ReglasBono""",CRM_ReglasBono_vendedor_id_fkey,"FOREIGN KEY (vendedor_id) REFERENCES ""CRM_Usuarios""(id)","""CRM_Usuarios"""
+"""CRM_Segmentos""",CRM_Segmentos_subclasificacion_id_fkey,"FOREIGN KEY (subclasificacion_id) REFERENCES ""CRM_Subclasificacion""(id) ON DELETE CASCADE","""CRM_Subclasificacion"""
+"""CRM_Subclasificacion""",CRM_Subclasificacion_canal_id_fkey,"FOREIGN KEY (canal_id) REFERENCES ""CRM_Canales""(id) ON DELETE CASCADE","""CRM_Canales"""
+"""CRM_Usuarios""",CRM_Usuarios_id_fkey,FOREIGN KEY (id) REFERENCES auth.users(id),auth.users
+"""Ciudades""",Ciudades_zona_id_fkey,"FOREIGN KEY (zona_id) REFERENCES ""Zonas""(id) ON DELETE RESTRICT","""Zonas"""
+"""Clientes""",Clientes_creado_por_fkey,"FOREIGN KEY (creado_por) REFERENCES ""Usuarios""(id)","""Usuarios"""
+"""Comentarios""",Comentarios_servicio_id_fkey,"FOREIGN KEY (servicio_id) REFERENCES ""Servicios""(id) ON UPDATE CASCADE ON DELETE CASCADE","""Servicios"""
+"""Comentarios""",Comentarios_usuario_id_fkey,"FOREIGN KEY (usuario_id) REFERENCES ""Usuarios""(id) ON UPDATE CASCADE ON DELETE RESTRICT","""Usuarios"""
+"""Comentarios""",Comentarios_visita_id_fkey,"FOREIGN KEY (visita_id) REFERENCES ""Visitas""(id) ON UPDATE CASCADE ON DELETE CASCADE","""Visitas"""
+"""Comentarios_RegistroMAC""",fk_autor,"FOREIGN KEY (autor) REFERENCES ""Usuarios""(id) ON DELETE CASCADE","""Usuarios"""
+"""Comentarios_RegistroMAC""",fk_registro_solicitud,FOREIGN KEY (numero_radicado) REFERENCES registro_solicitudes(consecutivo) ON DELETE CASCADE,registro_solicitudes
+"""Consumidores""",Consumidores_ciudad_id_fkey,"FOREIGN KEY (ciudad_id) REFERENCES ""Ciudades""(id) ON DELETE SET NULL","""Ciudades"""
+"""KT_ProgramacionProducto""",KT_ProgramacionProducto_programacioncita_fkey,"FOREIGN KEY (programacioncita) REFERENCES ""KT_ProgramacionDia""(id) ON DELETE CASCADE","""KT_ProgramacionDia"""
+"""Neg_historial_precios""",Neg_historial_precios_product_id_fkey,"FOREIGN KEY (product_id) REFERENCES ""Neg_productos""(id)","""Neg_productos"""
+"""Permisos""",Permisos_modulo_id_fkey,"FOREIGN KEY (modulo_id) REFERENCES ""Modulos""(id) ON DELETE CASCADE","""Modulos"""
+"""Productos""",Productos_sku_base_fkey,FOREIGN KEY (sku_base) REFERENCES productos_base(sku_base) ON UPDATE CASCADE ON DELETE RESTRICT,productos_base
+"""Repuestos_Servicios""",Repuestos_Servicios_producto_servicio_id_fkey,FOREIGN KEY (producto_servicio_id) REFERENCES productos_servicios(id) ON DELETE CASCADE,productos_servicios
+"""Repuestos_Servicios""",Repuestos_Servicios_repuesto_id_fkey,"FOREIGN KEY (repuesto_id) REFERENCES ""Repuestos""(id) ON UPDATE CASCADE ON DELETE RESTRICT","""Repuestos"""
+"""Repuestos_Servicios""",Repuestos_Servicios_servicio_id_fkey,"FOREIGN KEY (servicio_id) REFERENCES ""Servicios""(id) ON UPDATE CASCADE ON DELETE CASCADE","""Servicios"""
+"""Servicios""",Servicios_asesor_mac_id_fkey,"FOREIGN KEY (asesor_mac_id) REFERENCES ""Usuarios""(id) ON UPDATE CASCADE ON DELETE RESTRICT","""Usuarios"""
+"""Servicios""",Servicios_cerrado_por_fkey,"FOREIGN KEY (cerrado_por) REFERENCES ""Usuarios""(id) ON DELETE RESTRICT","""Usuarios"""
+"""Servicios""",Servicios_comercial_id_fkey,"FOREIGN KEY (comercial_id) REFERENCES ""Usuarios""(id)","""Usuarios"""
+"""Servicios""",Servicios_consumidor_id_fkey,"FOREIGN KEY (consumidor_id) REFERENCES ""Consumidores""(id) ON UPDATE CASCADE ON DELETE SET NULL","""Consumidores"""
+"""Servicios""",Servicios_coordinador_id_fkey,"FOREIGN KEY (coordinador_id) REFERENCES ""Usuarios""(id)","""Usuarios"""
+"""Servicios""",Servicios_service_parent_id_fkey,"FOREIGN KEY (service_parent_id) REFERENCES ""Servicios""(id) ON UPDATE CASCADE ON DELETE RESTRICT","""Servicios"""
+"""Servicios""",Servicios_ubicacion_id_fkey,"FOREIGN KEY (ubicacion_id) REFERENCES ""Ubicaciones""(id) ON UPDATE CASCADE ON DELETE RESTRICT","""Ubicaciones"""
+"""Servicios_Defectos""",Servicios_Defectos_defecto_id_fkey,"FOREIGN KEY (defecto_id) REFERENCES ""Defectos""(id) ON UPDATE CASCADE ON DELETE CASCADE","""Defectos"""
+"""Servicios_Defectos""",Servicios_Defectos_servicio_id_fkey,"FOREIGN KEY (servicio_id) REFERENCES ""Servicios""(id) ON UPDATE CASCADE ON DELETE CASCADE","""Servicios"""
+"""Servicios_Defectos""",Servicios_Defectos_tecnico_id_fkey,"FOREIGN KEY (tecnico_id) REFERENCES ""Usuarios""(id) ON UPDATE CASCADE ON DELETE RESTRICT","""Usuarios"""
+"""Servicios_Defectos""",Servicios_Defectos_visita_id_fkey,"FOREIGN KEY (visita_id) REFERENCES ""Visitas""(id) ON UPDATE CASCADE ON DELETE CASCADE","""Visitas"""
+"""Servicios_Distribuidor""",Servicios_Distribuidor_comercial_id_fkey,"FOREIGN KEY (comercial_id) REFERENCES ""Usuarios""(id)","""Usuarios"""
+"""Servicios_Distribuidor""",Servicios_Distribuidor_consumidor_id_fkey,"FOREIGN KEY (consumidor_id) REFERENCES ""Consumidores""(id)","""Consumidores"""
+"""Servicios_Distribuidor""",Servicios_Distribuidor_ubicacion_id_fkey,"FOREIGN KEY (ubicacion_id) REFERENCES ""Ubicaciones""(id)","""Ubicaciones"""
+"""Ubicaciones""",Ubicaciones_asesor_id_fkey,"FOREIGN KEY (asesor_id) REFERENCES ""Usuarios""(id) ON UPDATE CASCADE ON DELETE RESTRICT","""Usuarios"""
+"""Ubicaciones""",Ubicaciones_ciudad_id_fkey,"FOREIGN KEY (ciudad_id) REFERENCES ""Ciudades""(id) ON DELETE RESTRICT","""Ciudades"""
+"""Ubicaciones""",Ubicaciones_cliente_id_fkey,"FOREIGN KEY (cliente_id) REFERENCES ""Clientes""(id) ON UPDATE CASCADE ON DELETE RESTRICT","""Clientes"""
+"""Ubicaciones""",Ubicaciones_modified_by_fkey,"FOREIGN KEY (modified_by) REFERENCES ""Usuarios""(id) ON UPDATE RESTRICT ON DELETE CASCADE","""Usuarios"""
+"""Ubicaciones""",Ubicaciones_modified_by_fkey1,"FOREIGN KEY (modified_by) REFERENCES ""Usuarios""(id) ON UPDATE CASCADE ON DELETE RESTRICT","""Usuarios"""
+"""Usuarios""",Usuarios_user_id_fkey,FOREIGN KEY (user_id) REFERENCES auth.users(id) ON UPDATE CASCADE ON DELETE SET NULL,auth.users
+"""Usuarios""",fk_sucursal_predeterminada,"FOREIGN KEY (sucursal_predeterminada) REFERENCES ""Ubicaciones""(id)","""Ubicaciones"""
+"""Usuarios_MarginOS""",Usuarios_MarginOS_uuid_fkey,FOREIGN KEY (uuid) REFERENCES auth.users(id) ON DELETE CASCADE,auth.users
+"""Visitas""",public_Visitas_modified_by_fkey,"FOREIGN KEY (modified_by) REFERENCES ""Usuarios""(id) ON UPDATE CASCADE ON DELETE RESTRICT","""Usuarios"""
+"""Visitas""",public_Visitas_servicio_id_fkey,"FOREIGN KEY (servicio_id) REFERENCES ""Servicios""(id) ON UPDATE CASCADE ON DELETE CASCADE","""Servicios"""
+"""Visitas""",public_Visitas_tecnico_id_fkey,"FOREIGN KEY (tecnico_id) REFERENCES ""Usuarios""(id) ON UPDATE CASCADE ON DELETE RESTRICT","""Usuarios"""
+"""Zonas""",Zonas_admin_id_fkey,"FOREIGN KEY (admin_id) REFERENCES ""Usuarios""(id) ON DELETE RESTRICT","""Usuarios"""
+"""Zonas""",Zonas_coordinador_id_fkey,"FOREIGN KEY (coordinador_id) REFERENCES ""Usuarios""(id) ON DELETE RESTRICT","""Usuarios"""
+"""Zonas_tecnicos""",Zonas_tecnicos_tecnico_id_fkey,"FOREIGN KEY (tecnico_id) REFERENCES ""Usuarios""(id) ON DELETE CASCADE","""Usuarios"""
+"""Zonas_tecnicos""",Zonas_tecnicos_zona_id_fkey,"FOREIGN KEY (zona_id) REFERENCES ""Zonas""(id) ON DELETE SET NULL","""Zonas"""
+bom_components,bom_components_bom_product_id_fkey,FOREIGN KEY (bom_product_id) REFERENCES bom_products(id) ON DELETE CASCADE,bom_products
+bom_products,bom_products_bom_import_id_fkey,FOREIGN KEY (bom_import_id) REFERENCES bom_imports(id) ON DELETE CASCADE,bom_imports
+bom_products,bom_products_product_id_fkey,FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE SET NULL,products
+comentariossolicitudes,comentariossolicitudes_quien realiza el comentario_fkey,"FOREIGN KEY (""quien realiza el comentario"") REFERENCES ""Usuarios""(id) ON UPDATE CASCADE ON DELETE RESTRICT","""Usuarios"""
+comentariossolicitudes,comentariossolicitudes_solicitudid_fkey,FOREIGN KEY (solicitudid) REFERENCES solicitudes_clientes(id) ON DELETE RESTRICT,solicitudes_clientes
+customers,customers_default_channel_id_fkey,FOREIGN KEY (default_channel_id) REFERENCES sales_channels(id) ON DELETE SET NULL,sales_channels
+evaluacion_servicio,evaluacion_servicio_servicios_id_fkey,"FOREIGN KEY (""Servicios_id"") REFERENCES ""Servicios""(id) ON UPDATE CASCADE ON DELETE RESTRICT","""Servicios"""
+fir_kpi_users,fir_kpi_users_id_fkey,FOREIGN KEY (id) REFERENCES auth.users(id) ON DELETE CASCADE,auth.users
+firmas_digitales,firmas_digitales_servicio_fkey,"FOREIGN KEY (servicio) REFERENCES ""Servicios""(id) ON UPDATE CASCADE ON DELETE CASCADE","""Servicios"""
+firmas_digitales,firmas_digitales_visita_id_fkey,"FOREIGN KEY (visita_id) REFERENCES ""Visitas""(id) ON UPDATE CASCADE ON DELETE CASCADE","""Visitas"""
+inventario_almacenes,inventario_almacenes_modified_by_fkey,"FOREIGN KEY (modified_by) REFERENCES ""Usuarios""(id) ON UPDATE CASCADE ON DELETE RESTRICT","""Usuarios"""
+inventario_almacenes,inventario_almacenes_producto_id_fkey,"FOREIGN KEY (producto_id) REFERENCES ""Productos""(id) ON UPDATE CASCADE ON DELETE RESTRICT","""Productos"""
+inventario_almacenes,inventario_almacenes_ubicacion_id_fkey,"FOREIGN KEY (ubicacion_id) REFERENCES ""Ubicaciones""(id) ON UPDATE CASCADE ON DELETE RESTRICT","""Ubicaciones"""
+kitchen_furniture,kitchen_furniture_kitchen_id_fkey,FOREIGN KEY (kitchen_id) REFERENCES kitchens(id) ON DELETE CASCADE,kitchens
+kitchen_furniture,kitchen_furniture_segment_id_fkey,FOREIGN KEY (segment_id) REFERENCES kitchen_segments(id) ON DELETE CASCADE,kitchen_segments
+kitchen_segments,kitchen_segments_kitchen_id_fkey,FOREIGN KEY (kitchen_id) REFERENCES kitchens(id) ON DELETE CASCADE,kitchens
+kitchens,kitchens_project_id_fkey,FOREIGN KEY (project_id) REFERENCES projects(id) ON DELETE CASCADE,projects
+movimientos_inventario,movimientos_inventario_almacenes_created_by_fkey,"FOREIGN KEY (created_by) REFERENCES ""Usuarios""(id) ON UPDATE CASCADE ON DELETE RESTRICT","""Usuarios"""
+movimientos_inventario,movimientos_inventario_almacenes_inventario_id_fkey,FOREIGN KEY (inventario_id) REFERENCES inventario_almacenes(id) ON UPDATE CASCADE ON DELETE CASCADE,inventario_almacenes
+pdf_quotes,pdf_quotes_kitchen_id_fkey,FOREIGN KEY (kitchen_id) REFERENCES kitchens(id) ON DELETE CASCADE,kitchens
+pdf_quotes,pdf_quotes_project_id_fkey,FOREIGN KEY (project_id) REFERENCES projects(id) ON DELETE CASCADE,projects
+price_lists,price_lists_channel_id_fkey,FOREIGN KEY (channel_id) REFERENCES sales_channels(id) ON DELETE CASCADE,sales_channels
+price_lists,price_lists_product_id_fkey,FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE,products
+product_costs,product_costs_product_id_fkey,FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE,products
+productos_defectos,productos_defectos_producto_servicio_id_fkey,FOREIGN KEY (producto_servicio_id) REFERENCES productos_servicios(id) ON UPDATE CASCADE ON DELETE CASCADE,productos_servicios
+productos_defectos,productos_defectos_razon_queja_id_fkey,FOREIGN KEY (razon_queja_id) REFERENCES razones_queja(id) ON UPDATE CASCADE ON DELETE RESTRICT,razones_queja
+productos_defectos,productos_defectos_responsable_queja_id_fkey,FOREIGN KEY (responsable_queja_id) REFERENCES responsable_queja(id) ON UPDATE CASCADE ON DELETE RESTRICT,responsable_queja
+productos_servicios,productos_servicios_producto_id_fkey,"FOREIGN KEY (producto_id) REFERENCES ""Productos""(id) ON UPDATE CASCADE ON DELETE RESTRICT","""Productos"""
+productos_servicios,productos_servicios_servicio_id_fkey,"FOREIGN KEY (servicio_id) REFERENCES ""Servicios""(id) ON UPDATE CASCADE ON DELETE CASCADE","""Servicios"""
+productos_ubicaciones,exhibiciones_producto_id_fkey,"FOREIGN KEY (producto_id) REFERENCES ""Productos""(id) ON UPDATE CASCADE ON DELETE CASCADE","""Productos"""
+productos_ubicaciones,exhibiciones_ubicacion_id_fkey,"FOREIGN KEY (ubicacion_id) REFERENCES ""Ubicaciones""(id) ON UPDATE CASCADE ON DELETE CASCADE","""Ubicaciones"""
+productos_ubicaciones,productos_ubicaciones_created_by_fkey,"FOREIGN KEY (created_by) REFERENCES ""Usuarios""(id) ON UPDATE CASCADE ON DELETE RESTRICT","""Usuarios"""
+registro_solicitudes,registro_solicitudes_asesor_mac_id_fkey,"FOREIGN KEY (asesor_mac_id) REFERENCES ""Usuarios""(id)","""Usuarios"""
+registro_solicitudes,registro_solicitudes_cliente_final_id_fkey,"FOREIGN KEY (cliente_final_id) REFERENCES ""Consumidores""(id) ON DELETE SET NULL","""Consumidores"""
+registro_solicitudes,registro_solicitudes_cliente_id_fkey,"FOREIGN KEY (cliente_id) REFERENCES ""Ubicaciones""(id) ON DELETE SET NULL","""Ubicaciones"""
+registro_solicitudes,registro_solicitudes_responsable_atraso_id_fkey,"FOREIGN KEY (responsable_atraso_id) REFERENCES ""Usuarios""(id) ON DELETE SET NULL","""Usuarios"""
+registro_solicitudes,registro_solicitudes_tratado_por_id_fkey,"FOREIGN KEY (tratado_por_id) REFERENCES ""Usuarios""(id) ON DELETE SET NULL","""Usuarios"""
+registro_solicitudes,registro_solicitudes_vendedor_id_fkey,"FOREIGN KEY (vendedor_id) REFERENCES ""Usuarios""(id) ON DELETE SET NULL","""Usuarios"""
+sellers_dim,sellers_dim_user_id_fkey,FOREIGN KEY (user_id) REFERENCES fir_kpi_users(id),fir_kpi_users
+simulation_lines,simulation_lines_product_id_fkey,FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE SET NULL,products
+simulation_lines,simulation_lines_simulation_id_fkey,FOREIGN KEY (simulation_id) REFERENCES simulations(id) ON DELETE CASCADE,simulations
+simulation_versions,simulation_versions_original_simulation_id_fkey,FOREIGN KEY (original_simulation_id) REFERENCES simulations(id) ON DELETE CASCADE,simulations
+simulation_versions,simulation_versions_renewed_simulation_id_fkey,FOREIGN KEY (renewed_simulation_id) REFERENCES simulations(id) ON DELETE CASCADE,simulations
+simulations,simulations_channel_id_fkey,FOREIGN KEY (channel_id) REFERENCES sales_channels(id) ON DELETE SET NULL,sales_channels
+simulations,simulations_customer_id_fkey,FOREIGN KEY (customer_id) REFERENCES customers(id) ON DELETE SET NULL,customers
+simulations,simulations_source_simulation_id_fkey,FOREIGN KEY (source_simulation_id) REFERENCES simulations(id) ON DELETE SET NULL,simulations
+solicitudes_viaje,solicitudes_viaje_user_id_fkey,FOREIGN KEY (user_id) REFERENCES auth.users(id),auth.users
+soliciturepuestosservice,soliciturepuestosservice_asesor_mac_fkey,"FOREIGN KEY (asesor_mac) REFERENCES ""Usuarios""(id)","""Usuarios"""
+soliciturepuestosservice,soliciturepuestosservice_servicio_id_fkey,"FOREIGN KEY (servicio_id) REFERENCES ""Servicios""(id) ON UPDATE RESTRICT ON DELETE CASCADE","""Servicios"""
+tecnicos_repuestos,public_seguimiento_repuestos_created_by_fkey,"FOREIGN KEY (created_by) REFERENCES ""Usuarios""(id) ON UPDATE CASCADE ON DELETE RESTRICT","""Usuarios"""
+tecnicos_repuestos,public_seguimiento_repuestos_repuesto_id_fkey,"FOREIGN KEY (repuesto_id) REFERENCES ""Repuestos""(id) ON UPDATE CASCADE ON DELETE RESTRICT","""Repuestos"""
+tecnicos_repuestos,public_seguimiento_repuestos_servicio_id_fkey,"FOREIGN KEY (servicio_id) REFERENCES ""Servicios""(id) ON UPDATE CASCADE ON DELETE CASCADE","""Servicios"""
+tecnicos_repuestos,public_seguimiento_repuestos_tecnico_id_fkey,"FOREIGN KEY (tecnico_id) REFERENCES ""Usuarios""(id) ON UPDATE CASCADE ON DELETE RESTRICT","""Usuarios"""
+ticket_comentarios,ticket_comentarios_ticket_id_fkey,FOREIGN KEY (ticket_id) REFERENCES tickets_tiendas(id) ON DELETE CASCADE,tickets_tiendas
+ticket_comentarios,ticket_comentarios_usuario_id_fkey,"FOREIGN KEY (usuario_id) REFERENCES ""Usuarios""(id)","""Usuarios"""
+tickets_tiendas,tickets_tiendas_usuario_id_fkey,"FOREIGN KEY (usuario_id) REFERENCES ""Usuarios""(id)","""Usuarios"""
+whatsapp_messages,whatsapp_messages_chat_id_fkey,FOREIGN KEY (chat_id) REFERENCES whatsapp_chats(id) ON DELETE CASCADE,whatsapp_chats

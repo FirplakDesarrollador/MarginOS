@@ -1,0 +1,1348 @@
+view_name,view_definition
+CRM_InventarioDisponible," SELECT p.id AS producto_id,
+    p.numero_articulo,
+    p.descripcion,
+    COALESCE(sum(m.cantidad) FILTER (WHERE (((m.operacion)::text = 'ENTRADA'::text) AND ((m.estado)::text = 'ACTIVO'::text))), (0)::numeric) AS entradas,
+    COALESCE(sum(m.cantidad) FILTER (WHERE (((m.operacion)::text = 'SALIDA'::text) AND ((m.estado)::text = 'ACTIVO'::text))), (0)::numeric) AS salidas,
+    COALESCE(sum(m.cantidad) FILTER (WHERE (((m.operacion)::text = 'RESERVA'::text) AND ((m.estado)::text = 'ACTIVO'::text))), (0)::numeric) AS reservas,
+    (COALESCE(sum(m.cantidad) FILTER (WHERE (((m.operacion)::text = 'ENTRADA'::text) AND ((m.estado)::text = 'ACTIVO'::text))), (0)::numeric) - COALESCE(sum(m.cantidad) FILTER (WHERE (((m.operacion)::text = 'SALIDA'::text) AND ((m.estado)::text = 'ACTIVO'::text))), (0)::numeric)) AS existencia_fisica,
+    ((COALESCE(sum(m.cantidad) FILTER (WHERE (((m.operacion)::text = 'ENTRADA'::text) AND ((m.estado)::text = 'ACTIVO'::text))), (0)::numeric) - COALESCE(sum(m.cantidad) FILTER (WHERE (((m.operacion)::text = 'SALIDA'::text) AND ((m.estado)::text = 'ACTIVO'::text))), (0)::numeric)) - COALESCE(sum(m.cantidad) FILTER (WHERE (((m.operacion)::text = 'RESERVA'::text) AND ((m.estado)::text = 'ACTIVO'::text))), (0)::numeric)) AS disponible
+   FROM (""CRM_ListaDePrecios"" p
+     LEFT JOIN ""CRM_InventarioMovimientos"" m ON ((m.producto_id = p.id)))
+  GROUP BY p.id, p.numero_articulo, p.descripcion;"
+CRM_VistaCuentasConPotencial," SELECT c.id,
+    c.id_cuenta_principal,
+    c.nit_base,
+    c.nit_sufijo,
+    c.nombre,
+    c.telefono,
+    c.direccion,
+    c.ciudad,
+    c.email,
+    c.created_at,
+    c.updated_at,
+    c.created_by,
+    c.updated_by,
+    c.is_deleted,
+    c._sync_metadata,
+    c.canal_id,
+    c.es_premium,
+    c.tipo_id,
+    c.subclasificacion_id,
+    c.nivel_premium,
+    c.departamento_id,
+    c.ciudad_id,
+    c.owner_user_id,
+    c.nit,
+    c.pais_id,
+    c.comentarios,
+    c.ignorar_limites_descuento,
+    ( SELECT COALESCE(sum(o.amount), (0)::numeric) AS ""coalesce""
+           FROM ""CRM_Oportunidades"" o
+          WHERE ((o.account_id = c.id) AND (o.is_deleted = false) AND (o.estado_id <> ALL (ARRAY[11, 14, 2, 3, 4])))) AS potencial_venta,
+    ( SELECT count(*) AS count
+           FROM ""CRM_Contactos"" con
+          WHERE ((con.account_id = c.id) AND (con.is_deleted = false))) AS contact_count
+   FROM ""CRM_Cuentas"" c;"
+Neg_query_proveedores," SELECT DISTINCT b.""Codigo_provedor"" AS sku_proveedor,
+    b.""Provedor"" AS proveedor
+   FROM ""Neg_base"" b
+  WHERE ((b.""Provedor"" IS NOT NULL) AND (b.""Provedor"" <> ''::text) AND (b.""Codigo_provedor"" IS NOT NULL) AND (b.""Codigo_provedor"" <> ''::text))
+  ORDER BY b.""Provedor"";"
+VISOR_EJECUTIVO," SELECT (""VISOR"".""Orden de venta"")::text AS ov,
+    max(""VISOR"".""Orden de compra"") AS oc,
+    max(""VISOR"".""Código del cliente"") AS cod_cliente,
+    max(""VISOR"".""Nombre del cliente"") AS cliente,
+    max(""VISOR"".envio) AS tipo_envio,
+    max(""VISOR"".vendedor) AS vendedor,
+    max(""VISOR"".""Fecha de despacho"") AS fecha_compromiso,
+    max(""VISOR"".""Fecha de ingreso"") AS fecha_ingreso,
+    sum(
+        CASE
+            WHEN (""VISOR"".""Cantidad pedida"" = ''::text) THEN (0)::numeric
+            WHEN (""VISOR"".""Cantidad pedida"" IS NULL) THEN (0)::numeric
+            ELSE (replace(""VISOR"".""Cantidad pedida"", ','::text, ''::text))::numeric
+        END) AS total_unidades_pedidas,
+    sum(
+        CASE
+            WHEN (""VISOR"".""cant-ent-despacho"" = ''::text) THEN (0)::numeric
+            WHEN (""VISOR"".""cant-ent-despacho"" IS NULL) THEN (0)::numeric
+            ELSE (replace(""VISOR"".""cant-ent-despacho"", ','::text, ''::text))::numeric
+        END) AS total_en_cedi,
+    sum(
+        CASE
+            WHEN ((""VISOR"".""cant proc"")::text = ''::text) THEN (0)::numeric
+            WHEN (""VISOR"".""cant proc"" IS NULL) THEN (0)::numeric
+            ELSE (replace((""VISOR"".""cant proc"")::text, ','::text, ''::text))::numeric
+        END) AS total_en_produccion,
+    sum(
+        CASE
+            WHEN ((""VISOR"".""cant planif"")::text = ''::text) THEN (0)::numeric
+            WHEN (""VISOR"".""cant planif"" IS NULL) THEN (0)::numeric
+            ELSE (replace((""VISOR"".""cant planif"")::text, ','::text, ''::text))::numeric
+        END) AS total_planificado,
+    sum(
+        CASE
+            WHEN (""VISOR"".""Valor total"" = ''::text) THEN (0)::numeric
+            WHEN (""VISOR"".""Valor total"" IS NULL) THEN (0)::numeric
+            ELSE (replace(""VISOR"".""Valor total"", ','::text, ''::text))::numeric
+        END) AS valor_total_pedido,
+    min(
+        CASE
+            WHEN ((""VISOR"".""Fecha de ingreso"" IS NULL) OR (""VISOR"".""Fecha de ingreso"" = ''::text)) THEN NULL::date
+            ELSE to_date(""VISOR"".""Fecha de ingreso"", 'DD/MM/YYYY'::text)
+        END) AS fecha_ingreso_date,
+    max(
+        CASE
+            WHEN ((""VISOR"".""Fecha de despacho"" IS NULL) OR (""VISOR"".""Fecha de despacho"" = ''::text)) THEN NULL::date
+            ELSE to_date(""VISOR"".""Fecha de despacho"", 'DD/MM/YYYY'::text)
+        END) AS fecha_compromiso_date
+   FROM ""VISOR""
+  WHERE ((""VISOR"".""Orden de venta"" IS NOT NULL) AND ((""VISOR"".""Orden de venta"")::text <> ''::text))
+  GROUP BY ""VISOR"".""Orden de venta"";"
+cron_job_run_history," SELECT jr.runid,
+    jr.jobid,
+    j.jobname,
+    jr.job_pid,
+    jr.database,
+    jr.username,
+    jr.command,
+    jr.status,
+    jr.return_message,
+    jr.start_time,
+    jr.end_time
+   FROM (cron.job_run_details jr
+     JOIN cron.job j ON ((jr.jobid = j.jobid)))
+  WHERE (j.jobname = 'check-overdue-activities-daily'::text)
+  ORDER BY jr.start_time DESC
+ LIMIT 50;"
+neg_query_base," SELECT b.""Id"" AS id,
+    b.""Codigo_provedor"" AS codigo_proveedor,
+    b.""Provedor"" AS proveedor,
+    b.""Codigo_Articulo"" AS codigo_articulo,
+    b.""Descripcion_articulo"" AS descripcion_articulo,
+        CASE
+            WHEN ((b.""Precio"" IS NULL) OR (TRIM(BOTH FROM b.""Precio"") = ''::text)) THEN NULL::numeric
+            WHEN (POSITION((','::text) IN (b.""Precio"")) > 0) THEN (replace(replace(regexp_replace(b.""Precio"", '[^0-9,]'::text, ''::text, 'g'::text), '.'::text, ''::text), ','::text, '.'::text))::numeric
+            ELSE (replace(regexp_replace(b.""Precio"", '[^0-9]'::text, ''::text, 'g'::text), '.'::text, ''::text))::numeric
+        END AS precio,
+        CASE
+            WHEN ((b.""Cantidad"" IS NULL) OR (TRIM(BOTH FROM b.""Cantidad"") = ''::text)) THEN NULL::numeric
+            WHEN (POSITION((','::text) IN (b.""Cantidad"")) > 0) THEN (replace(replace(regexp_replace(b.""Cantidad"", '[^0-9,]'::text, ''::text, 'g'::text), '.'::text, ''::text), ','::text, '.'::text))::numeric
+            ELSE (replace(regexp_replace(b.""Cantidad"", '[^0-9]'::text, ''::text, 'g'::text), '.'::text, ''::text))::numeric
+        END AS cantidad,
+    b.""Unidad_de_medida"" AS unidad_medida
+   FROM ""Neg_base"" b;"
+nuevo_consecutivo," SELECT (max(""Servicios"".id) + 6377) AS nuevo_consecutivo
+   FROM ""Servicios"";"
+query_ciudades," SELECT c.id,
+    c.created_at,
+    c.pais,
+    c.ciudad,
+    c.departamento,
+    z.zona,
+    z.coordinador_id,
+    uc.correo AS coordinador_correo,
+    uc.display_name AS coordinador_nombre,
+    ua.display_name AS administrador_nombre,
+    z.admin_id AS administrador_id,
+    z.id AS zona_id
+   FROM (((""Ciudades"" c
+     LEFT JOIN ""Zonas"" z ON ((c.zona_id = z.id)))
+     LEFT JOIN ""Usuarios"" uc ON ((z.coordinador_id = uc.id)))
+     LEFT JOIN ""Usuarios"" ua ON ((z.admin_id = ua.id)));"
+query_comentarios," SELECT c.id,
+    c.created_at,
+    c.servicio_id,
+    c.contenido,
+    c.documentos,
+    c.usuario_id,
+    c.visita_id,
+    c.tipo,
+    u.display_name,
+    u.correo,
+    u.cedula,
+    u.url_foto,
+    u.rol
+   FROM (""Comentarios"" c
+     JOIN ""Usuarios"" u ON ((c.usuario_id = u.id)));"
+query_consumidores," SELECT c.id,
+    c.created_at,
+    c.cedula,
+    c.contacto,
+    c.telefono,
+    c.direccion,
+    c.descripcion_direccion,
+    c.ciudad_id,
+    c.correo_electronico,
+    q.ciudad,
+    q.pais,
+    q.departamento,
+    q.zona,
+    q.zona_id,
+    q.administrador_nombre,
+    q.administrador_id,
+    q.coordinador_id,
+    q.coordinador_nombre,
+    q.coordinador_correo
+   FROM (""Consumidores"" c
+     LEFT JOIN query_ciudades q ON ((c.ciudad_id = q.id)));"
+query_exhibiciones," SELECT ex.id,
+    ex.created_at,
+    ex.producto_id,
+    ex.ubicacion_id,
+    ex.comentario,
+    ex.mueble_marcado,
+    pr.sku AS producto_sku,
+    pr.nombre AS producto_descripcion,
+    pr.grupo AS producto_grupo,
+    pr.precio AS producto_precio,
+    ub.nombre AS ubicacion_nombre,
+    ub.nit AS ubicacion_nit,
+    ac.display_name AS asesor_comercial,
+    us.display_name AS creado_por_nombre,
+    us.correo AS creado_por_correo
+   FROM ((((productos_ubicaciones ex
+     LEFT JOIN ""Productos"" pr ON ((ex.producto_id = pr.id)))
+     LEFT JOIN ""Ubicaciones"" ub ON ((ex.ubicacion_id = ub.id)))
+     LEFT JOIN ""Usuarios"" us ON ((ex.created_by = us.id)))
+     LEFT JOIN ""Usuarios"" ac ON ((ub.asesor_id = ac.id)));"
+query_inventario_almacenes," SELECT inal.id,
+    inal.created_at,
+    inal.modified_by,
+    inal.modified_at,
+    inal.producto_id,
+    inal.ubicacion_id,
+    inal.cantidad,
+    ub.nombre AS nombre_almacen,
+    cl.nit AS cliente_nit,
+    cl.nombre AS cliente_nombre,
+    pr.nombre AS descripcion,
+    pr.sku,
+    pr.color_base,
+    pr.color_mueble,
+    pr.medidas,
+    pr.sku_base,
+    pr.diseno_base,
+    pr.diseno_mueble,
+    pr.grupo,
+    um.display_name
+   FROM ((((inventario_almacenes inal
+     LEFT JOIN ""Ubicaciones"" ub ON ((inal.ubicacion_id = ub.id)))
+     LEFT JOIN ""Productos"" pr ON ((inal.producto_id = pr.id)))
+     LEFT JOIN ""Clientes"" cl ON ((ub.cliente_id = cl.id)))
+     LEFT JOIN ""Usuarios"" um ON ((inal.modified_by = um.id)));"
+query_movi_invent_almacenes," SELECT moin.id,
+    moin.created_at,
+    moin.inventario_id,
+    moin.observacion,
+    moin.created_by,
+    moin.cantidad_anterior,
+    moin.cantidad_nueva,
+    moin.movimiento AS cantidad,
+    inal.cliente_nombre,
+    inal.cliente_nit,
+    inal.nombre_almacen,
+    inal.descripcion,
+    inal.sku,
+    inal.color_base,
+    inal.color_mueble,
+    inal.medidas,
+    inal.sku_base,
+    inal.diseno_base,
+    inal.diseno_mueble,
+    inal.grupo,
+    uc.display_name AS modificado_por
+   FROM ((movimientos_inventario moin
+     LEFT JOIN ""Usuarios"" uc ON ((moin.created_by = uc.id)))
+     LEFT JOIN query_inventario_almacenes inal ON ((moin.inventario_id = inal.id)));"
+query_productos_defectos," SELECT pd.id,
+    pd.producto_servicio_id,
+    date(pd.created_at) AS fecha,
+    ps.producto_id,
+    p.sku AS producto_sku,
+    p.nombre AS producto_descripcion,
+    p.grupo AS producto_grupo,
+    ps.cantidad,
+    pd.razon_queja_id,
+    rq.razon,
+    rs.responsable,
+    s.consecutivo AS servicio_consecutivo,
+    s.id AS servicio_id
+   FROM (((((productos_defectos pd
+     LEFT JOIN productos_servicios ps ON ((pd.producto_servicio_id = ps.id)))
+     LEFT JOIN ""Servicios"" s ON ((ps.servicio_id = s.id)))
+     LEFT JOIN ""Productos"" p ON ((ps.producto_id = p.id)))
+     LEFT JOIN razones_queja rq ON ((pd.razon_queja_id = rq.id)))
+     LEFT JOIN responsable_queja rs ON ((pd.responsable_queja_id = rs.id)));"
+query_productos_repuestos," SELECT ""Productos"".id,
+    ""Productos"".nombre,
+    ""Productos"".sku,
+    (""Productos"".grupo)::text AS grupo,
+    (((('Producto - '::text || ""Productos"".nombre) || ' ('::text) || ""Productos"".sku) || ')'::text) AS label
+   FROM ""Productos""
+UNION ALL
+ SELECT ""Repuestos"".id,
+    ""Repuestos"".nombre,
+    ""Repuestos"".sku,
+    'Repuesto'::text AS grupo,
+    (((('Repuesto - '::text || ""Repuestos"".nombre) || ' ('::text) || ""Repuestos"".sku) || ')'::text) AS label
+   FROM ""Repuestos""
+  ORDER BY 5;"
+query_productos_servicio," SELECT ps.id,
+    ps.created_at,
+    ps.servicio_id,
+    ps.producto_id,
+    ps.cantidad,
+    ps.codigos_iot,
+    p.sku,
+    p.nombre,
+    p.grupo,
+    p.diseno_mueble,
+    p.diseno_base,
+    p.medida_altura,
+    p.medida_anchura,
+    p.color_base,
+    p.color_mueble,
+    p.precio,
+    p.codigo_barras,
+    s.consecutivo,
+    s.tipo_de_servicio,
+    s.canal_de_venta
+   FROM ((productos_servicios ps
+     LEFT JOIN ""Servicios"" s ON ((ps.servicio_id = s.id)))
+     LEFT JOIN ""Productos"" p ON ((ps.producto_id = p.id)));"
+query_productos_ubicaciones," SELECT u.id,
+    cl.nombre AS cliente,
+    u.nombre AS almacen,
+    u.nit,
+    c.pais,
+    z.zona,
+    c.departamento,
+    c.ciudad,
+    u.direccion,
+    u.telefono,
+    u.nombre_contacto,
+    u.activo,
+    u.permite_exhibir,
+    u.pop_banos,
+    u.pop_cocinas,
+    u.pop_labores,
+    u.pop_hidros,
+    u.pop_no_aplica,
+    ac.display_name AS asesor_comercial,
+    cs.display_name AS coordinador_servicios,
+    p.sku AS producto_sku,
+    p.nombre AS producto_descripcion,
+    p.grupo AS producto_grupo,
+    p.color_base AS producto_color_base,
+    p.color_mueble AS producto_color_mueble,
+    p.diseno_base AS producto_diseno_base,
+    p.diseno_mueble AS producto_diseno_mueble,
+    p.medidas AS producto_medidas,
+    pu.comentario AS producto_descripcion_respaldo,
+    pu.mueble_marcado
+   FROM (((((((productos_ubicaciones pu
+     LEFT JOIN ""Productos"" p ON ((pu.producto_id = p.id)))
+     LEFT JOIN ""Ubicaciones"" u ON ((pu.ubicacion_id = u.id)))
+     LEFT JOIN ""Clientes"" cl ON ((u.cliente_id = cl.id)))
+     LEFT JOIN ""Usuarios"" ac ON ((u.asesor_id = ac.id)))
+     LEFT JOIN ""Ciudades"" c ON ((u.ciudad_id = c.id)))
+     LEFT JOIN ""Zonas"" z ON ((c.zona_id = z.id)))
+     LEFT JOIN ""Usuarios"" cs ON ((z.coordinador_id = cs.id)))
+  WHERE (cl.tipo_de_cliente = 'Distribuidor'::client_type)
+  ORDER BY cl.nombre, u.nombre;"
+query_repuestos_servicio," SELECT r.id,
+    r.created_at,
+    r.nombre,
+    r.sku,
+    rs.cantidad,
+    s.consecutivo,
+    s.tipo_de_servicio,
+    s.id AS servicio_id
+   FROM ((""Repuestos_Servicios"" rs
+     LEFT JOIN ""Servicios"" s ON ((rs.servicio_id = s.id)))
+     LEFT JOIN ""Repuestos"" r ON ((rs.repuesto_id = r.id)));"
+query_servicios," SELECT s.id,
+    s.created_at,
+    s.consecutivo,
+    s.numero_de_pedido,
+    s.comercial_id,
+    s.consumidor_id,
+    s.estado,
+    s.ubicacion_id,
+    s.consecutivo_sap,
+    s.fecha_cierre,
+    s.coordinador_id,
+    s.pedido_digitado,
+    s.orden_de_venta,
+    s.actividad_mac,
+    s.decision_cliente,
+    s.sharepoint_uid,
+    s.tipo_de_servicio,
+    s.canal_de_venta,
+    s.cerrado_por,
+    s.facturado,
+    s.creado_desde,
+    s.aprobacion_director,
+    s.aprobacion_logistica,
+    s.aprobacion_mac,
+    s.aplica_tecnico,
+    s.asesor_mac_id,
+    s.service_parent_id,
+    s.soportes_pago,
+    u.nombre_contacto AS ubicacion_contacto,
+    u.telefono AS ubicacion_telefono,
+    u.nombre AS ubicacion_nombre,
+    u.nit AS ubicacion_nit,
+    u.direccion AS ubicacion_direccion,
+    u.ciudad AS ubicacion_ciudad,
+    u.zona AS ubicacion_zona,
+    u.pais AS ubicacion_pais,
+    u.departamento AS ubicacion_departamento,
+    ucs.display_name AS coordinador_nombre,
+    ucs.correo AS coordinador_correo,
+    u.administrador_nombre,
+    u.cliente_nombre,
+    c.cedula AS consumidor_cedula,
+    c.contacto AS consumidor_contacto,
+    c.telefono AS consumidor_telefono,
+    c.direccion AS consumidor_direccion,
+    c.descripcion_direccion AS consumidor_descripcion_direccion,
+    c.ciudad AS consumidor_ciudad,
+    c.pais AS consumidor_pais,
+    c.departamento AS consumidor_departamento,
+    c.zona AS consumidor_zona,
+    c.correo_electronico AS consumidor_correo,
+    us.display_name AS asesor_nombre,
+    us.correo AS asesor_correo,
+    vt.tecnico_nombre,
+    vt.tecnico_cedula,
+    vt.tecnico_correo,
+    vt.fecha_hora_inicio AS visita_fecha_hora_inicio,
+    vt.fecha_hora_fin AS visita_fecha_hora_fin,
+    vt.estado AS visita_estado,
+    vt.ocurriendo AS visita_ocurriendo,
+    vt.entrega_parcial AS visita_parcial,
+    vt.reagendado AS visita_reagendada,
+    uc.display_name AS nombre_cerrado_por,
+    umac.display_name AS asesor_mac_nombre,
+        CASE
+            WHEN ((vt.fecha_hora_inicio IS NOT NULL) AND (vt.fecha_hora_fin IS NOT NULL) AND (vt.estado = true) AND (vt.ocurriendo = false) AND (vt.entrega_parcial = false) AND (vt.reagendado = false)) THEN 'Agendado'::text
+            WHEN ((vt.fecha_hora_inicio IS NOT NULL) AND (vt.fecha_hora_fin IS NOT NULL) AND (vt.estado = true) AND (vt.ocurriendo = true) AND (vt.entrega_parcial = false) AND (vt.reagendado = false)) THEN 'En progreso'::text
+            WHEN ((vt.fecha_hora_inicio IS NOT NULL) AND (vt.fecha_hora_fin IS NOT NULL) AND (vt.estado = false) AND (vt.ocurriendo = false) AND (vt.entrega_parcial = true) AND (vt.reagendado = false)) THEN 'Con pendientes'::text
+            WHEN ((vt.fecha_hora_inicio IS NOT NULL) AND (vt.fecha_hora_fin IS NOT NULL) AND (vt.estado = false) AND (vt.ocurriendo = false) AND (vt.entrega_parcial = false) AND (vt.reagendado = false)) THEN 'Terminado'::text
+            WHEN ((vt.fecha_hora_inicio IS NOT NULL) AND (vt.fecha_hora_fin IS NOT NULL) AND (vt.estado = false) AND (vt.ocurriendo = false) AND (vt.entrega_parcial = false) AND (vt.reagendado = true)) THEN 'Cancelado'::text
+            WHEN ((vt.fecha_hora_inicio IS NULL) AND (vt.fecha_hora_fin IS NULL) AND (vt.estado = true) AND (vt.ocurriendo = false) AND (vt.entrega_parcial = false) AND (vt.reagendado = false)) THEN 'Preagendado'::text
+            WHEN ((vt.fecha_hora_inicio IS NULL) AND (vt.fecha_hora_fin IS NULL) AND (vt.estado IS NULL) AND (vt.ocurriendo IS NULL) AND (vt.entrega_parcial IS NULL) AND (vt.reagendado IS NULL)) THEN 'Sin agendar'::text
+            ELSE 'Sin estado'::text
+        END AS estado_visita
+   FROM (((((((""Servicios"" s
+     LEFT JOIN query_ubicaciones u ON ((s.ubicacion_id = u.id)))
+     LEFT JOIN query_consumidores c ON ((s.consumidor_id = c.id)))
+     LEFT JOIN ""Usuarios"" us ON ((s.comercial_id = us.id)))
+     LEFT JOIN ""Usuarios"" uc ON ((s.cerrado_por = uc.id)))
+     LEFT JOIN ""Usuarios"" ucs ON ((s.coordinador_id = ucs.id)))
+     LEFT JOIN ""Usuarios"" umac ON ((s.asesor_mac_id = umac.id)))
+     LEFT JOIN ( SELECT DISTINCT ON (query_visita_tecnico.servicio_id) query_visita_tecnico.id,
+            query_visita_tecnico.created_at,
+            query_visita_tecnico.tecnico_id,
+            query_visita_tecnico.servicio_id,
+            query_visita_tecnico.estado,
+            query_visita_tecnico.recurrente,
+            query_visita_tecnico.dia_recurrente,
+            query_visita_tecnico.nombre,
+            query_visita_tecnico.reagendado,
+            query_visita_tecnico.personal,
+            query_visita_tecnico.fecha_hora_inicio,
+            query_visita_tecnico.fecha_hora_fin,
+            query_visita_tecnico.fecha_hora_inicio_real,
+            query_visita_tecnico.fecha_hora_fin_real,
+            query_visita_tecnico.ocurriendo,
+            query_visita_tecnico.modified_by,
+            query_visita_tecnico.entrega_parcial,
+            query_visita_tecnico.tecnico_nombre,
+            query_visita_tecnico.tecnico_correo,
+            query_visita_tecnico.tecnico_cedula
+           FROM query_visita_tecnico
+          ORDER BY query_visita_tecnico.servicio_id, query_visita_tecnico.created_at DESC) vt ON ((s.id = vt.servicio_id)));"
+query_servicios_csv," SELECT s.id,
+    s.created_at,
+    s.consecutivo,
+    s.numero_de_pedido,
+    s.comercial_id,
+    s.consumidor_id,
+    s.estado,
+    s.ubicacion_id,
+    s.consecutivo_sap,
+    s.fecha_cierre,
+    s.coordinador_id,
+    s.pedido_digitado,
+    s.orden_de_venta,
+    s.actividad_mac,
+    s.decision_cliente,
+    s.sharepoint_uid,
+    s.tipo_de_servicio,
+    s.canal_de_venta,
+    s.cerrado_por,
+    s.facturado,
+    s.creado_desde,
+    s.aprobacion_director,
+    s.aprobacion_logistica,
+    s.aprobacion_mac,
+    s.aplica_tecnico,
+    s.asesor_mac_id,
+    s.service_parent_id,
+    s.soportes_pago,
+    u.nombre_contacto AS ubicacion_contacto,
+    u.telefono AS ubicacion_telefono,
+    u.nombre AS ubicacion_nombre,
+    u.nit AS ubicacion_nit,
+    u.direccion AS ubicacion_direccion,
+    u.ciudad AS ubicacion_ciudad,
+    u.zona AS ubicacion_zona,
+    u.pais AS ubicacion_pais,
+    u.departamento AS ubicacion_departamento,
+    ucs.display_name AS coordinador_nombre,
+    ucs.correo AS coordinador_correo,
+    u.administrador_nombre,
+    u.cliente_nombre,
+    c.cedula AS consumidor_cedula,
+    c.contacto AS consumidor_contacto,
+    c.telefono AS consumidor_telefono,
+    c.direccion AS consumidor_direccion,
+    c.descripcion_direccion AS consumidor_descripcion_direccion,
+    c.ciudad AS consumidor_ciudad,
+    c.pais AS consumidor_pais,
+    c.departamento AS consumidor_departamento,
+    c.zona AS consumidor_zona,
+    c.correo_electronico AS consumidor_correo,
+    us.display_name AS asesor_nombre,
+    us.correo AS asesor_correo,
+    vt.tecnico_nombre,
+    vt.tecnico_cedula,
+    vt.tecnico_correo,
+    vt.fecha_hora_inicio AS visita_fecha_hora_inicio,
+    vt.fecha_hora_fin AS visita_fecha_hora_fin,
+    vt.estado AS visita_estado,
+    vt.ocurriendo AS visita_ocurriendo,
+    vt.entrega_parcial AS visita_parcial,
+    vt.reagendado AS visita_reagendada,
+    uc.display_name AS nombre_cerrado_por,
+    umac.display_name AS asesor_mac_nombre,
+        CASE
+            WHEN ((vt.fecha_hora_inicio IS NOT NULL) AND (vt.fecha_hora_fin IS NOT NULL) AND (vt.estado = true) AND (vt.ocurriendo = false) AND (vt.entrega_parcial = false) AND (vt.reagendado = false)) THEN 'Agendado'::text
+            WHEN ((vt.fecha_hora_inicio IS NOT NULL) AND (vt.fecha_hora_fin IS NOT NULL) AND (vt.estado = true) AND (vt.ocurriendo = true) AND (vt.entrega_parcial = false) AND (vt.reagendado = false)) THEN 'En progreso'::text
+            WHEN ((vt.fecha_hora_inicio IS NOT NULL) AND (vt.fecha_hora_fin IS NOT NULL) AND (vt.estado = false) AND (vt.ocurriendo = false) AND (vt.entrega_parcial = true) AND (vt.reagendado = false)) THEN 'Con pendientes'::text
+            WHEN ((vt.fecha_hora_inicio IS NOT NULL) AND (vt.fecha_hora_fin IS NOT NULL) AND (vt.estado = false) AND (vt.ocurriendo = false) AND (vt.entrega_parcial = false) AND (vt.reagendado = false)) THEN 'Terminado'::text
+            WHEN ((vt.fecha_hora_inicio IS NOT NULL) AND (vt.fecha_hora_fin IS NOT NULL) AND (vt.estado = false) AND (vt.ocurriendo = false) AND (vt.entrega_parcial = false) AND (vt.reagendado = true)) THEN 'Cancelado'::text
+            WHEN ((vt.fecha_hora_inicio IS NULL) AND (vt.fecha_hora_fin IS NULL) AND (vt.estado = true) AND (vt.ocurriendo = false) AND (vt.entrega_parcial = false) AND (vt.reagendado = false)) THEN 'Preagendado'::text
+            WHEN ((vt.fecha_hora_inicio IS NULL) AND (vt.fecha_hora_fin IS NULL) AND (vt.estado IS NULL) AND (vt.ocurriendo IS NULL) AND (vt.entrega_parcial IS NULL) AND (vt.reagendado IS NULL)) THEN 'Sin agendar'::text
+            ELSE 'Sin estado'::text
+        END AS estado_visita,
+    COALESCE(( SELECT jsonb_agg(jsonb_build_object('producto', p.nombre, 'cantidad', ps.cantidad)) AS jsonb_agg
+           FROM (productos_servicios ps
+             LEFT JOIN ""Productos"" p ON ((ps.producto_id = p.id)))
+          WHERE (ps.servicio_id = s.id)), '[]'::jsonb) AS productos
+   FROM (((((((""Servicios"" s
+     LEFT JOIN query_ubicaciones u ON ((s.ubicacion_id = u.id)))
+     LEFT JOIN query_consumidores c ON ((s.consumidor_id = c.id)))
+     LEFT JOIN ""Usuarios"" us ON ((s.comercial_id = us.id)))
+     LEFT JOIN ""Usuarios"" uc ON ((s.cerrado_por = uc.id)))
+     LEFT JOIN ""Usuarios"" ucs ON ((s.coordinador_id = ucs.id)))
+     LEFT JOIN ""Usuarios"" umac ON ((s.asesor_mac_id = umac.id)))
+     LEFT JOIN ( SELECT DISTINCT ON (query_visita_tecnico.servicio_id) query_visita_tecnico.id,
+            query_visita_tecnico.created_at,
+            query_visita_tecnico.tecnico_id,
+            query_visita_tecnico.servicio_id,
+            query_visita_tecnico.estado,
+            query_visita_tecnico.recurrente,
+            query_visita_tecnico.dia_recurrente,
+            query_visita_tecnico.nombre,
+            query_visita_tecnico.reagendado,
+            query_visita_tecnico.personal,
+            query_visita_tecnico.fecha_hora_inicio,
+            query_visita_tecnico.fecha_hora_fin,
+            query_visita_tecnico.fecha_hora_inicio_real,
+            query_visita_tecnico.fecha_hora_fin_real,
+            query_visita_tecnico.ocurriendo,
+            query_visita_tecnico.modified_by,
+            query_visita_tecnico.entrega_parcial,
+            query_visita_tecnico.tecnico_nombre,
+            query_visita_tecnico.tecnico_correo,
+            query_visita_tecnico.tecnico_cedula
+           FROM query_visita_tecnico
+          ORDER BY query_visita_tecnico.servicio_id, query_visita_tecnico.created_at DESC) vt ON ((s.id = vt.servicio_id)));"
+query_servicios_defectos," SELECT sd.servicio_id,
+    d.defecto,
+    d.planta
+   FROM ((""Servicios_Defectos"" sd
+     LEFT JOIN ""Defectos"" d ON ((sd.defecto_id = d.id)))
+     LEFT JOIN ""Servicios"" s ON ((sd.servicio_id = s.id)))
+  GROUP BY sd.servicio_id, sd.defecto_id, d.defecto, d.planta;"
+query_servicios_info_cliente," WITH q AS (
+         SELECT q.id,
+            (q.created_at)::timestamp without time zone AS created_at_ts,
+            q.consecutivo,
+            q.tipo_de_servicio
+           FROM query_servicios_info_cliente_public() q(id, created_at, consecutivo, numero_de_pedido, comercial_id, consumidor_id, estado, ubicacion_id, consecutivo_sap, fecha_cierre, coordinador_id, pedido_digitado, orden_de_venta, actividad_mac, decision_cliente, sharepoint_uid, tipo_de_servicio, canal_de_venta, cerrado_por, facturado, creado_desde, aprobacion_director, aprobacion_logistica, aprobacion_mac, aplica_tecnico, asesor_mac_id, service_parent_id, soportes_pago, ubicacion_contacto, ubicacion_telefono, ubicacion_nombre, ubicacion_nit, ubicacion_direccion, ubicacion_ciudad, ubicacion_zona, ubicacion_pais, ubicacion_departamento, coordinador_nombre, coordinador_correo, administrador_nombre, cliente_nombre, consumidor_cedula, consumidor_contacto, consumidor_telefono, consumidor_direccion, consumidor_descripcion_direccion, consumidor_ciudad, consumidor_pais, consumidor_departamento, consumidor_zona, consumidor_correo, asesor_nombre, asesor_correo, tecnico_nombre, tecnico_cedula, tecnico_correo, visita_fecha_hora_inicio, visita_fecha_hora_fin, visita_estado, visita_ocurriendo, visita_parcial, visita_reagendada, nombre_cerrado_por, asesor_mac_nombre, estado_visita)
+          WHERE ((q.tipo_de_servicio IS NOT NULL) AND (q.tipo_de_servicio <> ''::text))
+        ), cancels AS (
+         SELECT c.servicio_id,
+            c.created_at AS cancel_ts,
+            c.contenido AS motivo,
+            c.id AS comentario_id
+           FROM ""Comentarios"" c
+          WHERE (((c.tipo)::text ~~* '%cancel%'::text) OR ((c.tipo)::text ~~* '%anul%'::text))
+        ), reagends AS (
+         SELECT c.servicio_id,
+            c.cancel_ts,
+            v.fecha_hora_inicio,
+            v.fecha_hora_fin,
+            v.tecnico_id,
+            v.id AS visita_id
+           FROM (cancels c
+             JOIN LATERAL ( SELECT v1.id,
+                    v1.fecha_hora_inicio,
+                    v1.fecha_hora_fin,
+                    v1.tecnico_id
+                   FROM ""Visitas"" v1
+                  WHERE ((v1.servicio_id = c.servicio_id) AND (v1.fecha_hora_inicio IS NOT NULL) AND (v1.fecha_hora_inicio > c.cancel_ts))
+                  ORDER BY v1.fecha_hora_inicio
+                 LIMIT 1) v ON (true))
+        ), primera_visita AS (
+         SELECT DISTINCT ON (v.servicio_id) v.servicio_id,
+            v.fecha_hora_inicio,
+            v.fecha_hora_fin,
+            v.tecnico_id,
+            v.id AS visita_id
+           FROM ""Visitas"" v
+          WHERE (v.fecha_hora_inicio IS NOT NULL)
+          ORDER BY v.servicio_id, v.fecha_hora_inicio
+        ), finalizados AS (
+         SELECT DISTINCT ON (c.servicio_id) c.servicio_id,
+            c.created_at AS fin_ts,
+            c.contenido AS motivo,
+            c.id AS comentario_id
+           FROM ""Comentarios"" c
+          WHERE (c.tipo = 'trabajo_realizado_servicio'::tipo_comentario)
+          ORDER BY c.servicio_id, c.created_at DESC, c.id DESC
+        ), timeline AS (
+         SELECT q.consecutivo,
+            q.tipo_de_servicio,
+            'Solicitud ingresada'::text AS estado,
+            q.created_at_ts AS fecha_hora_inicio,
+            NULL::timestamp without time zone AS fecha_hora_fin,
+            NULL::text AS tecnico_nombre,
+            NULL::text AS motivo,
+            0 AS orden_evento,
+            1 AS orden_grupo,
+            q.created_at_ts AS evento_ts,
+            'Validando'::text AS sub_estado,
+            'solicitud'::text AS origen_tipo,
+            (q.id)::text AS origen_id
+           FROM q
+        UNION ALL
+         SELECT q.consecutivo,
+            q.tipo_de_servicio,
+            'Fecha de agendamiento'::text AS estado,
+            pv.fecha_hora_inicio,
+            pv.fecha_hora_fin,
+            u.display_name AS tecnico_nombre,
+            NULL::text AS motivo,
+            2 AS orden_evento,
+            2 AS orden_grupo,
+            pv.fecha_hora_inicio AS evento_ts,
+            'Validando'::text AS sub_estado,
+            'visita_primera'::text AS origen_tipo,
+            (pv.visita_id)::text AS origen_id
+           FROM ((q
+             JOIN primera_visita pv ON ((pv.servicio_id = q.id)))
+             LEFT JOIN ""Usuarios"" u ON ((u.id = pv.tecnico_id)))
+        UNION ALL
+         SELECT q.consecutivo,
+            q.tipo_de_servicio,
+            'Cancelado'::text AS estado,
+            c.cancel_ts AS fecha_hora_inicio,
+            NULL::timestamp without time zone AS fecha_hora_fin,
+            NULL::text AS tecnico_nombre,
+            c.motivo,
+            3 AS orden_evento,
+            3 AS orden_grupo,
+            c.cancel_ts AS evento_ts,
+            'Programado'::text AS sub_estado,
+            'comentario_cancel'::text AS origen_tipo,
+            (c.comentario_id)::text AS origen_id
+           FROM (q
+             JOIN cancels c ON ((c.servicio_id = q.id)))
+        UNION ALL
+         SELECT q.consecutivo,
+            q.tipo_de_servicio,
+            'Re-agendado'::text AS estado,
+            r.fecha_hora_inicio,
+            r.fecha_hora_fin,
+            u2.display_name AS tecnico_nombre,
+            NULL::text AS motivo,
+            4 AS orden_evento,
+            3 AS orden_grupo,
+            r.fecha_hora_inicio AS evento_ts,
+            'Programado'::text AS sub_estado,
+            'visita_reagendada'::text AS origen_tipo,
+            (r.visita_id)::text AS origen_id
+           FROM ((q
+             JOIN reagends r ON ((r.servicio_id = q.id)))
+             LEFT JOIN ""Usuarios"" u2 ON ((u2.id = r.tecnico_id)))
+        UNION ALL
+         SELECT q.consecutivo,
+            q.tipo_de_servicio,
+            'Finalizado'::text AS estado,
+            f.fin_ts AS fecha_hora_inicio,
+            NULL::timestamp without time zone AS fecha_hora_fin,
+            NULL::text AS tecnico_nombre,
+            f.motivo,
+            9 AS orden_evento,
+            9 AS orden_grupo,
+            f.fin_ts AS evento_ts,
+            'Finalizado'::text AS sub_estado,
+            'comentario_finalizado'::text AS origen_tipo,
+            (f.comentario_id)::text AS origen_id
+           FROM (q
+             JOIN finalizados f ON ((f.servicio_id = q.id)))
+        )
+ SELECT t.consecutivo,
+    t.tipo_de_servicio,
+    t.estado,
+    t.fecha_hora_inicio,
+    t.fecha_hora_fin,
+    t.tecnico_nombre,
+    t.motivo,
+    t.orden_evento,
+    t.orden_grupo,
+    t.evento_ts,
+    t.sub_estado,
+    t.origen_tipo,
+    t.origen_id,
+    (row_number() OVER (PARTITION BY t.consecutivo ORDER BY t.orden_grupo, t.evento_ts, t.orden_evento))::integer AS numero_estado,
+    md5(((((((((COALESCE(t.consecutivo, ''::text) || '|'::text) || COALESCE(t.estado, ''::text)) || '|'::text) || COALESCE((t.evento_ts)::text, ''::text)) || '|'::text) || COALESCE(t.origen_tipo, ''::text)) || '|'::text) || COALESCE(t.origen_id, ''::text))) AS row_id,
+        CASE
+            WHEN (t.estado = 'Re-agendado'::text) THEN t.fecha_hora_inicio
+            ELSE NULL::timestamp without time zone
+        END AS hora_inicio_reagendado,
+        CASE
+            WHEN (t.estado = 'Re-agendado'::text) THEN t.fecha_hora_fin
+            ELSE NULL::timestamp without time zone
+        END AS hora_fin_reagendado
+   FROM timeline t;"
+query_servicios_productos_repuestos," SELECT s.id,
+    s.created_at,
+    s.consecutivo,
+    s.numero_de_pedido,
+    s.comercial_id,
+    s.consumidor_id,
+    s.estado,
+    s.ubicacion_id,
+    s.consecutivo_sap,
+    s.fecha_cierre,
+    s.coordinador_id,
+    s.pedido_digitado,
+    s.orden_de_venta,
+    s.actividad_mac,
+    s.decision_cliente,
+    s.sharepoint_uid,
+    s.tipo_de_servicio,
+    s.canal_de_venta,
+    s.cerrado_por,
+    s.facturado,
+    s.creado_desde,
+    s.aprobacion_director,
+    s.aprobacion_logistica,
+    s.aprobacion_mac,
+    s.aplica_tecnico,
+    s.asesor_mac_id,
+    s.service_parent_id,
+    s.soportes_pago,
+    u.nombre_contacto AS ubicacion_contacto,
+    u.telefono AS ubicacion_telefono,
+    u.nombre AS ubicacion_nombre,
+    u.nit AS ubicacion_nit,
+    u.direccion AS ubicacion_direccion,
+    u.ciudad AS ubicacion_ciudad,
+    u.zona AS ubicacion_zona,
+    u.pais AS ubicacion_pais,
+    u.departamento AS ubicacion_departamento,
+    ucs.display_name AS coordinador_nombre,
+    ucs.correo AS coordinador_correo,
+    u.administrador_nombre,
+    u.cliente_nombre,
+    c.cedula AS consumidor_cedula,
+    c.contacto AS consumidor_contacto,
+    c.telefono AS consumidor_telefono,
+    c.direccion AS consumidor_direccion,
+    c.descripcion_direccion AS consumidor_descripcion_direccion,
+    c.ciudad AS consumidor_ciudad,
+    c.pais AS consumidor_pais,
+    c.departamento AS consumidor_departamento,
+    c.zona AS consumidor_zona,
+    c.correo_electronico AS consumidor_correo,
+    us.display_name AS asesor_nombre,
+    us.correo AS asesor_correo,
+    vt.tecnico_nombre,
+    vt.tecnico_cedula,
+    vt.tecnico_correo,
+    vt.fecha_hora_inicio AS visita_fecha_hora_inicio,
+    vt.fecha_hora_fin AS visita_fecha_hora_fin,
+    vt.estado AS visita_estado,
+    vt.ocurriendo AS visita_ocurriendo,
+    vt.entrega_parcial AS visita_parcial,
+    vt.reagendado AS visita_reagendada,
+    uc.display_name AS nombre_cerrado_por,
+    umac.display_name AS asesor_mac_nombre,
+    p.nombre AS producto,
+    NULL::text AS repuesto,
+    ps.cantidad AS producto_cantidad,
+    NULL::integer AS repuesto_cantidad,
+    (p.grupo)::text AS grupo_producto,
+    NULL::text AS grupo_repuesto,
+        CASE
+            WHEN ((vt.fecha_hora_inicio IS NOT NULL) AND (vt.fecha_hora_fin IS NOT NULL) AND (vt.estado = true) AND (vt.ocurriendo = false) AND (vt.entrega_parcial = false) AND (vt.reagendado = false)) THEN 'Agendado'::text
+            WHEN ((vt.fecha_hora_inicio IS NOT NULL) AND (vt.fecha_hora_fin IS NOT NULL) AND (vt.estado = true) AND (vt.ocurriendo = true) AND (vt.entrega_parcial = false) AND (vt.reagendado = false)) THEN 'En progreso'::text
+            WHEN ((vt.fecha_hora_inicio IS NOT NULL) AND (vt.fecha_hora_fin IS NOT NULL) AND (vt.estado = false) AND (vt.ocurriendo = false) AND (vt.entrega_parcial = true) AND (vt.reagendado = false)) THEN 'Con pendientes'::text
+            WHEN ((vt.fecha_hora_inicio IS NOT NULL) AND (vt.fecha_hora_fin IS NOT NULL) AND (vt.estado = false) AND (vt.ocurriendo = false) AND (vt.entrega_parcial = false) AND (vt.reagendado = false)) THEN 'Terminado'::text
+            WHEN ((vt.fecha_hora_inicio IS NOT NULL) AND (vt.fecha_hora_fin IS NOT NULL) AND (vt.estado = false) AND (vt.ocurriendo = false) AND (vt.entrega_parcial = false) AND (vt.reagendado = true)) THEN 'Cancelado'::text
+            WHEN ((vt.fecha_hora_inicio IS NULL) AND (vt.fecha_hora_fin IS NULL) AND (vt.estado = true) AND (vt.ocurriendo = false) AND (vt.entrega_parcial = false) AND (vt.reagendado = false)) THEN 'Preagendado'::text
+            WHEN ((vt.fecha_hora_inicio IS NULL) AND (vt.fecha_hora_fin IS NULL) AND (vt.estado IS NULL) AND (vt.ocurriendo IS NULL) AND (vt.entrega_parcial IS NULL) AND (vt.reagendado IS NULL)) THEN 'Sin agendar'::text
+            ELSE 'Sin estado'::text
+        END AS estado_visita
+   FROM (((((((((""Servicios"" s
+     JOIN productos_servicios ps ON ((ps.servicio_id = s.id)))
+     JOIN ""Productos"" p ON ((p.id = ps.producto_id)))
+     LEFT JOIN query_ubicaciones u ON ((s.ubicacion_id = u.id)))
+     LEFT JOIN query_consumidores c ON ((s.consumidor_id = c.id)))
+     LEFT JOIN ""Usuarios"" us ON ((s.comercial_id = us.id)))
+     LEFT JOIN ""Usuarios"" uc ON ((s.cerrado_por = uc.id)))
+     LEFT JOIN ""Usuarios"" ucs ON ((s.coordinador_id = ucs.id)))
+     LEFT JOIN ""Usuarios"" umac ON ((s.asesor_mac_id = umac.id)))
+     LEFT JOIN ( SELECT DISTINCT ON (query_visita_tecnico.servicio_id) query_visita_tecnico.id,
+            query_visita_tecnico.created_at,
+            query_visita_tecnico.tecnico_id,
+            query_visita_tecnico.servicio_id,
+            query_visita_tecnico.estado,
+            query_visita_tecnico.recurrente,
+            query_visita_tecnico.dia_recurrente,
+            query_visita_tecnico.nombre,
+            query_visita_tecnico.reagendado,
+            query_visita_tecnico.personal,
+            query_visita_tecnico.fecha_hora_inicio,
+            query_visita_tecnico.fecha_hora_fin,
+            query_visita_tecnico.fecha_hora_inicio_real,
+            query_visita_tecnico.fecha_hora_fin_real,
+            query_visita_tecnico.ocurriendo,
+            query_visita_tecnico.modified_by,
+            query_visita_tecnico.entrega_parcial,
+            query_visita_tecnico.tecnico_nombre,
+            query_visita_tecnico.tecnico_correo,
+            query_visita_tecnico.tecnico_cedula
+           FROM query_visita_tecnico
+          ORDER BY query_visita_tecnico.servicio_id, query_visita_tecnico.created_at DESC) vt ON ((s.id = vt.servicio_id)))
+UNION ALL
+ SELECT s.id,
+    s.created_at,
+    s.consecutivo,
+    s.numero_de_pedido,
+    s.comercial_id,
+    s.consumidor_id,
+    s.estado,
+    s.ubicacion_id,
+    s.consecutivo_sap,
+    s.fecha_cierre,
+    s.coordinador_id,
+    s.pedido_digitado,
+    s.orden_de_venta,
+    s.actividad_mac,
+    s.decision_cliente,
+    s.sharepoint_uid,
+    s.tipo_de_servicio,
+    s.canal_de_venta,
+    s.cerrado_por,
+    s.facturado,
+    s.creado_desde,
+    s.aprobacion_director,
+    s.aprobacion_logistica,
+    s.aprobacion_mac,
+    s.aplica_tecnico,
+    s.asesor_mac_id,
+    s.service_parent_id,
+    s.soportes_pago,
+    u.nombre_contacto AS ubicacion_contacto,
+    u.telefono AS ubicacion_telefono,
+    u.nombre AS ubicacion_nombre,
+    u.nit AS ubicacion_nit,
+    u.direccion AS ubicacion_direccion,
+    u.ciudad AS ubicacion_ciudad,
+    u.zona AS ubicacion_zona,
+    u.pais AS ubicacion_pais,
+    u.departamento AS ubicacion_departamento,
+    ucs.display_name AS coordinador_nombre,
+    ucs.correo AS coordinador_correo,
+    u.administrador_nombre,
+    u.cliente_nombre,
+    c.cedula AS consumidor_cedula,
+    c.contacto AS consumidor_contacto,
+    c.telefono AS consumidor_telefono,
+    c.direccion AS consumidor_direccion,
+    c.descripcion_direccion AS consumidor_descripcion_direccion,
+    c.ciudad AS consumidor_ciudad,
+    c.pais AS consumidor_pais,
+    c.departamento AS consumidor_departamento,
+    c.zona AS consumidor_zona,
+    c.correo_electronico AS consumidor_correo,
+    us.display_name AS asesor_nombre,
+    us.correo AS asesor_correo,
+    vt.tecnico_nombre,
+    vt.tecnico_cedula,
+    vt.tecnico_correo,
+    vt.fecha_hora_inicio AS visita_fecha_hora_inicio,
+    vt.fecha_hora_fin AS visita_fecha_hora_fin,
+    vt.estado AS visita_estado,
+    vt.ocurriendo AS visita_ocurriendo,
+    vt.entrega_parcial AS visita_parcial,
+    vt.reagendado AS visita_reagendada,
+    uc.display_name AS nombre_cerrado_por,
+    umac.display_name AS asesor_mac_nombre,
+    NULL::text AS producto,
+    r.nombre AS repuesto,
+    NULL::integer AS producto_cantidad,
+    rs.cantidad AS repuesto_cantidad,
+    NULL::text AS grupo_producto,
+    NULL::text AS grupo_repuesto,
+        CASE
+            WHEN ((vt.fecha_hora_inicio IS NOT NULL) AND (vt.fecha_hora_fin IS NOT NULL) AND (vt.estado = true) AND (vt.ocurriendo = false) AND (vt.entrega_parcial = false) AND (vt.reagendado = false)) THEN 'Agendado'::text
+            WHEN ((vt.fecha_hora_inicio IS NOT NULL) AND (vt.fecha_hora_fin IS NOT NULL) AND (vt.estado = true) AND (vt.ocurriendo = true) AND (vt.entrega_parcial = false) AND (vt.reagendado = false)) THEN 'En progreso'::text
+            WHEN ((vt.fecha_hora_inicio IS NOT NULL) AND (vt.fecha_hora_fin IS NOT NULL) AND (vt.estado = false) AND (vt.ocurriendo = false) AND (vt.entrega_parcial = true) AND (vt.reagendado = false)) THEN 'Con pendientes'::text
+            WHEN ((vt.fecha_hora_inicio IS NOT NULL) AND (vt.fecha_hora_fin IS NOT NULL) AND (vt.estado = false) AND (vt.ocurriendo = false) AND (vt.entrega_parcial = false) AND (vt.reagendado = false)) THEN 'Terminado'::text
+            WHEN ((vt.fecha_hora_inicio IS NOT NULL) AND (vt.fecha_hora_fin IS NOT NULL) AND (vt.estado = false) AND (vt.ocurriendo = false) AND (vt.entrega_parcial = false) AND (vt.reagendado = true)) THEN 'Cancelado'::text
+            WHEN ((vt.fecha_hora_inicio IS NULL) AND (vt.fecha_hora_fin IS NULL) AND (vt.estado = true) AND (vt.ocurriendo = false) AND (vt.entrega_parcial = false) AND (vt.reagendado = false)) THEN 'Preagendado'::text
+            WHEN ((vt.fecha_hora_inicio IS NULL) AND (vt.fecha_hora_fin IS NULL) AND (vt.estado IS NULL) AND (vt.ocurriendo IS NULL) AND (vt.entrega_parcial IS NULL) AND (vt.reagendado IS NULL)) THEN 'Sin agendar'::text
+            ELSE 'Sin estado'::text
+        END AS estado_visita
+   FROM (((((((((""Servicios"" s
+     JOIN ""Repuestos_Servicios"" rs ON ((rs.servicio_id = s.id)))
+     JOIN ""Repuestos"" r ON ((r.id = rs.repuesto_id)))
+     LEFT JOIN query_ubicaciones u ON ((s.ubicacion_id = u.id)))
+     LEFT JOIN query_consumidores c ON ((s.consumidor_id = c.id)))
+     LEFT JOIN ""Usuarios"" us ON ((s.comercial_id = us.id)))
+     LEFT JOIN ""Usuarios"" uc ON ((s.cerrado_por = uc.id)))
+     LEFT JOIN ""Usuarios"" ucs ON ((s.coordinador_id = ucs.id)))
+     LEFT JOIN ""Usuarios"" umac ON ((s.asesor_mac_id = umac.id)))
+     LEFT JOIN ( SELECT DISTINCT ON (query_visita_tecnico.servicio_id) query_visita_tecnico.id,
+            query_visita_tecnico.created_at,
+            query_visita_tecnico.tecnico_id,
+            query_visita_tecnico.servicio_id,
+            query_visita_tecnico.estado,
+            query_visita_tecnico.recurrente,
+            query_visita_tecnico.dia_recurrente,
+            query_visita_tecnico.nombre,
+            query_visita_tecnico.reagendado,
+            query_visita_tecnico.personal,
+            query_visita_tecnico.fecha_hora_inicio,
+            query_visita_tecnico.fecha_hora_fin,
+            query_visita_tecnico.fecha_hora_inicio_real,
+            query_visita_tecnico.fecha_hora_fin_real,
+            query_visita_tecnico.ocurriendo,
+            query_visita_tecnico.modified_by,
+            query_visita_tecnico.entrega_parcial,
+            query_visita_tecnico.tecnico_nombre,
+            query_visita_tecnico.tecnico_correo,
+            query_visita_tecnico.tecnico_cedula
+           FROM query_visita_tecnico
+          ORDER BY query_visita_tecnico.servicio_id, query_visita_tecnico.created_at DESC) vt ON ((s.id = vt.servicio_id)));"
+query_ubicaciones," SELECT src.id,
+    src.created_at,
+    src.cliente_id,
+    src.nombre_contacto,
+    src.telefono,
+    src.nombre,
+    src.direccion,
+    src.nit,
+    src.ciudad_id,
+    src.asesor_id,
+    src.activo,
+    src.pop_banos,
+    src.pop_cocinas,
+    src.pop_labores,
+    src.pop_hidros,
+    src.pop_no_aplica,
+    src.permite_exhibir,
+    src.modified_at,
+    src.modified_by,
+    src.fotos,
+    src.sharepoint_id,
+    src.cliente_nit,
+    src.cliente_nombre,
+    src.cliente_tipo,
+    src.pais,
+    src.ciudad,
+    src.departamento,
+    src.zona,
+    src.zona_id,
+    src.coordinador_nombre,
+    src.coordinador_correo,
+    src.administrador_nombre,
+    src.coordinador_id,
+    src.administrador_id,
+    src.asesor_comercial_nombre,
+    src.asesor_comercial_correo,
+    src.ultimo_mantenimiento_consecutivo,
+    src.ultimo_mantenimiento_fecha_cierre,
+    src.ultimo_mantenimiento_id,
+    NULL::integer AS _prio
+   FROM ( SELECT u.id,
+            u.created_at,
+            u.cliente_id,
+            u.nombre_contacto,
+            u.telefono,
+            u.nombre,
+            u.direccion,
+            u.nit,
+            u.ciudad_id,
+            u.asesor_id,
+            u.activo,
+            u.pop_banos,
+            u.pop_cocinas,
+            u.pop_labores,
+            u.pop_hidros,
+            u.pop_no_aplica,
+            u.permite_exhibir,
+            u.modified_at,
+            u.modified_by,
+            u.fotos,
+            u.sharepoint_id,
+            c.nit AS cliente_nit,
+            c.nombre AS cliente_nombre,
+            c.tipo_de_cliente AS cliente_tipo,
+            q.pais,
+            q.ciudad,
+            q.departamento,
+            q.zona,
+            q.zona_id,
+            q.coordinador_nombre,
+            q.coordinador_correo,
+            q.administrador_nombre,
+            q.coordinador_id,
+            q.administrador_id,
+            ac.display_name AS asesor_comercial_nombre,
+            ac.correo AS asesor_comercial_correo,
+            ( SELECT s.consecutivo
+                   FROM ""Servicios"" s
+                  WHERE ((s.ubicacion_id = u.id) AND (s.tipo_de_servicio = ANY (ARRAY['mantenimiento_con_kit'::service_type, 'mantenimiento'::service_type])))
+                  ORDER BY s.fecha_cierre DESC
+                 LIMIT 1) AS ultimo_mantenimiento_consecutivo,
+            ( SELECT s.fecha_cierre
+                   FROM ""Servicios"" s
+                  WHERE ((s.ubicacion_id = u.id) AND (s.tipo_de_servicio = ANY (ARRAY['mantenimiento_con_kit'::service_type, 'mantenimiento'::service_type])))
+                  ORDER BY s.fecha_cierre DESC
+                 LIMIT 1) AS ultimo_mantenimiento_fecha_cierre,
+            ( SELECT s.id
+                   FROM ""Servicios"" s
+                  WHERE ((s.ubicacion_id = u.id) AND (s.tipo_de_servicio = ANY (ARRAY['mantenimiento_con_kit'::service_type, 'mantenimiento'::service_type])))
+                  ORDER BY s.fecha_cierre DESC
+                 LIMIT 1) AS ultimo_mantenimiento_id
+           FROM (((""Ubicaciones"" u
+             LEFT JOIN ""Clientes"" c ON ((u.cliente_id = c.id)))
+             LEFT JOIN query_ciudades q ON ((u.ciudad_id = q.id)))
+             LEFT JOIN ""Usuarios"" ac ON ((u.asesor_id = ac.id)))
+          ORDER BY c.nombre, u.nombre) src;"
+query_ubicaciones_fast," SELECT u.id,
+    u.created_at,
+    u.cliente_id,
+    u.nombre_contacto,
+    u.telefono,
+    u.nombre,
+    u.direccion,
+    u.nit,
+    u.ciudad_id,
+    u.asesor_id,
+    u.activo,
+    u.pop_banos,
+    u.pop_cocinas,
+    u.pop_labores,
+    u.pop_hidros,
+    u.pop_no_aplica,
+    u.permite_exhibir,
+    u.modified_at,
+    u.modified_by,
+    u.fotos,
+    u.sharepoint_id,
+    c.nit AS cliente_nit,
+    c.nombre AS cliente_nombre,
+    c.tipo_de_cliente AS cliente_tipo,
+    q.pais,
+    q.ciudad,
+    q.departamento,
+    q.zona,
+    q.zona_id,
+    q.coordinador_nombre,
+    q.coordinador_correo,
+    q.administrador_nombre,
+    q.coordinador_id,
+    q.administrador_id,
+    ac.display_name AS asesor_comercial_nombre,
+    ac.correo AS asesor_comercial_correo
+   FROM (((""Ubicaciones"" u
+     LEFT JOIN ""Clientes"" c ON ((u.cliente_id = c.id)))
+     LEFT JOIN query_ciudades q ON ((u.ciudad_id = q.id)))
+     LEFT JOIN ""Usuarios"" ac ON ((u.asesor_id = ac.id)));"
+query_ubicaciones_simple," SELECT u.id,
+    u.nombre,
+    u.direccion,
+    u.ciudad_id,
+    u.activo,
+    u.created_at,
+    u.cliente_id,
+    c.nombre AS cliente_nombre,
+    q.ciudad,
+    q.departamento
+   FROM ((""Ubicaciones"" u
+     LEFT JOIN ""Clientes"" c ON ((u.cliente_id = c.id)))
+     LEFT JOIN query_ciudades q ON ((u.ciudad_id = q.id)));"
+query_visita_firma," SELECT v.id,
+    v.created_at,
+    v.tecnico_id,
+    v.servicio_id,
+    v.estado,
+    v.recurrente,
+    v.dia_recurrente,
+    v.nombre,
+    v.reagendado,
+    v.personal,
+    v.fecha_hora_inicio,
+    v.fecha_hora_fin,
+    v.fecha_hora_inicio_real,
+    v.fecha_hora_fin_real,
+    v.ocurriendo,
+    v.modified_by,
+    v.entrega_parcial,
+    u.display_name AS tecnico_nombre,
+    u.correo AS tecnico_correo,
+    u.cedula AS tecnico_cedula,
+    um.display_name AS modificado_por,
+    ds.contenido AS diagnostico_servicio,
+    ds.documentos AS documentos_diagnostico,
+    tr.contenido AS trabajo_realizado_servicio,
+    tr.documentos AS documentos_trabajo_realizado,
+    mc.contenido AS motivo_cancelacion,
+    mc.documentos AS motivo_cancelacion_documentos,
+    fd.nombre AS nombre_persona_recibe,
+    fd.telefono AS telefono_persona_recibe,
+    fd.cedula AS cedula_persona_recibe,
+    fd.correo AS correo_persona_recibe,
+    fd.firma_base64,
+    mc.created_at AS motivo_cancelacion_fecha
+   FROM ((((((""Visitas"" v
+     JOIN ""Usuarios"" u ON ((v.tecnico_id = u.id)))
+     JOIN ""Usuarios"" um ON ((v.modified_by = um.id)))
+     LEFT JOIN firmas_digitales fd ON ((v.id = fd.visita_id)))
+     LEFT JOIN ( SELECT ""Comentarios"".visita_id,
+            ""Comentarios"".contenido,
+            ""Comentarios"".documentos
+           FROM ""Comentarios""
+          WHERE (""Comentarios"".tipo = 'diagnostico_servicio'::tipo_comentario)) ds ON ((v.id = ds.visita_id)))
+     LEFT JOIN ( SELECT ""Comentarios"".visita_id,
+            ""Comentarios"".contenido,
+            ""Comentarios"".documentos
+           FROM ""Comentarios""
+          WHERE (""Comentarios"".tipo = 'trabajo_realizado_servicio'::tipo_comentario)) tr ON ((v.id = tr.visita_id)))
+     LEFT JOIN ( SELECT ""Comentarios"".visita_id,
+            ""Comentarios"".contenido,
+            ""Comentarios"".documentos,
+            ""Comentarios"".created_at
+           FROM ""Comentarios""
+          WHERE (""Comentarios"".tipo = 'motivo_cancelacion_visita'::tipo_comentario)) mc ON ((v.id = mc.visita_id)))
+  WHERE (v.personal = false);"
+query_visita_servicio," SELECT v.id,
+    v.created_at,
+    v.tecnico_id,
+    v.servicio_id,
+    v.estado,
+    v.recurrente,
+    v.dia_recurrente,
+    v.nombre,
+    v.reagendado,
+    v.personal,
+    v.fecha_hora_inicio,
+    v.fecha_hora_fin,
+    v.fecha_hora_inicio_real,
+    v.fecha_hora_fin_real,
+    v.ocurriendo,
+    v.modified_by,
+    v.entrega_parcial,
+    u.display_name AS tecnico_nombre,
+    u.correo AS tecnico_correo,
+    u.cedula AS tecnico_cedula,
+    s.canal_de_venta,
+    s.consecutivo,
+    s.asesor_nombre,
+    s.ubicacion_ciudad,
+    s.ubicacion_contacto,
+    s.ubicacion_departamento,
+    s.ubicacion_direccion,
+    s.ubicacion_nombre,
+    s.ubicacion_pais,
+    s.ubicacion_telefono,
+    s.consumidor_cedula,
+    s.consumidor_ciudad,
+    s.consumidor_contacto,
+    s.consumidor_departamento,
+    s.consumidor_descripcion_direccion,
+    s.consumidor_pais,
+    s.consumidor_direccion,
+    s.consumidor_telefono,
+    s.tipo_de_servicio,
+    s.estado_visita,
+    ds.contenido AS diagnostico_servicio,
+    ds.documentos AS documentos_diagnostico,
+    tr.contenido AS trabajo_realizado_servicio,
+    tr.documentos AS documentos_trabajo_realizado,
+    fd.nombre AS nombre_persona_recibe,
+    fd.telefono AS telefono_persona_recibe,
+    fd.cedula AS cedula_persona_recibe,
+    fd.correo AS correo_persona_recibe,
+    fd.firma_base64
+   FROM (((((""Visitas"" v
+     JOIN ""Usuarios"" u ON ((v.tecnico_id = u.id)))
+     LEFT JOIN query_servicios s ON ((v.servicio_id = s.id)))
+     LEFT JOIN firmas_digitales fd ON ((v.id = fd.visita_id)))
+     LEFT JOIN ( SELECT ""Comentarios"".visita_id,
+            ""Comentarios"".contenido,
+            ""Comentarios"".documentos
+           FROM ""Comentarios""
+          WHERE (""Comentarios"".tipo = 'diagnostico_servicio'::tipo_comentario)) ds ON ((v.id = ds.visita_id)))
+     LEFT JOIN ( SELECT ""Comentarios"".visita_id,
+            ""Comentarios"".contenido,
+            ""Comentarios"".documentos
+           FROM ""Comentarios""
+          WHERE (""Comentarios"".tipo = 'trabajo_realizado_servicio'::tipo_comentario)) tr ON ((v.id = tr.visita_id)))
+  ORDER BY v.fecha_hora_inicio;"
+query_visita_tecnico," SELECT v.id,
+    v.created_at,
+    v.tecnico_id,
+    v.servicio_id,
+    v.estado,
+    v.recurrente,
+    v.dia_recurrente,
+    v.nombre,
+    v.reagendado,
+    v.personal,
+    v.fecha_hora_inicio,
+    v.fecha_hora_fin,
+    v.fecha_hora_inicio_real,
+    v.fecha_hora_fin_real,
+    v.ocurriendo,
+    v.modified_by,
+    v.entrega_parcial,
+    u.display_name AS tecnico_nombre,
+    u.correo AS tecnico_correo,
+    u.cedula AS tecnico_cedula
+   FROM (""Visitas"" v
+     JOIN ""Usuarios"" u ON ((v.tecnico_id = u.id)))
+  WHERE (v.personal = false);"
+query_zonas," SELECT z.id,
+    z.zona,
+    z.coordinador_id,
+    u.display_name AS coordinador_nombre
+   FROM (""Zonas"" z
+     LEFT JOIN ""Usuarios"" u ON ((z.coordinador_id = u.id)))
+  ORDER BY z.zona;"
+vendedores_distintos," SELECT DISTINCT ""VISOR"".vendedor
+   FROM ""VISOR""
+  WHERE ((""VISOR"".vendedor IS NOT NULL) AND (""VISOR"".vendedor <> ''::text) AND (""VISOR"".vendedor <> 'null'::text))
+  ORDER BY ""VISOR"".vendedor;"
+view_totales_base_datos," SELECT ( SELECT count(*) AS count
+           FROM ""Ciudades"") AS total_ciudades,
+    ( SELECT count(*) AS count
+           FROM ""Clientes"") AS total_clientes,
+    ( SELECT count(*) AS count
+           FROM ""Ubicaciones"") AS total_salas_obras,
+    ( SELECT count(*) AS count
+           FROM ""Consumidores"") AS total_clientes_finales;"
+visor_recent," SELECT ""VISOR"".""#"",
+    ""VISOR"".""Fecha de ingreso"",
+    ""VISOR"".""tipo orden de venta"",
+    ""VISOR"".""Orden de venta"",
+    ""VISOR"".""Orden de compra"",
+    ""VISOR"".vendedor,
+    ""VISOR"".""Código del cliente"",
+    ""VISOR"".""Nombre del cliente"",
+    ""VISOR"".""Nombre de la sala"",
+    ""VISOR"".""Código del producto"",
+    ""VISOR"".""Descripción del producto"",
+    ""VISOR"".""Cantidad pedida"",
+    ""VISOR"".""cantidad facturada"",
+    ""VISOR"".""cant-ent-despacho"",
+    ""VISOR"".""cant proc"",
+    ""VISOR"".""cant planif"",
+    ""VISOR"".""Precio por unidad"",
+    ""VISOR"".""Valor total"",
+    ""VISOR"".""Componente"",
+    ""VISOR"".""situación item"",
+    ""VISOR"".envio,
+    ""VISOR"".""Familia"",
+    ""VISOR"".""Estado"",
+    ""VISOR"".""Fecha de despacho"",
+    ""VISOR"".""Fecha real de despacho"",
+    ""VISOR"".""Fecha estimada de entrega"",
+    ""VISOR"".""Fecha estimada de entrega (real)"",
+    ""VISOR"".""Destino"",
+    ""VISOR"".""Estado despacho"",
+    ""VISOR"".""Estado de la orden"",
+    ""VISOR"".""# Remisión"",
+    ""VISOR"".""Transportador"",
+    ""VISOR"".""# GUIA"",
+    ""VISOR"".""Fecha de entrega"",
+    ""VISOR"".""# Factura"",
+    ""VISOR"".""Fecha de la factura"",
+    ""VISOR"".""Item"",
+    parse_date_dmy_immutable(""VISOR"".""Fecha de ingreso"") AS fecha_ingreso_parsed
+   FROM ""VISOR"";"
+vista_defectos_unicos," SELECT DISTINCT ""Defectos"".defecto
+   FROM ""Defectos""
+  WHERE (""Defectos"".defecto IS NOT NULL)
+  ORDER BY ""Defectos"".defecto;"
+vista_solicitud_repuestos_servicio," SELECT srs.id,
+    srs.created_at,
+    srs.fecha,
+    srs.razon_social,
+    srs.nit,
+    srs.obra_o_sala,
+    srs.numero_pedido_factura,
+    srs.numero_queja,
+    srs.ciudad_despacho,
+    srs.direccion,
+    srs.telefono,
+    srs.asesor_venta,
+    srs.orden_venta_asignada,
+    srs.ventas_internas,
+    srs.devoluciones,
+    srs.observaciones,
+    srs.servicio_id,
+    srs.productos,
+    srs.repuestos,
+    srs.""Orden_de_devolucion"",
+    srs.""Notificar a"",
+    srs.estado,
+    s.consecutivo,
+    u.correo AS asesor_mac_correo,
+    srs.notificacion_vista
+   FROM ((soliciturepuestosservice srs
+     LEFT JOIN ""Servicios"" s ON ((srs.servicio_id = s.id)))
+     LEFT JOIN ""Usuarios"" u ON ((s.asesor_mac_id = u.id)));"
+vw_clase_esteban," SELECT clase_esteban.nombre,
+        CASE
+            WHEN (clase_esteban.edad > 40) THEN 'mayor_joven'::text
+            ELSE 'joven'::text
+        END AS persona
+   FROM clase_esteban;"
+vw_zonas_medidas_descripciones," SELECT DISTINCT zonas_medidas.descripcion
+   FROM zonas_medidas
+  WHERE ((zonas_medidas.descripcion IS NOT NULL) AND (TRIM(BOTH FROM zonas_medidas.descripcion) <> ''::text))
+  ORDER BY zonas_medidas.descripcion;"
